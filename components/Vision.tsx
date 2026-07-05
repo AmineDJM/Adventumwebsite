@@ -320,7 +320,7 @@ export default function Vision() {
 
       <div className="shell">
         <SectionHeading
-          eyebrow="09 · Regional Vision"
+          eyebrow="08 · Regional Vision"
           title="From Algeria to the Region"
           highlight={["Algeria"]}
           sub="From Algeria to the region, Adventum Pharma aims to become a trusted platform for complex and critical medicines."

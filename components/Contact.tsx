@@ -199,7 +199,7 @@ export default function Contact() {
           {/* ------- left · heading + identity ------- */}
           <div className="lg:col-span-5">
             <SectionHeading
-              eyebrow="08 · Contact"
+              eyebrow="09 · Contact"
               title="Start a Strategic Discussion"
               highlight={["Strategic"]}
               sub="We invite manufacturers and international partners to open a structured conversation about bringing critical therapies to the Algerian market."

@@ -183,7 +183,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: EASE, delay: 2 }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
+        className="absolute bottom-10 right-10 z-10 hidden flex-col items-center gap-3 lg:flex"
       >
         <span className="font-mono text-[0.6rem] uppercase tracking-[0.4em] text-muted">
           Scroll

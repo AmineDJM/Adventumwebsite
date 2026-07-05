@@ -104,7 +104,7 @@ export default function RegulatoryJourney() {
     <section
       id="regulatory"
       ref={sectionRef}
-      className="relative overflow-hidden section-pad"
+      className="relative overflow-x-clip section-pad"
     >
       {/* ------- decorative backdrop ------- */}
       <div
