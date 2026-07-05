@@ -1,0 +1,241 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { EASE } from "@/lib/anim";
+import { scrollToSection } from "@/components/providers/SmoothScroll";
+
+const LINKS = [
+  { label: "Home", href: "#home" },
+  { label: "Infectiology", href: "#infectiology" },
+  { label: "Platform", href: "#platform" },
+  { label: "Regulatory", href: "#regulatory" },
+  { label: "Partnerships", href: "#partnerships" },
+  { label: "Vision", href: "#vision" },
+  { label: "Contact", href: "#contact" },
+];
+
+function Logo() {
+  return (
+    <a
+      href="#home"
+      onClick={(e) => {
+        e.preventDefault();
+        scrollToSection("#home");
+      }}
+      className="group flex items-center gap-3"
+      aria-label="Adventum Pharma — home"
+    >
+      <span className="relative flex h-9 w-9 items-center justify-center">
+        <svg viewBox="0 0 36 36" fill="none" className="h-9 w-9" aria-hidden>
+          <path
+            d="M18 3l13 7.5v15L18 33 5 25.5v-15L18 3z"
+            stroke="url(#lg)"
+            strokeWidth="1.4"
+          />
+          <circle cx="18" cy="18" r="3.2" fill="url(#lg)" />
+          <circle cx="18" cy="9.5" r="1.6" fill="#4cd7f6" opacity="0.9" />
+          <circle cx="25.4" cy="22.3" r="1.6" fill="#3ee6a8" opacity="0.9" />
+          <circle cx="10.6" cy="22.3" r="1.6" fill="#4cd7f6" opacity="0.6" />
+          <path
+            d="M18 14.8v-3.7M20.8 19.6l3.2 1.9M15.2 19.6L12 21.5"
+            stroke="#89a8bd"
+            strokeWidth="0.9"
+            opacity="0.8"
+          />
+          <defs>
+            <linearGradient id="lg" x1="5" y1="3" x2="31" y2="33">
+              <stop stopColor="#3ee6a8" />
+              <stop offset="1" stopColor="#4cd7f6" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span className="absolute inset-0 rounded-full bg-bio/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
+      </span>
+      <span className="flex flex-col leading-none">
+        <span className="font-display text-[1.05rem] font-semibold tracking-[0.18em] text-frost">
+          ADVENTUM
+        </span>
+        <span className="mt-1 font-mono text-[0.55rem] uppercase tracking-[0.5em] text-pulse/80">
+          Pharma
+        </span>
+      </span>
+    </a>
+  );
+}
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState("#home");
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 32);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = LINKS.map((l) =>
+      document.querySelector(l.href)
+    ).filter(Boolean) as HTMLElement[];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  const go = (href: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    scrollToSection(href);
+  };
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: EASE, delay: 0.4 }}
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ease-premium ${
+          scrolled
+            ? "border-b border-white/[0.06] bg-abyss/70 backdrop-blur-2xl"
+            : "border-b border-transparent bg-transparent"
+        }`}
+      >
+        <nav className="shell flex h-[72px] items-center justify-between">
+          <Logo />
+
+          <ul className="hidden items-center gap-1 lg:flex">
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  onClick={go(link.href)}
+                  className={`relative rounded-full px-4 py-2 text-[0.82rem] font-medium tracking-wide transition-colors duration-400 ${
+                    active === link.href
+                      ? "text-frost"
+                      : "text-silver/80 hover:text-frost"
+                  }`}
+                >
+                  {link.label}
+                  {active === link.href && (
+                    <motion.span
+                      layoutId="nav-active"
+                      transition={{ duration: 0.5, ease: EASE }}
+                      className="absolute inset-0 -z-10 rounded-full border border-white/10 bg-white/[0.05]"
+                    />
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden lg:block">
+            <a
+              href="#contact"
+              onClick={go("#contact")}
+              className="inline-flex items-center gap-2 rounded-full border border-bio/30 bg-bio/[0.08] px-5 py-2.5 text-[0.8rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(62,230,168,0.5)]"
+            >
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-bio opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-bio" />
+              </span>
+              Partner With Us
+            </a>
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md lg:hidden"
+          >
+            <span className="relative block h-3 w-4">
+              <span
+                className={`absolute left-0 top-0 h-px w-full bg-frost transition-all duration-400 ease-premium ${
+                  open ? "top-1/2 rotate-45" : ""
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-1/2 h-px w-full bg-frost transition-all duration-400 ease-premium ${
+                  open ? "opacity-0" : ""
+                }`}
+              />
+              <span
+                className={`absolute bottom-0 left-0 h-px w-full bg-frost transition-all duration-400 ease-premium ${
+                  open ? "bottom-1/2 -rotate-45" : ""
+                }`}
+              />
+            </span>
+          </button>
+        </nav>
+      </motion.header>
+
+      {/* Mobile overlay menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-abyss/95 backdrop-blur-2xl lg:hidden"
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-grid-faint opacity-40"
+            />
+            <ul className="shell relative space-y-2">
+              {LINKS.map((link, i) => (
+                <motion.li
+                  key={link.href}
+                  initial={{ opacity: 0, x: -32 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.6, ease: EASE, delay: 0.06 * i }}
+                >
+                  <a
+                    href={link.href}
+                    onClick={go(link.href)}
+                    className={`flex items-baseline gap-4 py-2 font-display text-3xl font-medium ${
+                      active === link.href ? "text-gradient-bio" : "text-frost"
+                    }`}
+                  >
+                    <span className="font-mono text-xs text-pulse/60">
+                      0{i + 1}
+                    </span>
+                    {link.label}
+                  </a>
+                </motion.li>
+              ))}
+              <motion.li
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
+                className="pt-8"
+              >
+                <a
+                  href="#contact"
+                  onClick={go("#contact")}
+                  className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio"
+                >
+                  Partner With Us
+                </a>
+              </motion.li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
