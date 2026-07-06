@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EASE, stagger } from "@/lib/anim";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
+import SquareMosaic from "@/components/ui/SquareMosaic";
 
 const ThreeScientificScene = dynamic(
   () => import("@/components/three/ThreeScientificScene"),
@@ -62,6 +63,15 @@ export default function Hero() {
             "radial-gradient(ellipse 90% 70% at 50% 40%, transparent 45%, rgba(2,5,12,0.55) 100%)," +
             "linear-gradient(180deg, rgba(2,5,12,0.5) 0%, transparent 18%, transparent 70%, #02050c 100%)",
         }}
+      />
+
+      {/* brand tile mosaic — signature top-right corner */}
+      <SquareMosaic
+        seed={11}
+        columns={6}
+        rows={4}
+        anchor="tr"
+        className="right-0 top-0 z-[2] h-[16rem] w-[26rem] max-w-[70vw] opacity-60"
       />
 
       <div ref={contentRef} className="shell relative z-10 pb-20 pt-40">

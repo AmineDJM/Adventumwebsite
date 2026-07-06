@@ -18,16 +18,22 @@ const config: Config = {
         frost: "#eaf2fb",
         silver: "#aebacd",
         muted: "#71809a",
-        // Luminous accents
+        // Luminous accents — Adventum brand blue + teal on dark
+        // (token name "bio" retained across the codebase; now the brand teal)
         bio: {
-          DEFAULT: "#3ee6a8",
-          dim: "#2bb283",
-          faint: "rgba(62, 230, 168, 0.12)",
+          DEFAULT: "#1fc4dd",
+          dim: "#178ba3",
+          faint: "rgba(31, 196, 221, 0.12)",
         },
         pulse: {
-          DEFAULT: "#4cd7f6",
-          dim: "#2f9fc0",
-          faint: "rgba(76, 215, 246, 0.12)",
+          DEFAULT: "#4d9bf0",
+          dim: "#2f6fb5",
+          faint: "rgba(77, 155, 240, 0.12)",
+        },
+        // Brand royal blue (logo wordmark / mark)
+        royal: {
+          DEFAULT: "#2e6db4",
+          deep: "#1b4f8a",
         },
       },
       fontFamily: {

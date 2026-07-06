@@ -235,7 +235,7 @@ export default function RegulatoryJourney() {
                         aria-hidden
                         className={`absolute left-[1px] top-9 flex h-[18px] w-[18px] items-center justify-center rounded-full border transition-all duration-500 ease-premium ${
                           lit
-                            ? "border-bio/60 bg-bio/10 shadow-[0_0_18px_-2px_rgba(62,230,168,0.55)]"
+                            ? "border-bio/60 bg-bio/10 shadow-[0_0_18px_-2px_rgba(31,196,221,0.55)]"
                             : "border-white/15 bg-abyss"
                         }`}
                       >

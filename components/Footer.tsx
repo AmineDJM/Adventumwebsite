@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { EASE, VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import { scrollToSection } from "@/components/providers/SmoothScroll";
+import AdventumMark from "@/components/ui/AdventumMark";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
@@ -36,28 +37,7 @@ const columnTitle =
 function FooterMark() {
   return (
     <span className="relative flex h-9 w-9 items-center justify-center">
-      <svg viewBox="0 0 36 36" fill="none" className="h-9 w-9" aria-hidden>
-        <path
-          d="M18 3l13 7.5v15L18 33 5 25.5v-15L18 3z"
-          stroke="url(#footer-mark)"
-          strokeWidth="1.4"
-        />
-        <circle cx="18" cy="18" r="3.2" fill="url(#footer-mark)" />
-        <circle cx="18" cy="9.5" r="1.6" fill="#4cd7f6" opacity="0.9" />
-        <circle cx="25.4" cy="22.3" r="1.6" fill="#3ee6a8" opacity="0.9" />
-        <path
-          d="M18 14.8v-3.7M20.8 19.6l3.2 1.9"
-          stroke="#89a8bd"
-          strokeWidth="0.9"
-          opacity="0.8"
-        />
-        <defs>
-          <linearGradient id="footer-mark" x1="5" y1="3" x2="31" y2="33">
-            <stop stopColor="#3ee6a8" />
-            <stop offset="1" stopColor="#4cd7f6" />
-          </linearGradient>
-        </defs>
-      </svg>
+      <AdventumMark id="footer-mark" className="h-9 w-9" />
     </span>
   );
 }

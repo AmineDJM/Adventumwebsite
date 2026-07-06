@@ -25,8 +25,8 @@ export default function GlassCard({
 }: GlassCardProps) {
   const accentGlow =
     accent === "bio"
-      ? "hover:shadow-[0_0_60px_-18px_rgba(62,230,168,0.35)]"
-      : "hover:shadow-[0_0_60px_-18px_rgba(76,215,246,0.35)]";
+      ? "hover:shadow-[0_0_60px_-18px_rgba(31,196,221,0.35)]"
+      : "hover:shadow-[0_0_60px_-18px_rgba(77,155,240,0.35)]";
 
   const Comp = animated ? motion.div : "div";
   const motionProps = animated ? { variants: fadeUp } : {};

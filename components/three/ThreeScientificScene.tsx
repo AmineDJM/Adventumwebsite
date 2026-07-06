@@ -20,8 +20,8 @@ import {
 
 /* ----------------------------- palette ----------------------------- */
 
-const BIO = new THREE.Color("#3ee6a8");
-const PULSE = new THREE.Color("#4cd7f6");
+const BIO = new THREE.Color("#1fc4dd");
+const PULSE = new THREE.Color("#4d9bf0");
 const FROST = new THREE.Color("#cfe4f5");
 
 /* ------------------------- soft sprite texture --------------------- */
@@ -617,8 +617,8 @@ function FallbackBackdrop() {
       className="absolute inset-0 bg-grid-faint"
       style={{
         background:
-          "radial-gradient(ellipse 70% 55% at 70% 30%, rgba(76,215,246,0.10), transparent 60%)," +
-          "radial-gradient(ellipse 55% 45% at 25% 70%, rgba(62,230,168,0.08), transparent 60%)," +
+          "radial-gradient(ellipse 70% 55% at 70% 30%, rgba(77,155,240,0.10), transparent 60%)," +
+          "radial-gradient(ellipse 55% 45% at 25% 70%, rgba(31,196,221,0.08), transparent 60%)," +
           "linear-gradient(180deg, #050b17 0%, #02050c 100%)",
       }}
     />

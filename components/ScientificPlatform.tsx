@@ -198,22 +198,22 @@ const NET_EDGES: ReadonlyArray<readonly [number, number]> = [
 const DRIFT_DOTS = [
   {
     pos: "left-[10%] top-[24%]",
-    dot: "h-1 w-1 bg-pulse/60 shadow-[0_0_10px_rgba(76,215,246,0.55)]",
+    dot: "h-1 w-1 bg-pulse/60 shadow-[0_0_10px_rgba(77,155,240,0.55)]",
     delay: "0s",
   },
   {
     pos: "right-[12%] top-[32%]",
-    dot: "h-1.5 w-1.5 bg-bio/50 shadow-[0_0_10px_rgba(62,230,168,0.5)]",
+    dot: "h-1.5 w-1.5 bg-bio/50 shadow-[0_0_10px_rgba(31,196,221,0.5)]",
     delay: "-2.4s",
   },
   {
     pos: "left-[20%] bottom-[16%]",
-    dot: "h-1 w-1 bg-pulse/40 shadow-[0_0_8px_rgba(76,215,246,0.4)]",
+    dot: "h-1 w-1 bg-pulse/40 shadow-[0_0_8px_rgba(77,155,240,0.4)]",
     delay: "-4.2s",
   },
   {
     pos: "right-[22%] bottom-[24%]",
-    dot: "h-1 w-1 bg-pulse/50 shadow-[0_0_8px_rgba(76,215,246,0.5)]",
+    dot: "h-1 w-1 bg-pulse/50 shadow-[0_0_8px_rgba(77,155,240,0.5)]",
     delay: "-5.6s",
   },
 ];

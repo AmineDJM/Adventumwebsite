@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
+import SquareMosaic from "@/components/ui/SquareMosaic";
 
 type ContactForm = {
   company: string;
@@ -209,6 +210,14 @@ export default function Contact() {
       {/* ------- decorative field ------- */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-x-0 top-0 hairline" />
+        {/* brand tile mosaic — top-right, echoing the corporate template */}
+        <SquareMosaic
+          seed={42}
+          columns={7}
+          rows={5}
+          anchor="tr"
+          className="right-0 top-0 h-[22rem] w-[30rem] max-w-[60vw] opacity-70"
+        />
         {/* bio radial glow behind the form panel */}
         <div className="absolute right-[4%] top-[28%] h-[32rem] w-[32rem] rounded-full bg-bio/[0.05] blur-3xl" />
         <div className="absolute -left-28 bottom-[-8rem] h-[24rem] w-[24rem] rounded-full bg-pulse/[0.04] blur-3xl" />

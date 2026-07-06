@@ -1,14 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
-  <rect width="36" height="36" rx="8" fill="#02050c"/>
-  <path d="M18 5l11 6.35v12.7L18 30.4 7 24.05v-12.7L18 5z" stroke="url(#g)" stroke-width="1.6"/>
-  <circle cx="18" cy="17.7" r="3" fill="url(#g)"/>
-  <circle cx="18" cy="10.2" r="1.5" fill="#4cd7f6"/>
-  <circle cx="24.4" cy="21.5" r="1.5" fill="#3ee6a8"/>
-  <circle cx="11.6" cy="21.5" r="1.5" fill="#4cd7f6" opacity="0.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="10" fill="#02050c"/>
   <defs>
-    <linearGradient id="g" x1="7" y1="5" x2="29" y2="30" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3ee6a8"/>
-      <stop offset="1" stop-color="#4cd7f6"/>
+    <linearGradient id="b" x1="6" y1="10" x2="40" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5aa6f5"/>
+      <stop offset="0.55" stop-color="#2e6db4"/>
+      <stop offset="1" stop-color="#1b4f8a"/>
+    </linearGradient>
+    <linearGradient id="t" x1="2" y1="2" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38d6ec"/>
+      <stop offset="1" stop-color="#158399"/>
     </linearGradient>
   </defs>
+  <rect x="4.5" y="5.5" width="9" height="9" rx="2.6" fill="url(#t)"/>
+  <rect x="26" y="7" width="15" height="15" rx="4" fill="url(#b)"/>
+  <rect x="9" y="17" width="24" height="24" rx="6" fill="url(#b)"/>
+  <rect x="32" y="32" width="8.5" height="8.5" rx="2.4" fill="url(#t)"/>
 </svg>
