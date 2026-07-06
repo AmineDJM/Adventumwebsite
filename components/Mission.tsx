@@ -353,7 +353,7 @@ export default function Mission() {
                 {/* stem from rail to card */}
                 <span
                   aria-hidden
-                  className="mb-6 hidden h-10 w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent lg:block"
+                  className="mb-6 hidden h-10 w-px bg-gradient-to-b from-surface/20 via-surface/10 to-transparent lg:block"
                 />
 
                 <GlassCard
@@ -361,7 +361,7 @@ export default function Mission() {
                   className="flex w-full flex-col p-8 lg:flex-1"
                 >
                   <span
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-silver transition-colors duration-500 ease-premium ${
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl border border-hairline/10 bg-surface/[0.04] text-silver transition-colors duration-500 ease-premium ${
                       node.accent === "bio"
                         ? "group-hover:text-bio"
                         : "group-hover:text-pulse"

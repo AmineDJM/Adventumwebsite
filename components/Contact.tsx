@@ -47,7 +47,7 @@ const INTERESTS = [
 const CONTACT_EMAIL = "Info@adventumdz.com";
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-frost placeholder:text-muted focus:border-pulse/50 focus:outline-none focus:ring-1 focus:ring-pulse/30 transition-colors duration-300";
+  "w-full rounded-xl border border-hairline/10 bg-surface/[0.03] px-4 py-3 text-frost placeholder:text-muted focus:border-pulse/50 focus:outline-none focus:ring-1 focus:ring-pulse/30 transition-colors duration-300";
 
 const LABEL_CLASS =
   "mb-2 block font-mono text-[0.65rem] uppercase tracking-[0.25em] text-silver";
@@ -326,7 +326,7 @@ export default function Contact() {
               {/* top-edge light */}
               <span
                 aria-hidden
-                className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-surface/25 to-transparent"
               />
 
               <AnimatePresence mode="wait" initial={false}>
@@ -422,7 +422,7 @@ export default function Contact() {
                       </p>
                       <span
                         aria-hidden
-                        className="hidden h-px flex-1 max-w-[8rem] bg-gradient-to-l from-transparent to-white/15 sm:block"
+                        className="hidden h-px flex-1 max-w-[8rem] bg-gradient-to-l from-transparent to-surface/15 sm:block"
                       />
                     </FormRow>
 

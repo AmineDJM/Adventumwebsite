@@ -272,7 +272,7 @@ export default function InfectiologyFocus() {
                   <div className="relative flex items-start justify-between gap-4">
                     {/* icon chip */}
                     <span
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-md transition-colors duration-500 ease-premium ${
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-hairline/[0.08] bg-surface/[0.04] backdrop-blur-md transition-colors duration-500 ease-premium ${
                         area.accent === "bio"
                           ? "text-bio/90 group-hover:border-bio/25"
                           : "text-pulse/90 group-hover:border-pulse/25"
@@ -327,7 +327,7 @@ export default function InfectiologyFocus() {
                 <li key={molecule} className="flex items-center gap-3">
                   <span>{molecule}</span>
                   {i < MOLECULES.length - 1 && (
-                    <span aria-hidden className="text-white/20">
+                    <span aria-hidden className="text-frost/20">
                       ·
                     </span>
                   )}

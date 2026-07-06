@@ -179,7 +179,7 @@ export default function MarketAccess() {
           {/* top-edge light */}
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+            className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-surface/25 to-transparent"
           />
 
           {/* soft scan-line sweep */}
@@ -196,7 +196,7 @@ export default function MarketAccess() {
             className="relative flex items-center justify-between px-8 py-5 md:px-10"
           >
             <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-muted">
-              Adventum OS <span className="text-white/25">·</span> Market
+              Adventum OS <span className="text-frost/25">·</span> Market
               Access
             </p>
             <span aria-hidden className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function MarketAccess() {
               <motion.article
                 key={mod.title}
                 variants={fadeUp}
-                className="group relative p-8 transition-colors duration-500 ease-premium hover:bg-white/[0.02] md:p-10 lg:p-12"
+                className="group relative p-8 transition-colors duration-500 ease-premium hover:bg-surface/[0.02] md:p-10 lg:p-12"
               >
                 {/* horizontal hairline above every module except the first
                     (on lg only above the second row) */}
@@ -230,12 +230,12 @@ export default function MarketAccess() {
                 {i % 2 === 1 && (
                   <span
                     aria-hidden
-                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-white/10 to-transparent lg:block"
+                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-surface/10 to-transparent lg:block"
                   />
                 )}
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-silver transition-colors duration-500 ease-premium group-hover:border-pulse/30 group-hover:text-pulse">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-hairline/[0.08] bg-surface/[0.03] text-silver transition-colors duration-500 ease-premium group-hover:border-pulse/30 group-hover:text-pulse">
                     {mod.icon}
                   </span>
                   <p className="text-right font-mono text-[0.6rem] uppercase tracking-[0.28em] text-muted">

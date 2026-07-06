@@ -202,7 +202,7 @@ export default function RegulatoryJourney() {
               {/* spine */}
               <div
                 aria-hidden
-                className="absolute bottom-3 left-[10px] top-3 w-px bg-white/[0.08]"
+                className="absolute bottom-3 left-[10px] top-3 w-px bg-surface/[0.08]"
               />
               {/* gradient progress — scaleY driven by ScrollTrigger scrub */}
               <div
@@ -236,12 +236,12 @@ export default function RegulatoryJourney() {
                         className={`absolute left-[1px] top-9 flex h-[18px] w-[18px] items-center justify-center rounded-full border transition-all duration-500 ease-premium ${
                           lit
                             ? "border-bio/60 bg-bio/10 shadow-[0_0_18px_-2px_rgba(104,210,223,0.55)]"
-                            : "border-white/15 bg-abyss"
+                            : "border-hairline/15 bg-abyss"
                         }`}
                       >
                         <span
                           className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ease-premium ${
-                            lit ? "bg-bio" : "bg-white/20"
+                            lit ? "bg-bio" : "bg-surface/20"
                           }`}
                         />
                       </span>
@@ -250,7 +250,7 @@ export default function RegulatoryJourney() {
                       <div className="group glass glass-hover card-shadow relative overflow-hidden rounded-2xl p-8">
                         <span
                           aria-hidden
-                          className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-surface/20 to-transparent"
                         />
                         <div className="flex items-start gap-6">
                           <span

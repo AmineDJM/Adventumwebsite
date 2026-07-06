@@ -9,25 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Deep space / midnight scale — page backgrounds
-        abyss: "#02050c",
-        midnight: "#050b17",
-        navy: "#0a1526",
-        panel: "#0b1322",
-        // Cold whites & silvers — typography
-        frost: "#eaf2fb",
-        silver: "#aebacd",
-        muted: "#71809a",
-        // Adventum brand palette — exact charter values.
-        // bio = brand cyan (Pantone 3105 C); the luminous accent on dark.
+        // Theme-aware semantic tokens (values in globals.css :root / [data-theme]).
+        abyss: "rgb(var(--bg) / <alpha-value>)",
+        midnight: "rgb(var(--bg-1) / <alpha-value>)",
+        navy: "rgb(var(--bg-2) / <alpha-value>)",
+        panel: "rgb(var(--panel) / <alpha-value>)",
+        frost: "rgb(var(--text) / <alpha-value>)",
+        silver: "rgb(var(--text-2) / <alpha-value>)",
+        muted: "rgb(var(--text-3) / <alpha-value>)",
+        // glass tint + hairline base (flip white↔dark between themes)
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        hairline: "rgb(var(--hairline) / <alpha-value>)",
+        // Adventum brand accents — theme-aware (bright on dark, deep on light).
         bio: {
-          DEFAULT: "#68D2DF",
+          DEFAULT: "rgb(var(--accent-bio) / <alpha-value>)",
           dim: "#087084", // primary teal (Pantone 7714 C)
           faint: "rgba(104, 210, 223, 0.12)",
         },
-        // pulse = brand blue (Pantone 2945 C), brightened for dark legibility.
         pulse: {
-          DEFAULT: "#2f83d6",
+          DEFAULT: "rgb(var(--accent-pulse) / <alpha-value>)",
           dim: "#0057B8",
           faint: "rgba(47, 131, 214, 0.12)",
         },
@@ -44,8 +44,31 @@ const config: Config = {
         lime: "#82C341",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Calibri", "Segoe UI", "system-ui", "sans-serif"],
-        display: ["var(--font-sans)", "Calibri", "Segoe UI", "system-ui", "sans-serif"],
+        sans: [
+          "var(--font-sans)",
+          "var(--font-deva)",
+          "Calibri",
+          "Segoe UI",
+          "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          "Noto Sans SC",
+          "Noto Sans CJK SC",
+          "system-ui",
+          "sans-serif",
+        ],
+        display: [
+          "var(--font-sans)",
+          "var(--font-deva)",
+          "Calibri",
+          "Segoe UI",
+          "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          "Noto Sans SC",
+          "system-ui",
+          "sans-serif",
+        ],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       fontSize: {

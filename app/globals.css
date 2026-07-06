@@ -2,10 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================================================================== */
+/*  Theme tokens — RGB triplets consumed as rgb(var(--x) / <alpha>).   */
+/*  :root = dark (default). Light applies via [data-theme="light"]     */
+/*  and, before JS runs, via the system preference media query.        */
+/* ================================================================== */
+
 :root {
-  --bg: #02050c;
-  --acc-bio: #68D2DF;
-  --acc-pulse: #2f83d6;
+  --bg: 2 5 12; /* abyss */
+  --bg-1: 5 11 23; /* midnight */
+  --bg-2: 10 21 38; /* navy */
+  --panel: 11 19 34; /* panel */
+  --text: 234 242 251; /* frost */
+  --text-2: 174 186 205; /* silver */
+  --text-3: 113 128 154; /* muted */
+  --surface: 255 255 255; /* glass tint base */
+  --hairline: 255 255 255; /* borders / dividers */
+  --grid-line: 47 131 214;
+  --accent-bio: 104 210 223; /* cyan #68D2DF */
+  --accent-pulse: 47 131 214; /* blue #2f83d6 */
+  --glass-op: 0.035;
+  --hairline-op: 0.09;
+  --card-shadow-color: rgba(0, 0, 0, 0.7);
+  --canvas-scrim: rgba(2, 5, 12, 0.35);
+}
+
+/* explicit light theme */
+[data-theme="light"] {
+  --bg: 244 248 251;
+  --bg-1: 236 243 248;
+  --bg-2: 226 237 245;
+  --panel: 255 255 255;
+  --text: 11 43 58; /* deep teal ink */
+  --text-2: 60 86 102;
+  --text-3: 110 132 148;
+  --surface: 8 60 80; /* dark tint on light glass */
+  --hairline: 12 63 82;
+  --grid-line: 8 112 132;
+  --accent-bio: 8 112 132; /* teal #087084 */
+  --accent-pulse: 0 87 184; /* blue #0057B8 */
+  --glass-op: 0.045;
+  --hairline-op: 0.12;
+  --card-shadow-color: rgba(15, 50, 70, 0.14);
+  --canvas-scrim: rgba(244, 248, 251, 0.32);
+}
+
+/* system-preference light, before JS assigns an explicit theme */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: 244 248 251;
+    --bg-1: 236 243 248;
+    --bg-2: 226 237 245;
+    --panel: 255 255 255;
+    --text: 11 43 58;
+    --text-2: 60 86 102;
+    --text-3: 110 132 148;
+    --surface: 8 60 80;
+    --hairline: 12 63 82;
+    --grid-line: 8 112 132;
+    --accent-bio: 8 112 132;
+    --accent-pulse: 0 87 184;
+    --glass-op: 0.045;
+    --hairline-op: 0.12;
+    --card-shadow-color: rgba(15, 50, 70, 0.14);
+    --canvas-scrim: rgba(244, 248, 251, 0.32);
+  }
 }
 
 html {
@@ -16,27 +77,27 @@ html.lenis,
 html.lenis body {
   height: auto;
 }
-
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-
 .lenis.lenis-stopped {
   overflow: hidden;
 }
 
 body {
-  background-color: var(--bg);
-  color: #eaf2fb;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  transition: background-color 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 ::selection {
-  background: rgba(104,210,223, 0.25);
-  color: #eaf2fb;
+  background: rgb(var(--accent-bio) / 0.25);
+  color: rgb(var(--text));
 }
 
 /* ------- Scrollbar ------- */
@@ -44,24 +105,35 @@ body {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #02050c;
+  background: rgb(var(--bg));
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(47,131,214, 0.25), rgba(104,210,223, 0.25));
+  background: linear-gradient(
+    180deg,
+    rgb(var(--accent-pulse) / 0.3),
+    rgb(var(--accent-bio) / 0.3)
+  );
   border-radius: 8px;
-  border: 2px solid #02050c;
+  border: 2px solid rgb(var(--bg));
 }
 
 @layer components {
   /* ------- Glass surfaces ------- */
   .glass {
-    @apply border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl;
+    border: 1px solid rgb(var(--hairline) / var(--hairline-op));
+    background-color: rgb(var(--surface) / var(--glass-op));
+    @apply backdrop-blur-xl;
   }
   .glass-strong {
-    @apply border border-white/[0.1] bg-[#0a1526]/60 backdrop-blur-2xl;
+    border: 1px solid rgb(var(--hairline) / calc(var(--hairline-op) + 0.03));
+    background-color: rgb(var(--panel) / 0.6);
+    @apply backdrop-blur-2xl;
   }
   .glass-hover {
-    @apply transition-all duration-500 ease-premium hover:border-pulse/30 hover:bg-white/[0.05];
+    @apply transition-all duration-500 ease-premium hover:border-pulse/30;
+  }
+  .glass-hover:hover {
+    background-color: rgb(var(--surface) / calc(var(--glass-op) + 0.02));
   }
 
   /* ------- Typography helpers ------- */
@@ -83,19 +155,27 @@ body {
     @apply py-28 md:py-40;
   }
   .hairline {
-    @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgb(var(--hairline) / 0.14),
+      transparent
+    );
   }
 }
 
 @layer utilities {
   /* Faint scientific blueprint grid */
   .bg-grid-faint {
-    background-image:
-      linear-gradient(rgba(47,131,214, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(47,131,214, 0.045) 1px, transparent 1px);
+    background-image: linear-gradient(
+        rgb(var(--grid-line) / 0.05) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgb(var(--grid-line) / 0.05) 1px, transparent 1px);
     background-size: 56px 56px;
   }
-  /* Fine film-grain noise, keeps large dark surfaces from banding */
   .bg-noise::after {
     content: "";
     position: absolute;
@@ -105,15 +185,14 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   .glow-bio {
-    box-shadow: 0 0 40px -12px rgba(104,210,223, 0.45);
+    box-shadow: 0 0 40px -12px rgb(var(--accent-bio) / 0.45);
   }
   .glow-pulse {
-    box-shadow: 0 0 40px -12px rgba(47,131,214, 0.45);
+    box-shadow: 0 0 40px -12px rgb(var(--accent-pulse) / 0.45);
   }
   .card-shadow {
-    box-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-      0 24px 60px -24px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 1px 0 0 rgb(var(--hairline) / 0.06) inset,
+      0 24px 60px -24px var(--card-shadow-color);
   }
 }
 

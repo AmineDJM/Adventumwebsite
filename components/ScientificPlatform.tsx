@@ -343,7 +343,7 @@ export default function ScientificPlatform() {
               {i < CAPABILITIES.length - 1 && (
                 <span
                   aria-hidden
-                  className="mx-4 h-px w-5 bg-white/10 md:mx-5 md:w-8"
+                  className="mx-4 h-px w-5 bg-surface/10 md:mx-5 md:w-8"
                 />
               )}
             </motion.li>
@@ -366,7 +366,7 @@ export default function ScientificPlatform() {
             >
               <div className="flex items-start justify-between">
                 <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-silver transition-colors duration-500 ease-premium ${
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl border border-hairline/10 bg-surface/[0.04] text-silver transition-colors duration-500 ease-premium ${
                     cap.accent === "bio"
                       ? "group-hover:text-bio"
                       : "group-hover:text-pulse"

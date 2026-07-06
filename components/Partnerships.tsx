@@ -277,7 +277,7 @@ export default function Partnerships() {
               variants={chipReveal}
               className="flex items-center gap-3"
             >
-              <span aria-hidden className="text-white/20">
+              <span aria-hidden className="text-frost/20">
                 ·
               </span>
               <span>{audience}</span>
@@ -300,7 +300,7 @@ export default function Partnerships() {
                 className="flex h-full flex-col p-8 hover:-translate-y-1.5 md:p-10"
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-silver transition-colors duration-500 ease-premium group-hover:border-pulse/30 group-hover:text-pulse">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-hairline/[0.08] bg-surface/[0.03] text-silver transition-colors duration-500 ease-premium group-hover:border-pulse/30 group-hover:text-pulse">
                     {model.icon}
                   </span>
                   <span className="font-mono text-[0.62rem] uppercase tracking-[0.3em] text-muted transition-colors duration-500 ease-premium group-hover:text-pulse/80">
@@ -339,7 +339,7 @@ export default function Partnerships() {
             variants={fadeUp}
             className="mt-14 font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted"
           >
-            Adventum OS <span className="text-white/25">·</span> Partnership
+            Adventum OS <span className="text-frost/25">·</span> Partnership
             Channel
           </motion.p>
 

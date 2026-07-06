@@ -52,8 +52,8 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse 90% 70% at 50% 40%, transparent 45%, rgba(2,5,12,0.55) 100%)," +
-            "linear-gradient(180deg, rgba(2,5,12,0.5) 0%, transparent 18%, transparent 70%, #02050c 100%)",
+            "radial-gradient(ellipse 90% 70% at 50% 40%, transparent 45%, rgb(var(--bg) / 0.5) 100%)," +
+            "linear-gradient(180deg, rgb(var(--bg) / 0.45) 0%, transparent 18%, transparent 72%, rgb(var(--bg)) 100%)",
         }}
       />
 
@@ -170,7 +170,7 @@ export default function Hero() {
             {CHIPS.map((chip) => (
               <li
                 key={chip}
-                className="flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-silver backdrop-blur-md"
+                className="flex items-center gap-2.5 rounded-full border border-hairline/[0.08] bg-surface/[0.03] px-4 py-2 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-silver backdrop-blur-md"
               >
                 <span className="h-1 w-1 rounded-full bg-pulse animate-pulse-soft" />
                 {chip}
@@ -190,7 +190,7 @@ export default function Hero() {
         <span className="font-mono text-[0.6rem] uppercase tracking-[0.4em] text-muted">
           Scroll
         </span>
-        <span className="relative h-12 w-px overflow-hidden bg-white/10">
+        <span className="relative h-12 w-px overflow-hidden bg-surface/10">
           <motion.span
             animate={{ y: ["-100%", "100%"] }}
             transition={{ duration: 2.2, ease: "easeInOut", repeat: Infinity }}

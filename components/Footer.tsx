@@ -49,7 +49,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-white/[0.06]">
+    <footer className="relative overflow-hidden border-t border-hairline/[0.06]">
       {/* faint blueprint grid, masked to the top edge */}
       <div
         aria-hidden
@@ -182,7 +182,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => scrollToSection("#home")}
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-medium tracking-wide text-silver transition-all duration-500 ease-premium hover:border-pulse/40 hover:text-frost focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pulse/60"
+              className="mt-8 inline-flex items-center gap-2 rounded-full border border-hairline/10 px-4 py-2 text-xs font-medium tracking-wide text-silver transition-all duration-500 ease-premium hover:border-pulse/40 hover:text-frost focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pulse/60"
             >
               <svg
                 viewBox="0 0 16 16"

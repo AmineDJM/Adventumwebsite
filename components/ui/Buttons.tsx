@@ -50,7 +50,7 @@ export function PrimaryButton({
       </svg>
       <span
         aria-hidden
-        className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-premium group-hover:translate-x-full"
+        className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-surface/30 to-transparent transition-transform duration-700 ease-premium group-hover:translate-x-full"
       />
     </>
   );
@@ -78,7 +78,7 @@ export function GhostButton({
   type = "button",
 }: ButtonProps) {
   const anchor = useAnchorHandler(href);
-  const cls = `group relative inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-8 py-[0.95rem] text-sm font-medium tracking-wide text-frost backdrop-blur-md transition-all duration-500 ease-premium hover:border-pulse/40 hover:bg-pulse/[0.06] hover:text-pulse ${className}`;
+  const cls = `group relative inline-flex items-center justify-center gap-2 rounded-full border border-hairline/15 bg-surface/[0.03] px-8 py-[0.95rem] text-sm font-medium tracking-wide text-frost backdrop-blur-md transition-all duration-500 ease-premium hover:border-pulse/40 hover:bg-pulse/[0.06] hover:text-pulse ${className}`;
 
   const inner = (
     <>

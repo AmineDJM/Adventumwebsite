@@ -5,16 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { EASE } from "@/lib/anim";
 import { scrollToSection, getLenis } from "@/components/providers/SmoothScroll";
 import AdventumMark from "@/components/ui/AdventumMark";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 const LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Infectiology", href: "#infectiology" },
-  { label: "Platform", href: "#platform" },
-  { label: "Regulatory", href: "#regulatory" },
-  { label: "Partnerships", href: "#partnerships" },
-  { label: "Vision", href: "#vision" },
-  { label: "Contact", href: "#contact" },
-];
+  { key: "nav.home", href: "#home" },
+  { key: "nav.infectiology", href: "#infectiology" },
+  { key: "nav.platform", href: "#platform" },
+  { key: "nav.regulatory", href: "#regulatory" },
+  { key: "nav.partnerships", href: "#partnerships" },
+  { key: "nav.vision", href: "#vision" },
+  { key: "nav.contact", href: "#contact" },
+] as const;
 
 function Logo() {
   return (
@@ -44,6 +47,7 @@ function Logo() {
 }
 
 export default function Navbar() {
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("#home");
   const [open, setOpen] = useState(false);
@@ -104,7 +108,7 @@ export default function Navbar() {
         transition={{ duration: 1, ease: EASE, delay: 0.4 }}
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ease-premium ${
           scrolled
-            ? "border-b border-white/[0.06] bg-abyss/70 backdrop-blur-2xl"
+            ? "border-b border-hairline/[0.06] bg-abyss/70 backdrop-blur-2xl"
             : "border-b border-transparent bg-transparent"
         }`}
       >
@@ -123,12 +127,12 @@ export default function Navbar() {
                       : "text-silver/80 hover:text-frost"
                   }`}
                 >
-                  {link.label}
+                  {t(link.key)}
                   {active === link.href && (
                     <motion.span
                       layoutId="nav-active"
                       transition={{ duration: 0.5, ease: EASE }}
-                      className="absolute inset-0 -z-10 rounded-full border border-white/10 bg-white/[0.05]"
+                      className="absolute inset-0 -z-10 rounded-full border border-hairline/10 bg-surface/[0.05]"
                     />
                   )}
                 </a>
@@ -136,7 +140,9 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
+            <LanguageSwitcher />
+            <ThemeToggle />
             <a
               href="#contact"
               onClick={go("#contact")}
@@ -146,17 +152,20 @@ export default function Navbar() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-bio opacity-60" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-bio" />
               </span>
-              Partner With Us
+              {t("nav.partner")}
             </a>
           </div>
 
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setOpen(!open)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md lg:hidden"
-          >
+          {/* Mobile controls */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full border border-hairline/10 bg-surface/[0.04] backdrop-blur-md"
+            >
             <span className="relative block h-3 w-4">
               <span
                 className={`absolute left-0 top-0 h-px w-full bg-frost transition-all duration-400 ease-premium ${
@@ -174,7 +183,8 @@ export default function Navbar() {
                 }`}
               />
             </span>
-          </button>
+            </button>
+          </div>
         </nav>
       </motion.header>
 
@@ -211,7 +221,7 @@ export default function Navbar() {
                     <span className="font-mono text-xs text-pulse/60">
                       0{i + 1}
                     </span>
-                    {link.label}
+                    {t(link.key)}
                   </a>
                 </motion.li>
               ))}
@@ -227,7 +237,7 @@ export default function Navbar() {
                   onClick={go("#contact")}
                   className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio"
                 >
-                  Partner With Us
+                  {t("nav.partner")}
                 </a>
               </motion.li>
             </ul>

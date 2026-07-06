@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Grid } from "@react-three/drei";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   ALGERIA_OUTLINE,
   ALGERIA_CITIES,
@@ -834,11 +835,19 @@ function TravelingCamera({ reducedMotion }: { reducedMotion: boolean }) {
 
 /* ----------------------------- scene ------------------------------ */
 
-function Scene({ quality, reducedMotion }: { quality: number; reducedMotion: boolean }) {
+function Scene({
+  quality,
+  reducedMotion,
+  dark,
+}: {
+  quality: number;
+  reducedMotion: boolean;
+  dark: boolean;
+}) {
   return (
     <>
-      <fog attach="fog" args={["#02050c", 10, 58]} />
-      <ambientLight intensity={0.6} />
+      <fog attach="fog" args={[dark ? "#02050c" : "#e7eff5", 10, dark ? 58 : 50]} />
+      <ambientLight intensity={dark ? 0.6 : 1.1} />
       <pointLight position={[8, 6, 4]} intensity={40} color="#8fd0ff" distance={60} />
       <pointLight position={[-10, -4, -20]} intensity={30} color="#68D2DF" distance={70} />
       <pointLight position={[0, 4, -50]} intensity={35} color="#2f83d6" distance={80} />
@@ -874,10 +883,10 @@ function Scene({ quality, reducedMotion }: { quality: number; reducedMotion: boo
         args={[120, 120]}
         cellSize={1.6}
         cellThickness={0.5}
-        cellColor="#0c2233"
+        cellColor={dark ? "#0c2233" : "#c2d6e4"}
         sectionSize={8}
         sectionThickness={1}
-        sectionColor="#134a5c"
+        sectionColor={dark ? "#134a5c" : "#8fb3cc"}
         fadeDistance={70}
         fadeStrength={2}
         infiniteGrid
@@ -889,6 +898,8 @@ function Scene({ quality, reducedMotion }: { quality: number; reducedMotion: boo
 /* --------------------------- entry -------------------------------- */
 
 export default function SceneBackdrop() {
+  const { resolved } = useTheme();
+  const dark = resolved === "dark";
   const [env, setEnv] = useState<{
     webgl: boolean;
     quality: number;
@@ -918,27 +929,31 @@ export default function SceneBackdrop() {
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-abyss">
-      {/* gradient fallback / base wash */}
+      {/* gradient fallback / base wash — flips with the theme */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 72% 22%, rgba(47,131,214,0.10), transparent 60%)," +
-            "radial-gradient(ellipse 55% 45% at 20% 78%, rgba(104,210,223,0.08), transparent 60%)," +
-            "linear-gradient(180deg, #050b17 0%, #02050c 100%)",
+          background: dark
+            ? "radial-gradient(ellipse 70% 55% at 72% 22%, rgba(47,131,214,0.10), transparent 60%)," +
+              "radial-gradient(ellipse 55% 45% at 20% 78%, rgba(104,210,223,0.08), transparent 60%)," +
+              "linear-gradient(180deg, #050b17 0%, #02050c 100%)"
+            : "radial-gradient(ellipse 70% 55% at 72% 22%, rgba(0,87,184,0.08), transparent 60%)," +
+              "radial-gradient(ellipse 55% 45% at 20% 78%, rgba(8,112,132,0.07), transparent 60%)," +
+              "linear-gradient(180deg, #f2f7fb 0%, #e7eff5 100%)",
         }}
       />
       {env?.webgl && (
         <Canvas
           className="absolute inset-0"
+          style={{ opacity: dark ? 1 : 0.9 }}
           frameloop={active ? "always" : "never"}
           camera={{ position: [0, 1.2, 18], fov: 52, near: 0.1, far: 120 }}
           dpr={[1, env.quality < 1 ? 1.4 : 1.7]}
           gl={{ alpha: true, antialias: env.quality > 0.6, powerPreference: "high-performance" }}
           performance={{ min: 0.5 }}
         >
-          <Scene quality={env.quality} reducedMotion={env.reducedMotion} />
+          <Scene quality={env.quality} reducedMotion={env.reducedMotion} dark={dark} />
         </Canvas>
       )}
       {/* legibility scrim — keeps foreground text crisp over the scene */}
@@ -946,8 +961,9 @@ export default function SceneBackdrop() {
         aria-hidden
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 100% 60% at 50% 42%, transparent 40%, rgba(2,5,12,0.35) 100%)",
+          background: dark
+            ? "radial-gradient(ellipse 100% 60% at 50% 42%, transparent 40%, rgba(2,5,12,0.35) 100%)"
+            : "radial-gradient(ellipse 100% 62% at 50% 42%, transparent 35%, rgba(244,248,251,0.55) 100%)",
         }}
       />
     </div>

@@ -97,7 +97,7 @@ export default function GlassCard({
       {/* top-edge light */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+        className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-surface/25 to-transparent"
       />
       {/* cursor-following sheen (fine pointers only) */}
       {interactive && (
