@@ -15,12 +15,12 @@ import {
   LOCALES,
   type Locale,
 } from "@/lib/i18n/config";
-import { dictionaries, type Dict } from "@/lib/i18n/dictionaries";
+import { dictionaries } from "@/lib/i18n/dictionaries";
 
 type I18nState = {
   locale: Locale;
   setLocale: (l: Locale) => void;
-  t: (key: keyof Dict) => string;
+  t: (key: string) => string;
 };
 
 const STORAGE_KEY = "adventum-locale";
@@ -56,9 +56,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (key: keyof Dict): string => {
-      const active = dictionaries[locale] as Dict;
-      return active[key] ?? dictionaries.en[key] ?? (key as string);
+    (key: string): string => {
+      const active = dictionaries[locale] as Record<string, string>;
+      const en = dictionaries.en as Record<string, string>;
+      return active[key] ?? en[key] ?? key;
     },
     [locale]
   );
@@ -78,7 +79,8 @@ export function useI18n(): I18nState {
     return {
       locale: DEFAULT_LOCALE,
       setLocale: () => {},
-      t: (key) => dictionaries.en[key] ?? (key as string),
+      t: (key: string) =>
+        (dictionaries.en as Record<string, string>)[key] ?? key,
     };
   }
   return ctx;
