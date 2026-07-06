@@ -1,17 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Carlito, IBM_Plex_Mono } from "next/font/google";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+// Carlito is the metric-compatible open clone of Calibri — the charter's
+// primary typeface — so it renders the brand voice on the web without the
+// proprietary font file. Used for both body and display (Calibri Bold).
+const carlito = Carlito({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "700"],
   variable: "--font-sans",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
   display: "swap",
 });
 
@@ -56,7 +54,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable}`}
+      className={`${carlito.variable} ${plexMono.variable}`}
     >
       <body className="bg-abyss font-sans text-frost">
         <SmoothScroll>{children}</SmoothScroll>

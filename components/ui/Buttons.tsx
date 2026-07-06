@@ -29,7 +29,7 @@ export function PrimaryButton({
   type = "button",
 }: ButtonProps) {
   const anchor = useAnchorHandler(href);
-  const cls = `group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-bio-dim via-bio to-pulse px-8 py-[0.95rem] text-sm font-semibold tracking-wide text-abyss transition-all duration-500 ease-premium hover:shadow-[0_0_50px_-10px_rgba(31,196,221,0.6)] hover:brightness-110 ${className}`;
+  const cls = `group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-bio-dim via-bio to-pulse px-8 py-[0.95rem] text-sm font-semibold tracking-wide text-abyss transition-all duration-500 ease-premium hover:shadow-[0_0_50px_-10px_rgba(104,210,223,0.6)] hover:brightness-110 ${className}`;
 
   const inner = (
     <>

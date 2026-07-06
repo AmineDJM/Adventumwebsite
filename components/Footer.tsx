@@ -158,23 +158,25 @@ export default function Footer() {
                     strokeWidth="1.5"
                   />
                 </svg>
-                Algiers, Algeria
+                Classe 45 GPR PROP 15 N°01, Cheraga, Alger
+              </li>
+              <li>
+                <a
+                  href="mailto:Info@adventumdz.com"
+                  className="flex items-center gap-2.5 transition-colors duration-300 hover:text-frost"
+                >
+                  <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4 shrink-0 text-muted" aria-hidden>
+                    <rect x="2" y="3.5" width="12" height="9" rx="1.6" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M2.5 4.5L8 8.5l5.5-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Info@adventumdz.com
+                </a>
               </li>
               <li className="flex items-center gap-2.5">
-                <svg
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  className="h-4 w-4 shrink-0 text-muted"
-                  aria-hidden
-                >
-                  <path
-                    d="M5.5 7a2.5 2.5 0 113.4 2.34M10.5 9a2.5 2.5 0 11-3.4-2.34"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
+                <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4 shrink-0 text-muted" aria-hidden>
+                  <path d="M3 2.5h2l1.3 3.2-1.3 1a7 7 0 003.3 3.3l1-1.3 3.2 1.3v2a1 1 0 01-1.1 1A10.5 10.5 0 013 3.6 1 1 0 013 2.5z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Partnerships &amp; Licensing
+                +213 (0)20 339 430
               </li>
             </ul>
             <button

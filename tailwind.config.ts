@@ -18,27 +18,34 @@ const config: Config = {
         frost: "#eaf2fb",
         silver: "#aebacd",
         muted: "#71809a",
-        // Luminous accents — Adventum brand blue + teal on dark
-        // (token name "bio" retained across the codebase; now the brand teal)
+        // Adventum brand palette — exact charter values.
+        // bio = brand cyan (Pantone 3105 C); the luminous accent on dark.
         bio: {
-          DEFAULT: "#1fc4dd",
-          dim: "#178ba3",
-          faint: "rgba(31, 196, 221, 0.12)",
+          DEFAULT: "#68D2DF",
+          dim: "#087084", // primary teal (Pantone 7714 C)
+          faint: "rgba(104, 210, 223, 0.12)",
         },
+        // pulse = brand blue (Pantone 2945 C), brightened for dark legibility.
         pulse: {
-          DEFAULT: "#4d9bf0",
-          dim: "#2f6fb5",
-          faint: "rgba(77, 155, 240, 0.12)",
+          DEFAULT: "#2f83d6",
+          dim: "#0057B8",
+          faint: "rgba(47, 131, 214, 0.12)",
         },
-        // Brand royal blue (logo wordmark / mark)
+        // Brand primaries (logo wordmark / mark / CTAs)
         royal: {
-          DEFAULT: "#2e6db4",
-          deep: "#1b4f8a",
+          DEFAULT: "#0057B8", // Pantone 2945 C
+          deep: "#004a9e",
         },
+        teal: {
+          DEFAULT: "#087084", // Pantone 7714 C — "bleu Adventum"
+          cta: "#046F83", // charter web-CTA teal
+        },
+        // Secondary accent (Pantone 375 C) — used sparingly per charter
+        lime: "#82C341",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+        sans: ["var(--font-sans)", "Calibri", "Segoe UI", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "Calibri", "Segoe UI", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       fontSize: {

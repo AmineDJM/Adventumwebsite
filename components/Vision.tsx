@@ -150,7 +150,7 @@ function ParticleMap() {
         const tw = reducedMotion
           ? 0.8
           : 0.6 + 0.4 * Math.sin(t * 1.4 + outlinePhase[i]);
-        ctx.fillStyle = `rgba(77,155,240,${(0.75 * tw * mapAlpha).toFixed(3)})`;
+        ctx.fillStyle = `rgba(47,131,214,${(0.75 * tw * mapAlpha).toFixed(3)})`;
         ctx.fillRect(pt.x, pt.y, 1.6, 1.6);
       }
 
@@ -159,13 +159,13 @@ function ParticleMap() {
         const pt = project(city.pos);
         const pulse = reducedMotion ? 1 : 0.75 + 0.25 * Math.sin(t * 2 + pt.x);
         const g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 9);
-        g.addColorStop(0, `rgba(31,196,221,${0.55 * pulse * mapAlpha})`);
-        g.addColorStop(1, "rgba(31,196,221,0)");
+        g.addColorStop(0, `rgba(104,210,223,${0.55 * pulse * mapAlpha})`);
+        g.addColorStop(1, "rgba(104,210,223,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 9, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(31,196,221,${0.95 * mapAlpha})`;
+        ctx.fillStyle = `rgba(104,210,223,${0.95 * mapAlpha})`;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 1.7, 0, Math.PI * 2);
         ctx.fill();
@@ -194,22 +194,22 @@ function ParticleMap() {
           if (i === 0) ctx.moveTo(pt.x, pt.y);
           else ctx.lineTo(pt.x, pt.y);
         }
-        ctx.strokeStyle = `rgba(77,155,240,${0.28 * ringP})`;
+        ctx.strokeStyle = `rgba(47,131,214,${0.28 * ringP})`;
         ctx.lineWidth = 1;
         ctx.stroke();
 
         // head glow while drawing
         if (ringP < 1) {
           const head = quadPoint(origin, mid, dest, ringP);
-          ctx.fillStyle = "rgba(77,155,240,0.9)";
+          ctx.fillStyle = "rgba(47,131,214,0.9)";
           ctx.beginPath();
           ctx.arc(head.x, head.y, 2, 0, Math.PI * 2);
           ctx.fill();
         } else {
           // arrived: destination node + label + idle traveling pulse
           const g = ctx.createRadialGradient(dest.x, dest.y, 0, dest.x, dest.y, 8);
-          g.addColorStop(0, "rgba(77,155,240,0.5)");
-          g.addColorStop(1, "rgba(77,155,240,0)");
+          g.addColorStop(0, "rgba(47,131,214,0.5)");
+          g.addColorStop(1, "rgba(47,131,214,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(dest.x, dest.y, 8, 0, Math.PI * 2);
@@ -231,7 +231,7 @@ function ParticleMap() {
           if (!reducedMotion) {
             const cycle = (t * 0.22 + target.ring * 0.31) % 1;
             const pulsePt = quadPoint(origin, mid, dest, cycle);
-            ctx.fillStyle = "rgba(31,196,221,0.75)";
+            ctx.fillStyle = "rgba(104,210,223,0.75)";
             ctx.beginPath();
             ctx.arc(pulsePt.x, pulsePt.y, 1.5, 0, Math.PI * 2);
             ctx.fill();
@@ -246,8 +246,8 @@ function ParticleMap() {
           origin.x, origin.y, 0,
           origin.x, origin.y, 16
         );
-        g.addColorStop(0, `rgba(31,196,221,${0.6 * pulse * mapAlpha})`);
-        g.addColorStop(1, "rgba(31,196,221,0)");
+        g.addColorStop(0, `rgba(104,210,223,${0.6 * pulse * mapAlpha})`);
+        g.addColorStop(1, "rgba(104,210,223,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(origin.x, origin.y, 16, 0, Math.PI * 2);
@@ -280,8 +280,8 @@ function ParticleMap() {
         className="absolute inset-0 rounded-[2rem]"
         style={{
           background:
-            "radial-gradient(ellipse 60% 55% at 42% 42%, rgba(77,155,240,0.07), transparent 65%)," +
-            "radial-gradient(ellipse 45% 40% at 42% 42%, rgba(31,196,221,0.05), transparent 60%)",
+            "radial-gradient(ellipse 60% 55% at 42% 42%, rgba(47,131,214,0.07), transparent 65%)," +
+            "radial-gradient(ellipse 45% 40% at 42% 42%, rgba(104,210,223,0.05), transparent 60%)",
         }}
       />
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />

@@ -44,7 +44,7 @@ const INTERESTS = [
   "Other",
 ];
 
-const CONTACT_EMAIL = "partnerships@adventumpharma.com";
+const CONTACT_EMAIL = "Info@adventumdz.com";
 
 const INPUT_CLASS =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-frost placeholder:text-muted focus:border-pulse/50 focus:outline-none focus:ring-1 focus:ring-pulse/30 transition-colors duration-300";
@@ -270,7 +270,23 @@ export default function Contact() {
                       strokeWidth="1.5"
                     />
                   </svg>
-                  Algiers, Algeria
+                  Classe 45 GPR PROP 15 N°01, Cheraga, Alger
+                </p>
+                <a
+                  href="mailto:Info@adventumdz.com"
+                  className="flex items-center gap-2.5 text-sm text-silver transition-colors duration-300 hover:text-bio"
+                >
+                  <svg aria-hidden viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0 text-pulse">
+                    <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Info@adventumdz.com
+                </a>
+                <p className="flex items-center gap-2.5 text-sm text-silver">
+                  <svg aria-hidden viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0 text-pulse">
+                    <path d="M5 4h3l2 5-2 1.5a11 11 0 0 0 5 5L20 13l1 3v3a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 4.5 6.6 1.5 1.5 0 0 1 6 5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  +213 (0)20 339 430 · +213 (0)23 230 793
                 </p>
                 <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em] text-muted">
                   Partnerships · BD &amp; Licensing

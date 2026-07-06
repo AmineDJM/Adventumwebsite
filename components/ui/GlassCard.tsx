@@ -61,7 +61,7 @@ export default function GlassCard({
   });
   const sheenX = useTransform(px, (v) => `${v * 100}%`);
   const sheenY = useTransform(py, (v) => `${v * 100}%`);
-  const sheenColor = accent === "bio" ? "rgba(31,196,221,0.14)" : "rgba(77,155,240,0.14)";
+  const sheenColor = accent === "bio" ? "rgba(104,210,223,0.14)" : "rgba(47,131,214,0.14)";
   const sheen = useMotionTemplate`radial-gradient(220px circle at ${sheenX} ${sheenY}, ${sheenColor}, transparent 70%)`;
 
   const handleMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -78,8 +78,8 @@ export default function GlassCard({
 
   const accentGlow =
     accent === "bio"
-      ? "hover:shadow-[0_0_60px_-18px_rgba(31,196,221,0.4)]"
-      : "hover:shadow-[0_0_60px_-18px_rgba(77,155,240,0.4)]";
+      ? "hover:shadow-[0_0_60px_-18px_rgba(104,210,223,0.4)]"
+      : "hover:shadow-[0_0_60px_-18px_rgba(47,131,214,0.4)]";
 
   return (
     <motion.div

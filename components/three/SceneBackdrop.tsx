@@ -20,8 +20,8 @@ import {
 /*  structures, capsules, vials, holographic panels and networks.     */
 /* ================================================================== */
 
-const BIO = new THREE.Color("#1fc4dd"); // teal
-const PULSE = new THREE.Color("#4d9bf0"); // brand blue
+const BIO = new THREE.Color("#68D2DF"); // teal
+const PULSE = new THREE.Color("#2f83d6"); // brand blue
 const ROYAL = new THREE.Color("#2e6db4");
 const FROST = new THREE.Color("#cfe4f5");
 
@@ -840,8 +840,8 @@ function Scene({ quality, reducedMotion }: { quality: number; reducedMotion: boo
       <fog attach="fog" args={["#02050c", 10, 58]} />
       <ambientLight intensity={0.6} />
       <pointLight position={[8, 6, 4]} intensity={40} color="#8fd0ff" distance={60} />
-      <pointLight position={[-10, -4, -20]} intensity={30} color="#1fc4dd" distance={70} />
-      <pointLight position={[0, 4, -50]} intensity={35} color="#4d9bf0" distance={80} />
+      <pointLight position={[-10, -4, -20]} intensity={30} color="#68D2DF" distance={70} />
+      <pointLight position={[0, 4, -50]} intensity={35} color="#2f83d6" distance={80} />
 
       <TravelingCamera reducedMotion={reducedMotion} />
       <AmbientVolume quality={quality} />
@@ -924,8 +924,8 @@ export default function SceneBackdrop() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 70% 55% at 72% 22%, rgba(77,155,240,0.10), transparent 60%)," +
-            "radial-gradient(ellipse 55% 45% at 20% 78%, rgba(31,196,221,0.08), transparent 60%)," +
+            "radial-gradient(ellipse 70% 55% at 72% 22%, rgba(47,131,214,0.10), transparent 60%)," +
+            "radial-gradient(ellipse 55% 45% at 20% 78%, rgba(104,210,223,0.08), transparent 60%)," +
             "linear-gradient(180deg, #050b17 0%, #02050c 100%)",
         }}
       />

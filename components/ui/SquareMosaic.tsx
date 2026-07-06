@@ -78,7 +78,7 @@ export default function SquareMosaic({
             width={t.w}
             height={t.h}
             rx={1.4}
-            fill={t.tone === "teal" ? "#1fc4dd" : "#4d9bf0"}
+            fill={t.tone === "teal" ? "#68D2DF" : "#2f83d6"}
             opacity={t.op}
           />
         ))}

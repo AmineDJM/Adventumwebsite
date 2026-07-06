@@ -136,7 +136,7 @@ function Beacon({ className = "" }: { className?: string }) {
     <>
       <span className="absolute inset-0 rounded-full bg-bio/40 blur-[3px] animate-pulse-soft" />
       <span
-        className={`relative rounded-full bg-bio shadow-[0_0_12px_rgba(31,196,221,0.8)] ${className}`}
+        className={`relative rounded-full bg-bio shadow-[0_0_12px_rgba(104,210,223,0.8)] ${className}`}
       />
     </>
   );
@@ -224,10 +224,10 @@ export default function Mission() {
                 x2="0"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#1fc4dd" stopOpacity="0" />
-                <stop offset="10%" stopColor="#1fc4dd" />
-                <stop offset="88%" stopColor="#4d9bf0" />
-                <stop offset="100%" stopColor="#4d9bf0" stopOpacity="0" />
+                <stop offset="0%" stopColor="#68D2DF" stopOpacity="0" />
+                <stop offset="10%" stopColor="#68D2DF" />
+                <stop offset="88%" stopColor="#2f83d6" />
+                <stop offset="100%" stopColor="#2f83d6" stopOpacity="0" />
               </linearGradient>
             </defs>
             <line
@@ -249,7 +249,7 @@ export default function Mission() {
               pathLength={100}
               strokeDasharray={100}
               strokeDashoffset={100}
-              style={{ filter: "drop-shadow(0 0 6px rgba(31,196,221,0.45))" }}
+              style={{ filter: "drop-shadow(0 0 6px rgba(104,210,223,0.45))" }}
             />
           </svg>
 
@@ -268,10 +268,10 @@ export default function Mission() {
                   x2="100%"
                   y2="0"
                 >
-                  <stop offset="0%" stopColor="#1fc4dd" stopOpacity="0" />
-                  <stop offset="10%" stopColor="#1fc4dd" />
-                  <stop offset="88%" stopColor="#4d9bf0" />
-                  <stop offset="100%" stopColor="#4d9bf0" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#68D2DF" stopOpacity="0" />
+                  <stop offset="10%" stopColor="#68D2DF" />
+                  <stop offset="88%" stopColor="#2f83d6" />
+                  <stop offset="100%" stopColor="#2f83d6" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <line
@@ -294,7 +294,7 @@ export default function Mission() {
                 strokeDasharray={100}
                 strokeDashoffset={100}
                 style={{
-                  filter: "drop-shadow(0 0 6px rgba(31,196,221,0.45))",
+                  filter: "drop-shadow(0 0 6px rgba(104,210,223,0.45))",
                 }}
               />
             </svg>

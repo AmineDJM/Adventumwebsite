@@ -140,7 +140,7 @@ export default function Navbar() {
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="inline-flex items-center gap-2 rounded-full border border-bio/30 bg-bio/[0.08] px-5 py-2.5 text-[0.8rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(31,196,221,0.5)]"
+              className="inline-flex items-center gap-2 rounded-full border border-bio/30 bg-bio/[0.08] px-5 py-2.5 text-[0.8rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)]"
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-bio opacity-60" />

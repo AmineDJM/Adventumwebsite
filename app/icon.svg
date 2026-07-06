@@ -2,13 +2,13 @@
   <rect width="48" height="48" rx="10" fill="#02050c"/>
   <defs>
     <linearGradient id="b" x1="6" y1="10" x2="40" y2="44" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#5aa6f5"/>
-      <stop offset="0.55" stop-color="#2e6db4"/>
-      <stop offset="1" stop-color="#1b4f8a"/>
+      <stop stop-color="#2f83d6"/>
+      <stop offset="0.55" stop-color="#0057B8"/>
+      <stop offset="1" stop-color="#004a9e"/>
     </linearGradient>
     <linearGradient id="t" x1="2" y1="2" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#38d6ec"/>
-      <stop offset="1" stop-color="#158399"/>
+      <stop stop-color="#68D2DF"/>
+      <stop offset="1" stop-color="#087084"/>
     </linearGradient>
   </defs>
   <rect x="4.5" y="5.5" width="9" height="9" rx="2.6" fill="url(#t)"/>

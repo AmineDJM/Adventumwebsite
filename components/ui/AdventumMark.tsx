@@ -16,13 +16,13 @@ export default function AdventumMark({ id, className = "" }: AdventumMarkProps) 
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden>
       <defs>
         <linearGradient id={`${id}-blue`} x1="6" y1="10" x2="40" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5aa6f5" />
-          <stop offset="0.55" stopColor="#2e6db4" />
-          <stop offset="1" stopColor="#1b4f8a" />
+          <stop stopColor="#2f83d6" />
+          <stop offset="0.55" stopColor="#0057B8" />
+          <stop offset="1" stopColor="#004a9e" />
         </linearGradient>
         <linearGradient id={`${id}-teal`} x1="2" y1="2" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38d6ec" />
-          <stop offset="1" stopColor="#158399" />
+          <stop stopColor="#68D2DF" />
+          <stop offset="1" stopColor="#087084" />
         </linearGradient>
       </defs>
       {/* small teal accent — top left */}
