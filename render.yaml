@@ -1,0 +1,20 @@
+# Render Blueprint — deploy Adventum Pharma as a Node Web Service.
+# In Render: New + → Blueprint → connect this repo → it reads this file.
+# (Or create a Web Service manually with the Build/Start commands below.)
+services:
+  - type: web
+    name: adventum-pharma
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: claude/adventum-pharma-website-q7ovlt
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      # Next.js `next start` binds to Render's injected PORT automatically.
+      - key: NODE_VERSION
+        value: "22.14.0"
+      - key: NODE_ENV
+        value: production
