@@ -43,6 +43,8 @@ const INTERESTS = [
   "Other",
 ];
 
+const CONTACT_EMAIL = "partnerships@adventumpharma.com";
+
 const INPUT_CLASS =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-frost placeholder:text-muted focus:border-pulse/50 focus:outline-none focus:ring-1 focus:ring-pulse/30 transition-colors duration-300";
 
@@ -175,6 +177,25 @@ export default function Contact() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // No server backend on this static site — hand the inquiry to the
+    // visitor's mail client so it is never silently dropped.
+    const subject = `Partnership inquiry — ${form.company || "Adventum Pharma"}`;
+    const body = [
+      `Company: ${form.company}`,
+      `Contact: ${form.contact}`,
+      `Email: ${form.email}`,
+      `Country: ${form.country}`,
+      `Product area: ${form.productArea}`,
+      `Partnership interest: ${form.interest}`,
+      "",
+      "Message:",
+      form.message,
+    ].join("\n");
+    if (typeof window !== "undefined") {
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(body)}`;
+    }
     setSubmitted(true);
   };
 
@@ -338,7 +359,15 @@ export default function Contact() {
                       Thank you.
                     </h3>
                     <p className="mt-4 max-w-sm text-base leading-relaxed text-silver">
-                      Our partnerships team will come back to you shortly.
+                      Your email draft is ready to send. You can also reach our
+                      partnerships team directly at{" "}
+                      <a
+                        href={`mailto:${CONTACT_EMAIL}`}
+                        className="text-pulse underline-offset-4 transition-colors duration-300 hover:underline"
+                      >
+                        {CONTACT_EMAIL}
+                      </a>
+                      .
                     </p>
 
                     <div className="mt-10">

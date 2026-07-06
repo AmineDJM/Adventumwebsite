@@ -630,6 +630,8 @@ export default function ThreeScientificScene({
 }: {
   className?: string;
 }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
   const [env, setEnv] = useState<{
     webgl: boolean;
     quality: number;
@@ -656,12 +658,26 @@ export default function ThreeScientificScene({
     setEnv({ webgl, quality: isMobile ? 0.45 : 1, reducedMotion });
   }, []);
 
+  // Pause the render loop when the hero scrolls out of view — keeps the
+  // Canvas mounted (no WebGL context churn) but stops GPU work off-screen.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className={`absolute inset-0 overflow-hidden ${className}`}>
+    <div ref={wrapRef} className={`absolute inset-0 overflow-hidden ${className}`}>
       <FallbackBackdrop />
       {env?.webgl && (
         <Canvas
           className="absolute inset-0"
+          frameloop={visible ? "always" : "never"}
           camera={{ position: [0, 0.4, 16], fov: 50, near: 0.1, far: 80 }}
           dpr={[1, env.quality < 1 ? 1.5 : 1.75]}
           gl={{

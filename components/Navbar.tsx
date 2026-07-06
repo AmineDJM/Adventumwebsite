@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE } from "@/lib/anim";
-import { scrollToSection } from "@/components/providers/SmoothScroll";
+import { scrollToSection, getLenis } from "@/components/providers/SmoothScroll";
 
 const LINKS = [
   { label: "Home", href: "#home" },
@@ -91,6 +91,25 @@ export default function Navbar() {
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
+
+  // Lock background scrolling (Lenis + native) while the mobile menu is open.
+  // Locking <html> overflow stops native window scrolling; stopping Lenis
+  // prevents it from re-driving scroll while the overlay is up.
+  useEffect(() => {
+    const root = document.documentElement;
+    const lenis = getLenis();
+    if (open) {
+      lenis?.stop();
+      root.style.overflow = "hidden";
+    } else {
+      lenis?.start();
+      root.style.overflow = "";
+    }
+    return () => {
+      getLenis()?.start();
+      root.style.overflow = "";
+    };
+  }, [open]);
 
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();

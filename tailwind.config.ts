@@ -55,6 +55,9 @@ const config: Config = {
       transitionTimingFunction: {
         premium: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
+      transitionDuration: {
+        "400": "400ms",
+      },
       keyframes: {
         "pulse-soft": {
           "0%, 100%": { opacity: "0.35" },
