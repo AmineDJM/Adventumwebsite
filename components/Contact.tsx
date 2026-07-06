@@ -7,6 +7,7 @@ import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
 import SquareMosaic from "@/components/ui/SquareMosaic";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 type ContactForm = {
   company: string;
@@ -29,19 +30,19 @@ const INITIAL_FORM: ContactForm = {
 };
 
 const PRODUCT_AREAS = [
-  "HIV / Antiretrovirals",
-  "Hospital Anti-Infectives",
-  "Public Health Therapeutics",
-  "Other",
+  { value: "HIV / Antiretrovirals", labelKey: "contact.pa_arv" },
+  { value: "Hospital Anti-Infectives", labelKey: "contact.pa_hospital" },
+  { value: "Public Health Therapeutics", labelKey: "contact.pa_public_health" },
+  { value: "Other", labelKey: "contact.pa_other" },
 ];
 
 const INTERESTS = [
-  "Licensing",
-  "Co-development",
-  "Registration Support",
-  "Tender Strategy",
-  "Commercialization",
-  "Other",
+  { value: "Licensing", labelKey: "contact.int_licensing" },
+  { value: "Co-development", labelKey: "contact.int_codevelopment" },
+  { value: "Registration Support", labelKey: "contact.int_registration" },
+  { value: "Tender Strategy", labelKey: "contact.int_tender" },
+  { value: "Commercialization", labelKey: "contact.int_commercialization" },
+  { value: "Other", labelKey: "contact.int_other" },
 ];
 
 const CONTACT_EMAIL = "Info@adventumdz.com";
@@ -97,13 +98,15 @@ function TextField({
   );
 }
 
+type SelectOption = { value: string; label: string };
+
 type SelectFieldProps = {
   id: string;
   name: keyof ContactForm;
   label: string;
   value: string;
   onChange: (e: FieldChangeEvent) => void;
-  options: string[];
+  options: SelectOption[];
 };
 
 function SelectField({
@@ -128,8 +131,12 @@ function SelectField({
           className={`${INPUT_CLASS} cursor-pointer appearance-none pr-10`}
         >
           {options.map((option) => (
-            <option key={option} value={option} className="bg-navy text-frost">
-              {option}
+            <option
+              key={option.value}
+              value={option.value}
+              className="bg-navy text-frost"
+            >
+              {option.label}
             </option>
           ))}
         </select>
@@ -168,6 +175,7 @@ function FormRow({
 }
 
 export default function Contact() {
+  const { t } = useI18n();
   const [form, setForm] = useState<ContactForm>(INITIAL_FORM);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -180,16 +188,16 @@ export default function Contact() {
     e.preventDefault();
     // No server backend on this static site — hand the inquiry to the
     // visitor's mail client so it is never silently dropped.
-    const subject = `Partnership inquiry — ${form.company || "Adventum Pharma"}`;
+    const subject = `${t("contact.email_subject")} — ${form.company || "Adventum Pharma"}`;
     const body = [
-      `Company: ${form.company}`,
-      `Contact: ${form.contact}`,
-      `Email: ${form.email}`,
-      `Country: ${form.country}`,
-      `Product area: ${form.productArea}`,
-      `Partnership interest: ${form.interest}`,
+      `${t("contact.email_label_company")}: ${form.company}`,
+      `${t("contact.email_label_contact")}: ${form.contact}`,
+      `${t("contact.email_label_email")}: ${form.email}`,
+      `${t("contact.email_label_country")}: ${form.country}`,
+      `${t("contact.email_label_product_area")}: ${form.productArea}`,
+      `${t("contact.email_label_interest")}: ${form.interest}`,
       "",
-      "Message:",
+      t("contact.email_message_heading"),
       form.message,
     ].join("\n");
     if (typeof window !== "undefined") {
@@ -229,10 +237,10 @@ export default function Contact() {
           {/* ------- left · heading + identity ------- */}
           <div className="lg:col-span-5">
             <SectionHeading
-              eyebrow="09 · Contact"
-              title="Start a Strategic Discussion"
+              eyebrow={t("contact.eyebrow")}
+              title={t("contact.title")}
               highlight={["Strategic"]}
-              sub="We invite manufacturers and international partners to open a structured conversation about bringing critical therapies to the Algerian market."
+              sub={t("contact.sub")}
             />
 
             <motion.div
@@ -270,7 +278,7 @@ export default function Contact() {
                       strokeWidth="1.5"
                     />
                   </svg>
-                  Classe 45 GPR PROP 15 N°01, Cheraga, Alger
+                  {t("contact.address")}
                 </p>
                 <a
                   href="mailto:Info@adventumdz.com"
@@ -289,7 +297,7 @@ export default function Contact() {
                   +213 (0)20 339 430 · +213 (0)23 230 793
                 </p>
                 <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em] text-muted">
-                  Partnerships · BD &amp; Licensing
+                  {t("contact.partnerships_tag")}
                 </p>
               </motion.div>
 
@@ -302,7 +310,7 @@ export default function Contact() {
                   className="h-1 w-1 rounded-full bg-bio animate-pulse-soft"
                 />
                 <span className="font-mono text-[0.65rem] uppercase tracking-[0.22em] text-silver">
-                  Response within a few business days
+                  {t("contact.response_time")}
                 </span>
               </motion.div>
             </motion.div>
@@ -381,11 +389,10 @@ export default function Contact() {
                     </div>
 
                     <h3 className="mt-8 font-display text-display-md font-medium text-frost">
-                      Thank you.
+                      {t("contact.confirm_title")}
                     </h3>
                     <p className="mt-4 max-w-sm text-base leading-relaxed text-silver">
-                      Your email draft is ready to send. You can also reach our
-                      partnerships team directly at{" "}
+                      {t("contact.confirm_body_pre")}{" "}
                       <a
                         href={`mailto:${CONTACT_EMAIL}`}
                         className="text-pulse underline-offset-4 transition-colors duration-300 hover:underline"
@@ -397,7 +404,7 @@ export default function Contact() {
 
                     <div className="mt-10">
                       <GhostButton onClick={handleReset}>
-                        Send another inquiry
+                        {t("contact.send_another")}
                       </GhostButton>
                     </div>
                   </motion.div>
@@ -418,7 +425,7 @@ export default function Contact() {
                   >
                     <FormRow className="flex items-center justify-between gap-4">
                       <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em] text-muted">
-                        Partnership Inquiry
+                        {t("contact.form_header")}
                       </p>
                       <span
                         aria-hidden
@@ -430,19 +437,19 @@ export default function Contact() {
                       <TextField
                         id="contact-company"
                         name="company"
-                        label="Company Name"
+                        label={t("contact.field_company_label")}
                         value={form.company}
                         onChange={handleChange}
-                        placeholder="Your organization"
+                        placeholder={t("contact.field_company_ph")}
                         autoComplete="organization"
                       />
                       <TextField
                         id="contact-person"
                         name="contact"
-                        label="Contact Person"
+                        label={t("contact.field_contact_label")}
                         value={form.contact}
                         onChange={handleChange}
-                        placeholder="Full name"
+                        placeholder={t("contact.field_contact_ph")}
                         autoComplete="name"
                       />
                     </FormRow>
@@ -451,20 +458,20 @@ export default function Contact() {
                       <TextField
                         id="contact-email"
                         name="email"
-                        label="Email"
+                        label={t("contact.field_email_label")}
                         type="email"
                         value={form.email}
                         onChange={handleChange}
-                        placeholder="name@company.com"
+                        placeholder={t("contact.field_email_ph")}
                         autoComplete="email"
                       />
                       <TextField
                         id="contact-country"
                         name="country"
-                        label="Country"
+                        label={t("contact.field_country_label")}
                         value={form.country}
                         onChange={handleChange}
-                        placeholder="Country of operation"
+                        placeholder={t("contact.field_country_ph")}
                         autoComplete="country-name"
                       />
                     </FormRow>
@@ -473,24 +480,30 @@ export default function Contact() {
                       <SelectField
                         id="contact-product-area"
                         name="productArea"
-                        label="Product Area"
+                        label={t("contact.field_product_area_label")}
                         value={form.productArea}
                         onChange={handleChange}
-                        options={PRODUCT_AREAS}
+                        options={PRODUCT_AREAS.map((o) => ({
+                          value: o.value,
+                          label: t(o.labelKey),
+                        }))}
                       />
                       <SelectField
                         id="contact-interest"
                         name="interest"
-                        label="Partnership Interest"
+                        label={t("contact.field_interest_label")}
                         value={form.interest}
                         onChange={handleChange}
-                        options={INTERESTS}
+                        options={INTERESTS.map((o) => ({
+                          value: o.value,
+                          label: t(o.labelKey),
+                        }))}
                       />
                     </FormRow>
 
                     <FormRow>
                       <label htmlFor="contact-message" className={LABEL_CLASS}>
-                        Message
+                        {t("contact.field_message_label")}
                       </label>
                       <textarea
                         id="contact-message"
@@ -498,14 +511,14 @@ export default function Contact() {
                         rows={5}
                         value={form.message}
                         onChange={handleChange}
-                        placeholder="Outline your portfolio, objectives and the collaboration you have in mind."
+                        placeholder={t("contact.field_message_ph")}
                         className={`${INPUT_CLASS} resize-none`}
                       />
                     </FormRow>
 
                     <FormRow className="pt-2">
                       <PrimaryButton type="submit" className="w-full">
-                        Start a Strategic Discussion
+                        {t("contact.submit_cta")}
                       </PrimaryButton>
                     </FormRow>
                   </motion.form>
@@ -520,7 +533,7 @@ export default function Contact() {
               variants={fadeUp}
               className="mt-5 text-center text-xs text-muted lg:text-left"
             >
-              Submitted information is used only to respond to your inquiry.
+              {t("contact.disclaimer")}
             </motion.p>
           </div>
         </div>

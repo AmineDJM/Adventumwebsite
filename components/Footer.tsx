@@ -4,22 +4,23 @@ import { motion } from "framer-motion";
 import { EASE, VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import { scrollToSection } from "@/components/providers/SmoothScroll";
 import AdventumMark from "@/components/ui/AdventumMark";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Infectiology", href: "#infectiology" },
-  { label: "Platform", href: "#platform" },
-  { label: "Regulatory", href: "#regulatory" },
-  { label: "Partnerships", href: "#partnerships" },
-  { label: "Vision", href: "#vision" },
-  { label: "Contact", href: "#contact" },
+  { labelKey: "footer.nav_home", href: "#home" },
+  { labelKey: "footer.nav_infectiology", href: "#infectiology" },
+  { labelKey: "footer.nav_platform", href: "#platform" },
+  { labelKey: "footer.nav_regulatory", href: "#regulatory" },
+  { labelKey: "footer.nav_partnerships", href: "#partnerships" },
+  { labelKey: "footer.nav_vision", href: "#vision" },
+  { labelKey: "footer.nav_contact", href: "#contact" },
 ];
 
 const FOCUS_AREAS = [
-  "HIV / Antiretrovirals",
-  "Hospital Infectious Diseases",
-  "Public Health Therapeutics",
-  "Strategic Supply Access",
+  "footer.focus_hiv",
+  "footer.focus_hospital",
+  "footer.focus_public_health",
+  "footer.focus_supply",
 ];
 
 const columnFade = {
@@ -43,6 +44,8 @@ function FooterMark() {
 }
 
 export default function Footer() {
+  const { t } = useI18n();
+
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     scrollToSection(href);
@@ -91,14 +94,16 @@ export default function Footer() {
               </span>
             </div>
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted">
-              Advancing infectious disease care in Algeria through regulatory
-              excellence and strategic partnerships.
+              {t("footer.brand_description")}
             </p>
           </motion.div>
 
           {/* navigate */}
-          <motion.nav variants={columnFade} aria-label="Footer navigation">
-            <h3 className={columnTitle}>Navigate</h3>
+          <motion.nav
+            variants={columnFade}
+            aria-label={t("footer.nav_aria_label")}
+          >
+            <h3 className={columnTitle}>{t("footer.nav_heading")}</h3>
             <ul className="mt-6 space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
@@ -107,7 +112,7 @@ export default function Footer() {
                     onClick={go(link.href)}
                     className="text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost"
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </a>
                 </li>
               ))}
@@ -116,7 +121,7 @@ export default function Footer() {
 
           {/* focus */}
           <motion.div variants={columnFade}>
-            <h3 className={columnTitle}>Focus</h3>
+            <h3 className={columnTitle}>{t("footer.focus_heading")}</h3>
             <ul className="mt-6 space-y-3">
               {FOCUS_AREAS.map((area) => (
                 <li
@@ -127,7 +132,7 @@ export default function Footer() {
                     aria-hidden
                     className="h-1 w-1 shrink-0 rounded-full bg-bio/60"
                   />
-                  {area}
+                  {t(area)}
                 </li>
               ))}
             </ul>
@@ -135,7 +140,7 @@ export default function Footer() {
 
           {/* contact */}
           <motion.div variants={columnFade}>
-            <h3 className={columnTitle}>Contact</h3>
+            <h3 className={columnTitle}>{t("footer.contact_heading")}</h3>
             <ul className="mt-6 space-y-3 text-sm text-silver">
               <li className="flex items-center gap-2.5">
                 <svg
@@ -158,7 +163,7 @@ export default function Footer() {
                     strokeWidth="1.5"
                   />
                 </svg>
-                Classe 45 GPR PROP 15 N°01, Cheraga, Alger
+                {t("footer.address")}
               </li>
               <li>
                 <a
@@ -198,7 +203,7 @@ export default function Footer() {
                   strokeLinejoin="round"
                 />
               </svg>
-              Back to top
+              {t("footer.back_to_top")}
             </button>
           </motion.div>
         </motion.div>
@@ -208,16 +213,15 @@ export default function Footer() {
 
         {/* bottom row */}
         <div className="mt-8 flex flex-col flex-wrap items-start gap-4 text-xs text-muted md:flex-row md:items-center md:justify-between">
-          <p>© 2026 Adventum Pharma. All rights reserved.</p>
+          <p>{t("footer.copyright")}</p>
           <p className="md:text-center">
-            Product availability is subject to registration status in each
-            market.
+            {t("footer.disclaimer")}
           </p>
           <p
             aria-hidden
             className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-muted/70"
           >
-            ADVENTUM OS · v1.0
+            {t("footer.os_version")}
           </p>
         </div>
       </motion.div>

@@ -9,6 +9,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
 import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
 /*  Partnerships — six structured collaboration models rendered as    */
@@ -19,25 +20,25 @@ import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
 
 type PartnershipModel = {
   code: string;
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
   icon: ReactNode;
 };
 
 const ICON_CLASS = "h-5 w-5";
 
 const AUDIENCES = [
-  "International Pharma Manufacturers",
-  "Biotech Companies",
-  "API & FDF Suppliers",
-  "Licensing Partners",
+  "partnerships.audience_manufacturers",
+  "partnerships.audience_biotech",
+  "partnerships.audience_suppliers",
+  "partnerships.audience_licensing",
 ];
 
 const MODELS: PartnershipModel[] = [
   {
     code: "P-01",
-    title: "Licensing",
-    body: "In-licensing of registered or late-stage infectious disease therapies, aligned with Algeria's institutional treatment priorities.",
+    titleKey: "partnerships.model_licensing_title",
+    bodyKey: "partnerships.model_licensing_body",
     icon: (
       // link nodes
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -66,8 +67,8 @@ const MODELS: PartnershipModel[] = [
   },
   {
     code: "P-02",
-    title: "Co-development",
-    body: "Shared development of regulatory dossiers and market entry strategies, coordinated from first submission through launch.",
+    titleKey: "partnerships.model_codev_title",
+    bodyKey: "partnerships.model_codev_body",
     icon: (
       // twin helix merging
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -88,8 +89,8 @@ const MODELS: PartnershipModel[] = [
   },
   {
     code: "P-03",
-    title: "Registration Support",
-    body: "Full local ownership of the regulatory pathway — dossier compilation, submission and lifecycle follow-through in Algeria.",
+    titleKey: "partnerships.model_registration_title",
+    bodyKey: "partnerships.model_registration_body",
     icon: (
       // shield-document
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -111,8 +112,8 @@ const MODELS: PartnershipModel[] = [
   },
   {
     code: "P-04",
-    title: "Tender Strategy",
-    body: "Institutional market planning across the full cycle — from pricing architecture to tender submission and award.",
+    titleKey: "partnerships.model_tender_title",
+    bodyKey: "partnerships.model_tender_body",
     icon: (
       // target rings
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -142,8 +143,8 @@ const MODELS: PartnershipModel[] = [
   },
   {
     code: "P-05",
-    title: "Commercialization",
-    body: "Hospital-focused launch execution and medical engagement across Algeria's institutional care network.",
+    titleKey: "partnerships.model_commercialization_title",
+    bodyKey: "partnerships.model_commercialization_body",
     icon: (
       // institutional building
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -165,8 +166,8 @@ const MODELS: PartnershipModel[] = [
   },
   {
     code: "P-06",
-    title: "Long-term Market Development",
-    body: "Multi-year lifecycle management and portfolio growth, designed for a durable therapeutic presence in Algeria.",
+    titleKey: "partnerships.model_market_dev_title",
+    bodyKey: "partnerships.model_market_dev_body",
     icon: (
       // ascending path
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
@@ -199,6 +200,7 @@ const chipReveal: Variants = {
 };
 
 export default function Partnerships() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
@@ -254,10 +256,10 @@ export default function Partnerships() {
 
       <div className="shell relative">
         <SectionHeading
-          eyebrow="07 · Partnerships"
-          title="Partnering With Global Manufacturers for the Algerian Market"
+          eyebrow={t("partnerships.eyebrow")}
+          title={t("partnerships.title")}
           highlight={["Global", "Manufacturers"]}
-          sub="Adventum Pharma works with international partners to bring high-value infectious disease therapies to Algeria through structured registration, market access and commercialization pathways."
+          sub={t("partnerships.sub")}
         />
 
         {/* audience readout line */}
@@ -269,18 +271,18 @@ export default function Partnerships() {
           className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-2.5 font-mono text-[0.62rem] uppercase tracking-widest text-muted"
         >
           <motion.li variants={chipReveal} className="text-pulse/80">
-            For
+            {t("partnerships.audience_prefix")}
           </motion.li>
-          {AUDIENCES.map((audience) => (
+          {AUDIENCES.map((audienceKey) => (
             <motion.li
-              key={audience}
+              key={audienceKey}
               variants={chipReveal}
               className="flex items-center gap-3"
             >
               <span aria-hidden className="text-frost/20">
                 ·
               </span>
-              <span>{audience}</span>
+              <span>{t(audienceKey)}</span>
             </motion.li>
           ))}
         </motion.ul>
@@ -309,11 +311,11 @@ export default function Partnerships() {
                 </div>
 
                 <h3 className="mt-7 font-display text-xl font-medium text-frost">
-                  {model.title}
+                  {t(model.titleKey)}
                 </h3>
 
                 <p className="mt-3 text-sm leading-relaxed text-silver">
-                  {model.body}
+                  {t(model.bodyKey)}
                 </p>
 
                 {/* quiet accent line, extends on hover */}
@@ -339,16 +341,20 @@ export default function Partnerships() {
             variants={fadeUp}
             className="mt-14 font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted"
           >
-            Adventum OS <span className="text-frost/25">·</span> Partnership
-            Channel
+            Adventum OS <span className="text-frost/25">·</span>{" "}
+            {t("partnerships.channel_label")}
           </motion.p>
 
           <motion.div
             variants={fadeUp}
             className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            <PrimaryButton href="#contact">Partner With Adventum</PrimaryButton>
-            <GhostButton href="#contact">View Partnership Form</GhostButton>
+            <PrimaryButton href="#contact">
+              {t("partnerships.cta_primary")}
+            </PrimaryButton>
+            <GhostButton href="#contact">
+              {t("partnerships.cta_secondary")}
+            </GhostButton>
           </motion.div>
         </motion.div>
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { useI18n } from "@/components/providers/I18nProvider";
 import { EASE, VIEWPORT, stagger } from "@/lib/anim";
 import {
   ALGERIA_OUTLINE,
@@ -293,23 +294,24 @@ function ParticleMap() {
 
 const HORIZONS = [
   {
-    tag: "TODAY",
-    title: "Algeria",
-    body: "Home market — hospital and public-health infectious disease care.",
+    tagKey: "vision.horizon1_tag",
+    titleKey: "vision.horizon1_title",
+    bodyKey: "vision.horizon1_body",
   },
   {
-    tag: "NEXT",
-    title: "North Africa",
-    body: "Selective registration pathways in neighboring markets.",
+    tagKey: "vision.horizon2_tag",
+    titleKey: "vision.horizon2_title",
+    bodyKey: "vision.horizon2_body",
   },
   {
-    tag: "HORIZON",
-    title: "MENA & Africa",
-    body: "A long-term ambition: trusted access to complex, critical medicines.",
+    tagKey: "vision.horizon3_tag",
+    titleKey: "vision.horizon3_title",
+    bodyKey: "vision.horizon3_body",
   },
 ];
 
 export default function Vision() {
+  const { t } = useI18n();
   return (
     <section id="vision" className="relative overflow-hidden section-pad">
       {/* deep-space backdrop accent */}
@@ -320,10 +322,10 @@ export default function Vision() {
 
       <div className="shell">
         <SectionHeading
-          eyebrow="08 · Regional Vision"
-          title="From Algeria to the Region"
+          eyebrow={t("vision.eyebrow")}
+          title={t("vision.title")}
           highlight={["Algeria"]}
-          sub="From Algeria to the region, Adventum Pharma aims to become a trusted platform for complex and critical medicines."
+          sub={t("vision.sub")}
           align="center"
         />
 
@@ -346,7 +348,7 @@ export default function Vision() {
         >
           {HORIZONS.map((h) => (
             <motion.div
-              key={h.tag}
+              key={h.tagKey}
               variants={{
                 hidden: { opacity: 0, y: 28 },
                 visible: {
@@ -358,13 +360,13 @@ export default function Vision() {
               className="glass glass-hover rounded-2xl p-6"
             >
               <p className="font-mono text-[0.6rem] uppercase tracking-[0.35em] text-pulse/80">
-                {h.tag}
+                {t(h.tagKey)}
               </p>
               <h3 className="mt-3 font-display text-xl font-medium text-frost">
-                {h.title}
+                {t(h.titleKey)}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                {h.body}
+                {t(h.bodyKey)}
               </p>
             </motion.div>
           ))}

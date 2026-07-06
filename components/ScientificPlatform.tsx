@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EASE, VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
 /*  Scientific Platform — the capability stack.                        */
@@ -128,8 +129,8 @@ function IconMolecule() {
 
 type Capability = {
   code: string;
-  title: string;
-  desc: string;
+  titleKey: string;
+  descKey: string;
   accent: "bio" | "pulse";
   icon: ReactNode;
 };
@@ -137,43 +138,43 @@ type Capability = {
 const CAPABILITIES: Capability[] = [
   {
     code: "CAP-01",
-    title: "Infectious Disease Expertise",
-    desc: "Deep therapeutic focus on HIV and hospital infectiology, informing every registration and access decision.",
+    titleKey: "platform.cap1_title",
+    descKey: "platform.cap1_desc",
     accent: "bio",
     icon: <IconVirion />,
   },
   {
     code: "CAP-02",
-    title: "Regulatory Intelligence",
-    desc: "Current knowledge of Algerian registration pathways, requirements and timelines — kept live, not archived.",
+    titleKey: "platform.cap2_title",
+    descKey: "platform.cap2_desc",
     accent: "pulse",
     icon: <IconDossier />,
   },
   {
     code: "CAP-03",
-    title: "Hospital Tender Strategy",
-    desc: "A structured approach to institutional procurement, aligned with tender cycles and public-health priorities.",
+    titleKey: "platform.cap3_title",
+    descKey: "platform.cap3_desc",
     accent: "bio",
     icon: <IconInstitution />,
   },
   {
     code: "CAP-04",
-    title: "Supply Chain Reliability",
-    desc: "Importation, storage and distribution engineered for one outcome: continuity of treatment, without interruption.",
+    titleKey: "platform.cap4_title",
+    descKey: "platform.cap4_desc",
     accent: "pulse",
     icon: <IconLink />,
   },
   {
     code: "CAP-05",
-    title: "Pharmacovigilance Mindset",
-    desc: "Safety reporting and risk awareness embedded in daily operations, from first shipment to ongoing follow-up.",
+    titleKey: "platform.cap5_title",
+    descKey: "platform.cap5_desc",
     accent: "bio",
     icon: <IconShieldPulse />,
   },
   {
     code: "CAP-06",
-    title: "Long-Term Portfolio Development",
-    desc: "A pipeline built molecule by molecule around unmet needs, compounding into a durable therapeutic platform.",
+    titleKey: "platform.cap6_title",
+    descKey: "platform.cap6_desc",
     accent: "pulse",
     icon: <IconMolecule />,
   },
@@ -226,6 +227,7 @@ const chipReveal: Variants = {
 };
 
 export default function ScientificPlatform() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const netRef = useRef<HTMLDivElement>(null);
 
@@ -316,10 +318,10 @@ export default function ScientificPlatform() {
 
       <div className="shell relative z-10">
         <SectionHeading
-          eyebrow="06 · Scientific Platform"
-          title="More Than Distribution — A Scientific Operating Platform"
+          eyebrow={t("platform.eyebrow")}
+          title={t("platform.title")}
           highlight={["Scientific", "Operating"]}
-          sub="Every capability compounds across registration, supply and vigilance — making Adventum a durable platform for infectious disease care, not a trading company."
+          sub={t("platform.sub")}
           align="center"
         />
 
@@ -380,10 +382,10 @@ export default function ScientificPlatform() {
               </div>
 
               <h3 className="mt-7 font-display text-xl font-medium text-frost">
-                {cap.title}
+                {t(cap.titleKey)}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                {cap.desc}
+                {t(cap.descKey)}
               </p>
             </GlassCard>
           ))}
@@ -399,7 +401,7 @@ export default function ScientificPlatform() {
         >
           <div className="hairline" />
           <p className="text-center font-mono text-[0.6rem] uppercase tracking-[0.4em] text-muted">
-            Registration · Supply · Vigilance — one compounding system
+            {t("platform.system_caption")}
           </p>
         </motion.div>
       </div>

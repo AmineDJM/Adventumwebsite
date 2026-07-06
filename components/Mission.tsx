@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
 /*  Mission — the supply-of-care schematic.                            */
@@ -18,9 +19,9 @@ import GlassCard from "@/components/ui/GlassCard";
 /* ------------------------------------------------------------------ */
 
 type FlowNode = {
-  tag: string;
-  title: string;
-  desc: string;
+  tagKey: string;
+  titleKey: string;
+  descKey: string;
   accent: "bio" | "pulse";
   icon: ReactNode;
 };
@@ -101,30 +102,30 @@ function IconHeartPulse() {
 
 const NODES: FlowNode[] = [
   {
-    tag: "Node 01",
-    title: "Manufacturer",
-    desc: "International partners and licensed originators.",
+    tagKey: "mission.node1_tag",
+    titleKey: "mission.node1_title",
+    descKey: "mission.node1_desc",
     accent: "pulse",
     icon: <IconGlobe />,
   },
   {
-    tag: "Node 02",
-    title: "Regulatory",
-    desc: "Dossier, submission and registration follow-up.",
+    tagKey: "mission.node2_tag",
+    titleKey: "mission.node2_title",
+    descKey: "mission.node2_desc",
     accent: "pulse",
     icon: <IconShieldDoc />,
   },
   {
-    tag: "Node 03",
-    title: "Hospital Market",
-    desc: "Tenders, procurement and institutional deployment.",
+    tagKey: "mission.node3_tag",
+    titleKey: "mission.node3_title",
+    descKey: "mission.node3_desc",
     accent: "pulse",
     icon: <IconHospital />,
   },
   {
-    tag: "Node 04",
-    title: "Patient Access",
-    desc: "Reliable availability where treatment happens.",
+    tagKey: "mission.node4_tag",
+    titleKey: "mission.node4_title",
+    descKey: "mission.node4_desc",
     accent: "bio",
     icon: <IconHeartPulse />,
   },
@@ -143,6 +144,7 @@ function Beacon({ className = "" }: { className?: string }) {
 }
 
 export default function Mission() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const flowRef = useRef<HTMLDivElement>(null);
 
@@ -198,10 +200,10 @@ export default function Mission() {
 
       <div className="shell relative z-10">
         <SectionHeading
-          eyebrow="02 · Mission"
-          title="Strengthening Access to Critical Medicines"
+          eyebrow={t("mission.eyebrow")}
+          title={t("mission.title")}
           highlight={["Access"]}
-          sub="Adventum Pharma is built around one mission: improving access to essential infectious disease treatments in Algeria through disciplined regulatory execution, reliable supply chains and long-term partnerships with international manufacturers."
+          sub={t("mission.sub")}
           align="center"
         />
 
@@ -329,7 +331,7 @@ export default function Mission() {
           >
             {NODES.map((node, i) => (
               <li
-                key={node.title}
+                key={node.titleKey}
                 className="relative pl-12 lg:flex lg:flex-col lg:items-center lg:pl-0"
               >
                 {/* beacon on the mobile spine */}
@@ -371,13 +373,13 @@ export default function Mission() {
                   </span>
 
                   <p className="mt-6 font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted">
-                    {node.tag}
+                    {t(node.tagKey)}
                   </p>
                   <h3 className="mt-3 font-display text-xl font-medium text-frost">
-                    {node.title}
+                    {t(node.titleKey)}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted">
-                    {node.desc}
+                    {t(node.descKey)}
                   </p>
                 </GlassCard>
               </li>
@@ -395,7 +397,7 @@ export default function Mission() {
         >
           <div className="hairline" />
           <p className="text-center font-mono text-[0.6rem] uppercase tracking-[0.4em] text-muted">
-            Supply-of-care continuum · Origin to point of treatment
+            {t("mission.caption")}
           </p>
         </motion.div>
       </div>

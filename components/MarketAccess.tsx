@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { useI18n } from "@/components/providers/I18nProvider";
 import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
 
 /* ------------------------------------------------------------------ */
@@ -15,9 +16,9 @@ import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
 /* ------------------------------------------------------------------ */
 
 type ConsoleModule = {
-  tag: string;
-  title: string;
-  body: string;
+  tagKey: string;
+  titleKey: string;
+  bodyKey: string;
   icon: ReactNode;
 };
 
@@ -25,9 +26,9 @@ const ICON_CLASS = "h-5 w-5";
 
 const MODULES: ConsoleModule[] = [
   {
-    tag: "CHANNEL / INSTITUTIONAL",
-    title: "Hospital Channel",
-    body: "Working directly with hospital pharmacies, clinicians and institutional decision-makers — so critical therapies are positioned where care is actually delivered.",
+    tagKey: "market.card1_tag",
+    titleKey: "market.card1_title",
+    bodyKey: "market.card1_body",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
@@ -41,9 +42,9 @@ const MODULES: ConsoleModule[] = [
     ),
   },
   {
-    tag: "CYCLE / PROGRAMMED",
-    title: "Tender & Procurement",
-    body: "Structured preparation for national tenders and procurement cycles — from eligibility and dossier readiness through award follow-through.",
+    tagKey: "market.card2_tag",
+    titleKey: "market.card2_title",
+    bodyKey: "market.card2_body",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
@@ -57,9 +58,9 @@ const MODULES: ConsoleModule[] = [
     ),
   },
   {
-    tag: "LOGISTICS / COLD CHAIN",
-    title: "Supply Continuity",
-    body: "Forecasting, importation and cold-chain logistics designed around a single objective — avoiding stock-outs of critical therapies.",
+    tagKey: "market.card3_tag",
+    titleKey: "market.card3_title",
+    bodyKey: "market.card3_body",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
@@ -73,9 +74,9 @@ const MODULES: ConsoleModule[] = [
     ),
   },
   {
-    tag: "RELATIONSHIPS / LONG TERM",
-    title: "Institutional Trust",
-    body: "A long-term presence alongside health institutions and public-health programs — built on reliability rather than transactions.",
+    tagKey: "market.card4_tag",
+    titleKey: "market.card4_title",
+    bodyKey: "market.card4_body",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
@@ -106,6 +107,7 @@ const consoleReveal: Variants = {
 };
 
 export default function MarketAccess() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
@@ -162,10 +164,10 @@ export default function MarketAccess() {
 
       <div className="shell relative">
         <SectionHeading
-          eyebrow="05 · Market Access"
-          title="Built for Hospital and Tender Markets"
+          eyebrow={t("market.eyebrow")}
+          title={t("market.title")}
           highlight={["Hospital"]}
-          sub="In Algeria, critical medicines reach patients through institutions — Adventum is engineered around that reality."
+          sub={t("market.sub")}
         />
 
         {/* ---- the console ---- */}
@@ -196,8 +198,9 @@ export default function MarketAccess() {
             className="relative flex items-center justify-between px-8 py-5 md:px-10"
           >
             <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-muted">
-              Adventum OS <span className="text-frost/25">·</span> Market
-              Access
+              {t("market.console_os")}{" "}
+              <span className="text-frost/25">·</span>{" "}
+              {t("market.console_channel")}
             </p>
             <span aria-hidden className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-bio/80 animate-pulse-soft" />
@@ -212,7 +215,7 @@ export default function MarketAccess() {
           <motion.div variants={stagger(0.1)} className="grid lg:grid-cols-2">
             {MODULES.map((mod, i) => (
               <motion.article
-                key={mod.title}
+                key={mod.titleKey}
                 variants={fadeUp}
                 className="group relative p-8 transition-colors duration-500 ease-premium hover:bg-surface/[0.02] md:p-10 lg:p-12"
               >
@@ -239,12 +242,12 @@ export default function MarketAccess() {
                     {mod.icon}
                   </span>
                   <p className="text-right font-mono text-[0.6rem] uppercase tracking-[0.28em] text-muted">
-                    {mod.tag}
+                    {t(mod.tagKey)}
                   </p>
                 </div>
 
                 <h3 className="mt-7 font-display text-xl font-medium text-frost md:text-2xl">
-                  {mod.title}
+                  {t(mod.titleKey)}
                 </h3>
 
                 <motion.span
@@ -254,7 +257,7 @@ export default function MarketAccess() {
                 />
 
                 <p className="mt-4 max-w-md text-sm leading-relaxed text-silver">
-                  {mod.body}
+                  {t(mod.bodyKey)}
                 </p>
               </motion.article>
             ))}

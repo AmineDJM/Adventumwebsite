@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
 /*  Regulatory & Market Access Engine — an 8-stage vertical timeline.  */
@@ -13,52 +14,57 @@ import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
 /*  stage node lights up as the line passes it. Mission-control calm.  */
 /* ------------------------------------------------------------------ */
 
-const STATUS_CHIPS = ["END-TO-END", "REGULATORY-FIRST", "LIFECYCLE MANAGED"];
+const STATUS_CHIPS = [
+  "regulatory.chip_end_to_end",
+  "regulatory.chip_regulatory_first",
+  "regulatory.chip_lifecycle_managed",
+];
 
 const STEPS = [
   {
     num: "01",
-    title: "Product selection",
-    body: "Therapeutic value, unmet hospital need and supply criticality drive every candidate.",
+    titleKey: "regulatory.step01_title",
+    bodyKey: "regulatory.step01_body",
   },
   {
     num: "02",
-    title: "Partner qualification",
-    body: "Due diligence on manufacturing quality, capacity and reliability.",
+    titleKey: "regulatory.step02_title",
+    bodyKey: "regulatory.step02_body",
   },
   {
     num: "03",
-    title: "Dossier preparation",
-    body: "Complete, submission-ready technical and clinical documentation.",
+    titleKey: "regulatory.step03_title",
+    bodyKey: "regulatory.step03_body",
   },
   {
     num: "04",
-    title: "Regulatory submission",
-    body: "Structured filing with the national regulatory authority.",
+    titleKey: "regulatory.step04_title",
+    bodyKey: "regulatory.step04_body",
   },
   {
     num: "05",
-    title: "Registration follow-up",
-    body: "Active management of questions, commitments and timelines.",
+    titleKey: "regulatory.step05_title",
+    bodyKey: "regulatory.step05_body",
   },
   {
     num: "06",
-    title: "Tender access",
-    body: "Positioning for institutional tenders and procurement programs.",
+    titleKey: "regulatory.step06_title",
+    bodyKey: "regulatory.step06_body",
   },
   {
     num: "07",
-    title: "Hospital deployment",
-    body: "Distribution, availability and institutional support.",
+    titleKey: "regulatory.step07_title",
+    bodyKey: "regulatory.step07_body",
   },
   {
     num: "08",
-    title: "Lifecycle management",
-    body: "Variations, renewals, vigilance and continuous supply.",
+    titleKey: "regulatory.step08_title",
+    bodyKey: "regulatory.step08_body",
   },
 ] as const;
 
 export default function RegulatoryJourney() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -129,10 +135,10 @@ export default function RegulatoryJourney() {
           {/* ------- LEFT · sticky heading ------- */}
           <div className="self-start lg:sticky lg:top-32 lg:col-span-5">
             <SectionHeading
-              eyebrow="04 · Regulatory Engine"
-              title="From Dossier to Hospital Bedside"
+              eyebrow={t("regulatory.eyebrow")}
+              title={t("regulatory.title")}
               highlight={["Dossier"]}
-              sub="A disciplined, end-to-end registration and market-access engine built for the Algerian regulatory environment — from candidate selection to lifecycle stewardship."
+              sub={t("regulatory.sub")}
             />
 
             <motion.ul
@@ -152,7 +158,7 @@ export default function RegulatoryJourney() {
                     aria-hidden
                     className="h-1 w-1 rounded-full bg-bio animate-pulse-soft"
                   />
-                  {chip}
+                  {t(chip)}
                 </motion.li>
               ))}
             </motion.ul>
@@ -168,7 +174,7 @@ export default function RegulatoryJourney() {
             >
               <span className="hairline max-w-[6rem]" />
               <span className="whitespace-nowrap font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted">
-                Stage {String(Math.min(activeStep + 1, STEPS.length)).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")}
+                {t("regulatory.stage_label")} {String(Math.min(activeStep + 1, STEPS.length)).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")}
               </span>
             </motion.div>
           </div>
@@ -195,7 +201,7 @@ export default function RegulatoryJourney() {
                   strokeLinecap="round"
                 />
               </svg>
-              Registration Pipeline · 8 Stages
+              {t("regulatory.pipeline_label")}
             </motion.p>
 
             <div ref={railRef} className="relative">
@@ -262,10 +268,10 @@ export default function RegulatoryJourney() {
                           </span>
                           <div className="min-w-0">
                             <h3 className="font-display text-lg font-medium text-frost md:text-xl">
-                              {step.title}
+                              {t(step.titleKey)}
                             </h3>
                             <p className="mt-2 text-sm leading-relaxed text-muted">
-                              {step.body}
+                              {t(step.bodyKey)}
                             </p>
                           </div>
                         </div>

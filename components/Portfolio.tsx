@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ---------------------------------------------------------------- */
 /*  Abstract molecular-bond diagrams — nodes + trimmed bond lines.  */
@@ -168,10 +169,13 @@ function Formula({ formula }: { formula: string }) {
 
 type Product = {
   index: string;
-  name: string;
-  tag: string;
+  /** Literal proper-noun product name (rendered as-is). */
+  name?: string;
+  /** Translation key for a descriptive (non-proper-noun) name. */
+  nameKey?: string;
+  tagKey: string;
   formula?: string;
-  description: string;
+  descriptionKey: string;
   accent: "bio" | "pulse";
   diagram: Diagram;
 };
@@ -180,39 +184,35 @@ const PRODUCTS: Product[] = [
   {
     index: "01",
     name: "Dolutegravir",
-    tag: "INSTI · INTEGRASE INHIBITOR",
+    tagKey: "portfolio.tag_insti",
     formula: "C20H19F2N3O5",
-    description:
-      "Core component of modern first-line antiretroviral regimens.",
+    descriptionKey: "portfolio.dolutegravir_desc",
     accent: "bio",
     diagram: DIAGRAM_DOLUTEGRAVIR,
   },
   {
     index: "02",
     name: "Raltegravir",
-    tag: "INSTI · INTEGRASE INHIBITOR",
+    tagKey: "portfolio.tag_insti",
     formula: "C20H21FN6O5",
-    description:
-      "Established integrase inhibitor used in specific clinical situations.",
+    descriptionKey: "portfolio.raltegravir_desc",
     accent: "pulse",
     diagram: DIAGRAM_RALTEGRAVIR,
   },
   {
     index: "03",
     name: "Darunavir",
-    tag: "PI · PROTEASE INHIBITOR",
+    tagKey: "portfolio.tag_pi",
     formula: "C27H37N3O7S",
-    description:
-      "High-barrier protease inhibitor for treatment-experienced patients.",
+    descriptionKey: "portfolio.darunavir_desc",
     accent: "bio",
     diagram: DIAGRAM_DARUNAVIR,
   },
   {
     index: "04",
-    name: "Hospital Anti-Infectives",
-    tag: "PIPELINE · HOSPITAL",
-    description:
-      "A developing pipeline of critical anti-infective therapies for hospital use.",
+    nameKey: "portfolio.hospital_name",
+    tagKey: "portfolio.tag_pipeline",
+    descriptionKey: "portfolio.hospital_desc",
     accent: "pulse",
     diagram: DIAGRAM_PIPELINE,
   },
@@ -223,6 +223,7 @@ const PRODUCTS: Product[] = [
 /* ---------------------------------------------------------------- */
 
 export default function Portfolio() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
@@ -268,10 +269,10 @@ export default function Portfolio() {
 
       <div className="shell relative">
         <SectionHeading
-          eyebrow="03 · Portfolio & Pipeline"
-          title="A Focused Antiretroviral and Hospital Portfolio"
+          eyebrow={t("portfolio.eyebrow")}
+          title={t("portfolio.title")}
           highlight={["Portfolio"]}
-          sub="A deliberately narrow portfolio built around molecules that matter for infectious disease care in Algeria."
+          sub={t("portfolio.sub")}
         />
 
         {/* specimen plates */}
@@ -284,7 +285,7 @@ export default function Portfolio() {
         >
           {PRODUCTS.map((product) => (
             <GlassCard
-              key={product.name}
+              key={product.index}
               accent={product.accent}
               className="flex h-full flex-col p-8"
             >
@@ -337,11 +338,11 @@ export default function Portfolio() {
 
               {/* classification */}
               <p className="mt-6 font-mono text-[0.62rem] uppercase tracking-[0.22em] text-muted">
-                {product.tag}
+                {t(product.tagKey)}
               </p>
 
               <h3 className="mt-3 font-display text-2xl font-medium leading-tight text-frost">
-                {product.name}
+                {product.nameKey ? t(product.nameKey) : product.name}
               </h3>
 
               {product.formula && (
@@ -351,7 +352,7 @@ export default function Portfolio() {
               )}
 
               <p className="mt-4 text-sm leading-relaxed text-silver">
-                {product.description}
+                {t(product.descriptionKey)}
               </p>
 
               {/* status line — pinned to the plate base */}
@@ -364,7 +365,7 @@ export default function Portfolio() {
                       product.accent === "bio" ? "bg-bio" : "bg-pulse"
                     }`}
                   />
-                  Status · Portfolio / Pipeline example
+                  {t("portfolio.status")}
                 </p>
               </div>
             </GlassCard>
@@ -402,10 +403,7 @@ export default function Portfolio() {
               />
             </svg>
             <p className="text-sm leading-relaxed text-muted">
-              Products are shown as examples of Adventum Pharma&apos;s portfolio
-              and pipeline focus areas. Availability in any market depends on
-              registration status and applicable regulations. No claim of
-              approval is made.
+              {t("portfolio.disclaimer")}
             </p>
           </div>
         </motion.div>

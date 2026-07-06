@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ---------------------------------------------------------------- icons */
 
@@ -143,57 +144,58 @@ function HexLattice({ id }: { id: string }) {
 /* ------------------------------------------------------------------ data */
 
 type FocusArea = {
-  title: string;
-  tag: string;
-  body: string;
+  titleKey: string;
+  tagKey: string;
+  bodyKey: string;
   accent: "bio" | "pulse";
   icon: ReactNode;
 };
 
 const FOCUS_AREAS: FocusArea[] = [
   {
-    title: "HIV / Antiretrovirals",
-    tag: "ARV · Priority Axis",
-    body: "Modern antiretroviral therapies for national HIV programs and specialized hospital services — the central axis of our portfolio.",
+    titleKey: "infectiology.card1_title",
+    tagKey: "infectiology.card1_tag",
+    bodyKey: "infectiology.card1_body",
     accent: "bio",
     icon: <VirionIcon />,
   },
   {
-    title: "Hospital Infectious Diseases",
-    tag: "Acute Care",
-    body: "Therapies addressing severe bacterial, viral and fungal infections treated in hospital settings, where continuity of care is critical.",
+    titleKey: "infectiology.card2_title",
+    tagKey: "infectiology.card2_tag",
+    bodyKey: "infectiology.card2_body",
     accent: "pulse",
     icon: <HospitalHexIcon />,
   },
   {
-    title: "Public Health Therapeutics",
-    tag: "Population Health",
-    body: "Medicines aligned with national public-health priorities and structured treatment programs across the care system.",
+    titleKey: "infectiology.card3_title",
+    tagKey: "infectiology.card3_tag",
+    bodyKey: "infectiology.card3_body",
     accent: "bio",
     icon: <PopulationIcon />,
   },
   {
-    title: "Strategic Supply Access",
-    tag: "Supply Continuity",
-    body: "Structured import, registration and supply pathways for critical therapies that hospitals cannot source reliably.",
+    titleKey: "infectiology.card4_title",
+    tagKey: "infectiology.card4_tag",
+    bodyKey: "infectiology.card4_body",
     accent: "pulse",
     icon: <SupplyRouteIcon />,
   },
 ];
 
-const MOLECULES = [
-  "Dolutegravir",
-  "Raltegravir",
-  "Darunavir",
-  "Hospital anti-infectives",
-];
-
 /* ------------------------------------------------------------- component */
 
 export default function InfectiologyFocus() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const glowTopRef = useRef<HTMLDivElement>(null);
   const glowBottomRef = useRef<HTMLDivElement>(null);
+
+  const molecules = [
+    "Dolutegravir",
+    "Raltegravir",
+    "Darunavir",
+    t("infectiology.molecule_hospital"),
+  ];
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -243,10 +245,10 @@ export default function InfectiologyFocus() {
 
       <div className="shell relative">
         <SectionHeading
-          eyebrow="01 · Infectiology Focus"
-          title="Critical Therapies for Infectious Disease Care"
+          eyebrow={t("infectiology.eyebrow")}
+          title={t("infectiology.title")}
           highlight={["Critical", "Therapies"]}
-          sub="Adventum Pharma concentrates exclusively on infectious diseases and critical hospital therapies for the Algerian market — depth over breadth."
+          sub={t("infectiology.sub")}
         />
 
         {/* focus grid */}
@@ -259,7 +261,7 @@ export default function InfectiologyFocus() {
         >
           {FOCUS_AREAS.map((area, i) => (
             <motion.div
-              key={area.title}
+              key={area.titleKey}
               variants={fadeUp}
               whileHover={{ y: -4 }}
               transition={{ duration: 0.4, ease: EASE }}
@@ -289,15 +291,15 @@ export default function InfectiologyFocus() {
                           area.accent === "bio" ? "bg-bio" : "bg-pulse"
                         }`}
                       />
-                      {area.tag}
+                      {t(area.tagKey)}
                     </span>
                   </div>
 
                   <h3 className="relative mt-8 font-display text-xl font-medium text-frost md:text-2xl">
-                    {area.title}
+                    {t(area.titleKey)}
                   </h3>
                   <p className="relative mt-3 max-w-md text-sm leading-relaxed text-silver md:text-[0.95rem]">
-                    {area.body}
+                    {t(area.bodyKey)}
                   </p>
                 </div>
               </GlassCard>
@@ -320,13 +322,13 @@ export default function InfectiologyFocus() {
             className="mt-8 flex flex-col gap-5 lg:flex-row lg:items-baseline lg:justify-between"
           >
             <p className="font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted">
-              Portfolio · Pipeline Focus
+              {t("infectiology.portfolio_label")}
             </p>
             <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-silver">
-              {MOLECULES.map((molecule, i) => (
+              {molecules.map((molecule, i) => (
                 <li key={molecule} className="flex items-center gap-3">
                   <span>{molecule}</span>
-                  {i < MOLECULES.length - 1 && (
+                  {i < molecules.length - 1 && (
                     <span aria-hidden className="text-frost/20">
                       ·
                     </span>
@@ -340,8 +342,7 @@ export default function InfectiologyFocus() {
             variants={fadeUp}
             className="mt-5 max-w-2xl text-xs leading-relaxed text-muted"
           >
-            Portfolio and pipeline focus examples. Product availability is
-            subject to registration status in each market.
+            {t("infectiology.disclaimer")}
           </motion.p>
         </motion.div>
       </div>
