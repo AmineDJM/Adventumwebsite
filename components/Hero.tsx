@@ -1,18 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EASE, stagger } from "@/lib/anim";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
 import SquareMosaic from "@/components/ui/SquareMosaic";
-
-const ThreeScientificScene = dynamic(
-  () => import("@/components/three/ThreeScientificScene"),
-  { ssr: false }
-);
 
 const HEADLINE = "Advancing Infectious Disease Care in Algeria";
 const HIGHLIGHT = new Set(["Infectious", "Disease"]);
@@ -51,8 +45,6 @@ export default function Hero() {
       ref={sectionRef}
       className="relative flex min-h-screen items-center overflow-hidden"
     >
-      {/* 3D scientific environment */}
-      <ThreeScientificScene />
 
       {/* cinematic vignette + bottom fade into the page */}
       <div

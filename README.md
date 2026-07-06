@@ -44,10 +44,15 @@ components/
   Contact.tsx           # strategic partnership form
   Footer.tsx
   three/
-    ThreeScientificScene.tsx  # R3F scene: particles, DNA helix, virions,
-                              # molecular network, Algeria hologram, camera rig
+    SceneBackdrop.tsx         # persistent full-page R3F "laboratory": DNA
+                              # helices, virions, molecular networks, capsules,
+                              # vials, holographic panels, hospital network,
+                              # molecular lattice, Algeria hologram + the
+                              # scroll-driven traveling camera rig
+    SceneBackdropClient.tsx   # lazy-load wrapper (code-splits Three.js)
   providers/SmoothScroll.tsx  # Lenis + GSAP ScrollTrigger integration
-  ui/                   # GlassCard, SectionHeading, Buttons
+  ui/                   # GlassCard, SectionHeading, Buttons, AdventumMark,
+                        # SquareMosaic (brand tile motif)
 lib/
   anim.ts               # shared easing / motion variants
   geo.ts                # stylized Algeria outline + regional map data

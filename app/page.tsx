@@ -10,22 +10,29 @@ import Partnerships from "@/components/Partnerships";
 import Vision from "@/components/Vision";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+// Persistent full-page 3D laboratory the camera flies through on scroll.
+// Lazy-loaded (code-split) via a client wrapper so Three.js stays out of
+// the initial bundle.
+import SceneBackdrop from "@/components/three/SceneBackdropClient";
 
 export default function Home() {
   return (
-    <main className="relative">
-      <Navbar />
-      <Hero />
-      <InfectiologyFocus />
-      <Mission />
-      <Portfolio />
-      <RegulatoryJourney />
-      <MarketAccess />
-      <ScientificPlatform />
-      <Partnerships />
-      <Vision />
-      <Contact />
-      <Footer />
-    </main>
+    <>
+      <SceneBackdrop />
+      <main className="relative z-10">
+        <Navbar />
+        <Hero />
+        <InfectiologyFocus />
+        <Mission />
+        <Portfolio />
+        <RegulatoryJourney />
+        <MarketAccess />
+        <ScientificPlatform />
+        <Partnerships />
+        <Vision />
+        <Contact />
+        <Footer />
+      </main>
+    </>
   );
 }
