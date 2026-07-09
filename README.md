@@ -2,17 +2,24 @@
 
 Ultra-premium cinematic website for **Adventum Pharma**, an Algerian pharmaceutical
 company focused on infectious disease care — HIV/antiretrovirals, hospital
-therapeutics and public-health medicines — built as an immersive, dark,
-scientific "medical OS" experience.
+therapeutics and public-health medicines — built as an immersive, scientific
+"medical OS" experience that the camera flies through on scroll.
+
+Applies the official Adventum brand charter (blue `#0057B8` / teal `#087084` /
+cyan `#68D2DF`, Calibri-family type), ships **light + dark themes** (system
+default with a toggle) and a **4-language UI** (EN / FR / Hindi / Chinese).
 
 ## Stack
 
 - **Next.js 15** (App Router) + **React 19** + **TypeScript** (strict)
-- **Tailwind CSS** — design tokens for the midnight/bio-green/cyan palette
+- **Tailwind CSS** — CSS-variable theme tokens (light/dark) + brand palette
 - **Framer Motion** — section reveals, staggered typography, micro-interactions
 - **GSAP + ScrollTrigger** — scroll-scrubbed timelines, parallax, progress lines
 - **Lenis** — smooth inertial scrolling, synced with ScrollTrigger
-- **Three.js / React Three Fiber + Drei** — the hero's scientific 3D environment
+- **Three.js / React Three Fiber + Drei** — the persistent scene the camera
+  travels through, and the interactive "Infection Intelligence" explorer
+- **i18n** — lightweight dictionary provider (EN/FR/HI/ZH), Carlito (Calibri
+  clone) + Noto Sans Devanagari + system CJK fonts
 
 ## Getting started
 
