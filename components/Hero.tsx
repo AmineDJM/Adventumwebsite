@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,8 +8,7 @@ import { EASE, stagger } from "@/lib/anim";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
 import SquareMosaic from "@/components/ui/SquareMosaic";
 import { useI18n } from "@/components/providers/I18nProvider";
-
-const HIGHLIGHT = new Set(["Infectious", "Disease"]);
+import { parseHighlight, plainTitle } from "@/lib/i18n/highlight";
 
 const CHIPS = [
   "hero.chip_arv",
@@ -95,33 +94,38 @@ export default function Hero() {
 
           {/* headline */}
           <h1
+            aria-label={plainTitle(t("hero.headline"))}
             className="font-display text-display-xl font-medium text-frost"
             style={{ perspective: "900px" }}
           >
-            {t("hero.headline").split(" ").map((word, i) => (
-              <span
-                key={i}
-                className="inline-block overflow-hidden pb-2 align-top"
-              >
-                <motion.span
-                  variants={{
-                    hidden: { y: "110%", rotateX: -35, opacity: 0 },
-                    visible: {
-                      y: 0,
-                      rotateX: 0,
-                      opacity: 1,
-                      transition: { duration: 1, ease: EASE },
-                    },
-                  }}
-                  className={`inline-block will-change-transform ${
-                    HIGHLIGHT.has(word) ? "text-gradient-bio" : ""
-                  }`}
+            {parseHighlight(t("hero.headline")).map((tk, i) =>
+              tk.word.trim() === "" ? (
+                <Fragment key={i}> </Fragment>
+              ) : (
+                <span
+                  key={i}
+                  aria-hidden
+                  className="inline-block overflow-hidden pb-2 align-top"
                 >
-                  {word}
-                  {" "}
-                </motion.span>
-              </span>
-            ))}
+                  <motion.span
+                    variants={{
+                      hidden: { y: "110%", rotateX: -35, opacity: 0 },
+                      visible: {
+                        y: 0,
+                        rotateX: 0,
+                        opacity: 1,
+                        transition: { duration: 1, ease: EASE },
+                      },
+                    }}
+                    className={`inline-block will-change-transform ${
+                      tk.hl ? "text-gradient-bio" : ""
+                    }`}
+                  >
+                    {tk.word}
+                  </motion.span>
+                </span>
+              )
+            )}
           </h1>
 
           {/* subtitle */}

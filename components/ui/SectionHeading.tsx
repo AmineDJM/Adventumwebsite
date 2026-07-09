@@ -1,12 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Fragment } from "react";
 import { EASE, VIEWPORT, stagger, wordReveal } from "@/lib/anim";
+import { parseHighlight, plainTitle } from "@/lib/i18n/highlight";
 
 type SectionHeadingProps = {
   eyebrow: string;
+  /** Title, optionally with ⟦…⟧ around the words to gradient (any language). */
   title: string;
-  /** Words to render with the luminous gradient */
+  /** Legacy word list — used only if the title has no ⟦…⟧ markers. */
   highlight?: string[];
   sub?: string;
   align?: "left" | "center";
@@ -25,8 +28,14 @@ export default function SectionHeading({
   align = "left",
   className = "",
 }: SectionHeadingProps) {
-  const words = title.split(" ");
   const isCenter = align === "center";
+
+  // Marker-based highlight (locale-agnostic); fall back to the legacy word list.
+  const hasMarkers = title.includes("⟦");
+  const tokens = parseHighlight(title).map((tk) => {
+    if (hasMarkers || !highlight.length) return tk;
+    return { ...tk, hl: highlight.includes(tk.word.replace(/[.,]/g, "")) };
+  });
 
   return (
     <motion.div
@@ -50,24 +59,30 @@ export default function SectionHeading({
       </motion.p>
 
       <h2
+        aria-label={plainTitle(title)}
         className="font-display text-display-lg font-medium text-frost"
         style={{ perspective: "800px" }}
       >
-        {words.map((word, i) => (
-          <span key={i} className="inline-block overflow-hidden pb-1 align-top">
-            <motion.span
-              variants={wordReveal}
-              className={`inline-block will-change-transform ${
-                highlight.includes(word.replace(/[.,]/g, ""))
-                  ? "text-gradient-bio"
-                  : ""
-              }`}
+        {tokens.map((tk, i) =>
+          tk.word.trim() === "" ? (
+            <Fragment key={i}> </Fragment>
+          ) : (
+            <span
+              key={i}
+              aria-hidden
+              className="inline-block overflow-hidden pb-1 align-top"
             >
-              {word}
-              {i < words.length - 1 ? " " : ""}
-            </motion.span>
-          </span>
-        ))}
+              <motion.span
+                variants={wordReveal}
+                className={`inline-block will-change-transform ${
+                  tk.hl ? "text-gradient-bio" : ""
+                }`}
+              >
+                {tk.word}
+              </motion.span>
+            </span>
+          )
+        )}
       </h2>
 
       {sub && (
