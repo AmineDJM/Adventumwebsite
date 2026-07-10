@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import InfectiologyFocus from "@/components/InfectiologyFocus";
 import Mission from "@/components/Mission";
-import Portfolio from "@/components/Portfolio";
 import RegulatoryJourney from "@/components/RegulatoryJourney";
 import MarketAccess from "@/components/MarketAccess";
 import ScientificPlatform from "@/components/ScientificPlatform";
@@ -25,7 +24,6 @@ export default function Home() {
         <Hero />
         <InfectiologyFocus />
         <Mission />
-        <Portfolio />
         <RegulatoryJourney />
         <MarketAccess />
         <ScientificPlatform />

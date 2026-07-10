@@ -1,8 +1,8 @@
 /**
  * Stage model for the animated HIV replication-cycle module (MyPathology).
  * Purely educational: it describes the biology and the therapeutic CLASS that
- * acts at each step. Molecule names appear as Adventum portfolio focus
- * examples only — no approval/availability claim is made anywhere.
+ * acts at each step. No products, no company data — no approval/availability
+ * claim is made anywhere.
  *
  * `el` values (0..1) drive element opacity/scale; the component lerps the
  * live scene toward the active stage's values every frame.
@@ -26,8 +26,6 @@ export type CycleStage = {
   descKey: string;
   /** therapeutic class acting here (i18n key) or null */
   targetKey: string | null;
-  /** does the acting class map to an Adventum focus area */
-  focus?: boolean;
   cam: [number, number, number];
   look: [number, number, number];
   el: CycleElements;
@@ -71,7 +69,6 @@ export const CYCLE_STAGES: CycleStage[] = [
     titleKey: "cycle.s3_title",
     descKey: "cycle.s3_desc",
     targetKey: "cycle.s3_target",
-    focus: true,
     cam: [2.4, 0.6, 5.2],
     look: [2.4, 0.3, 0],
     el: { ...ZERO, dna: 0.3, integrated: 1 },
@@ -108,7 +105,6 @@ export const CYCLE_STAGES: CycleStage[] = [
     titleKey: "cycle.s7_title",
     descKey: "cycle.s7_desc",
     targetKey: "cycle.s7_target",
-    focus: true,
     cam: [-3, 0.5, 5.6],
     look: [-3.2, 0.2, 0],
     el: { ...ZERO, budVirion: 0.5, mature: 1 },

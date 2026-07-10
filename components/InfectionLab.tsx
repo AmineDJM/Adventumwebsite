@@ -229,13 +229,11 @@ function Hotspot({
   position,
   color,
   active,
-  focus,
   onActivate,
 }: {
   position: [number, number, number];
   color: THREE.Color;
   active: boolean;
-  focus?: boolean;
   onActivate: () => void;
 }) {
   const ring = useRef<THREE.Mesh>(null);
@@ -274,11 +272,11 @@ function Hotspot({
     >
       <mesh ref={core}>
         <sphereGeometry args={[0.075, 16, 16]} />
-        <meshBasicMaterial color={focus ? "#82C341" : color} toneMapped={false} />
+        <meshBasicMaterial color={color} toneMapped={false} />
       </mesh>
       <mesh ref={ring}>
         <ringGeometry args={[0.13, 0.16, 32]} />
-        <meshBasicMaterial color={focus ? "#82C341" : color} transparent opacity={0.55} side={THREE.DoubleSide} toneMapped={false} />
+        <meshBasicMaterial color={color} transparent opacity={0.55} side={THREE.DoubleSide} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -325,7 +323,6 @@ function LabScene({
             key={h.id}
             position={h.pos}
             color={color}
-            focus={h.focus}
             active={activeId === h.id}
             onActivate={() => setActiveId(h.id)}
           />
@@ -376,11 +373,11 @@ export default function InfectionLab() {
     return () => io.disconnect();
   }, []);
 
-  // when switching pathogen, focus its first focus-target (or first hotspot)
+  // when switching pathogen, highlight its first hotspot
   const selectPathogen = (key: PathogenKey) => {
     setSelected(key);
     const p = PATHOGENS.find((x) => x.key === key)!;
-    const first = p.hotspots.find((h) => h.focus) ?? p.hotspots[0];
+    const first = p.hotspots[0];
     setActiveId(first ? first.id : null);
   };
 
@@ -526,18 +523,13 @@ export default function InfectionLab() {
                       <span
                         className="h-2.5 w-2.5 rounded-full"
                         style={{
-                          backgroundColor: activeSpot.focus ? "#82C341" : pathogen.accent,
-                          boxShadow: `0 0 10px ${activeSpot.focus ? "#82C341" : pathogen.accent}`,
+                          backgroundColor: pathogen.accent,
+                          boxShadow: `0 0 10px ${pathogen.accent}`,
                         }}
                       />
                       <h4 className="font-display text-lg font-medium text-frost">
                         {t(activeSpot.labelKey)}
                       </h4>
-                      {activeSpot.focus && (
-                        <span className="rounded-full border border-lime/40 bg-lime/10 px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-lime">
-                          {t("lab.focus_badge")}
-                        </span>
-                      )}
                     </div>
                     <p className="mt-3 text-sm leading-relaxed text-silver">
                       {t(activeSpot.descKey)}

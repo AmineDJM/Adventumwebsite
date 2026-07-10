@@ -1,9 +1,8 @@
 /**
  * Data model for the interactive "Infection Intelligence" explorer.
  * Content is educational only — it describes the biology and the
- * therapeutic CLASS that acts on each target. No product is described as
- * approved or available; molecule names appear as portfolio focus examples.
- * All display strings are i18n keys resolved via t().
+ * therapeutic CLASS that acts on each target. No products, no company
+ * data. All display strings are i18n keys resolved via t().
  */
 
 export type PathogenKey = "hiv" | "hepatitis" | "bacteria" | "fungus";
@@ -14,8 +13,6 @@ export type Hotspot = {
   pos: [number, number, number];
   labelKey: string;
   descKey: string;
-  /** true when this target maps to an Adventum portfolio focus */
-  focus?: boolean;
 };
 
 export type Pathogen = {
@@ -38,8 +35,8 @@ export const PATHOGENS: Pathogen[] = [
     hotspots: [
       { id: "env", pos: [0, 1.85, 0], labelKey: "lab.hiv_env_label", descKey: "lab.hiv_env_desc" },
       { id: "rt", pos: [-1.15, 0.2, 0.9], labelKey: "lab.hiv_rt_label", descKey: "lab.hiv_rt_desc" },
-      { id: "in", pos: [1.2, -0.1, 0.7], labelKey: "lab.hiv_in_label", descKey: "lab.hiv_in_desc", focus: true },
-      { id: "pr", pos: [0.15, -1.55, 0.5], labelKey: "lab.hiv_pr_label", descKey: "lab.hiv_pr_desc", focus: true },
+      { id: "in", pos: [1.2, -0.1, 0.7], labelKey: "lab.hiv_in_label", descKey: "lab.hiv_in_desc" },
+      { id: "pr", pos: [0.15, -1.55, 0.5], labelKey: "lab.hiv_pr_label", descKey: "lab.hiv_pr_desc" },
     ],
   },
   {
@@ -50,7 +47,7 @@ export const PATHOGENS: Pathogen[] = [
     accent: "#2f83d6",
     hotspots: [
       { id: "surface", pos: [0, 1.7, 0.4], labelKey: "lab.hep_surface_label", descKey: "lab.hep_surface_desc" },
-      { id: "pol", pos: [0.9, -0.6, 1.0], labelKey: "lab.hep_pol_label", descKey: "lab.hep_pol_desc", focus: true },
+      { id: "pol", pos: [0.9, -0.6, 1.0], labelKey: "lab.hep_pol_label", descKey: "lab.hep_pol_desc" },
     ],
   },
   {
@@ -60,7 +57,7 @@ export const PATHOGENS: Pathogen[] = [
     overviewKey: "lab.bac_overview",
     accent: "#82C341",
     hotspots: [
-      { id: "wall", pos: [1.4, 0.9, 0.2], labelKey: "lab.bac_wall_label", descKey: "lab.bac_wall_desc", focus: true },
+      { id: "wall", pos: [1.4, 0.9, 0.2], labelKey: "lab.bac_wall_label", descKey: "lab.bac_wall_desc" },
       { id: "ribo", pos: [-0.4, 0.1, 1.0], labelKey: "lab.bac_ribo_label", descKey: "lab.bac_ribo_desc" },
     ],
   },
@@ -71,7 +68,7 @@ export const PATHOGENS: Pathogen[] = [
     overviewKey: "lab.fun_overview",
     accent: "#9BB4C9",
     hotspots: [
-      { id: "membrane", pos: [1.35, 1.1, 0.3], labelKey: "lab.fun_membrane_label", descKey: "lab.fun_membrane_desc", focus: true },
+      { id: "membrane", pos: [1.35, 1.1, 0.3], labelKey: "lab.fun_membrane_label", descKey: "lab.fun_membrane_desc" },
       { id: "bud", pos: [1.5, -1.0, 0.2], labelKey: "lab.fun_bud_label", descKey: "lab.fun_bud_desc" },
     ],
   },

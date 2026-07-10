@@ -390,14 +390,7 @@ export default function HIVCycle() {
                       {t(active.titleKey)}
                     </h3>
                     {active.targetKey && (
-                      <span
-                        className={`rounded-full border px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-[0.2em] ${
-                          active.focus
-                            ? "border-lime/50 bg-lime/10 text-lime"
-                            : "border-hairline/20 text-silver"
-                        }`}
-                      >
-                        {active.focus ? t("cycle.focus_badge") + " · " : ""}
+                      <span className="rounded-full border border-hairline/20 px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-silver">
                         {t(active.targetKey)}
                       </span>
                     )}
@@ -462,7 +455,7 @@ export default function HIVCycle() {
                           : i < stage
                           ? "border-transparent bg-bio/70"
                           : "border-hairline/30 bg-abyss"
-                      } ${s.focus ? "ring-2 ring-lime/40 ring-offset-2 ring-offset-transparent" : ""}`}
+                      }`}
                     />
                   </button>
                 ))}

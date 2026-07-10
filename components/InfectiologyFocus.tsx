@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
+import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -190,13 +190,6 @@ export default function InfectiologyFocus() {
   const glowTopRef = useRef<HTMLDivElement>(null);
   const glowBottomRef = useRef<HTMLDivElement>(null);
 
-  const molecules = [
-    "Dolutegravir",
-    "Raltegravir",
-    "Darunavir",
-    t("infectiology.molecule_hospital"),
-  ];
-
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
@@ -307,44 +300,6 @@ export default function InfectiologyFocus() {
           ))}
         </motion.div>
 
-        {/* molecule strip */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={VIEWPORT}
-          variants={stagger(0.1)}
-          className="mt-16 md:mt-20"
-        >
-          <motion.div variants={lineGrow} className="hairline origin-left" />
-
-          <motion.div
-            variants={fadeUp}
-            className="mt-8 flex flex-col gap-5 lg:flex-row lg:items-baseline lg:justify-between"
-          >
-            <p className="font-mono text-[0.6rem] uppercase tracking-[0.35em] text-muted">
-              {t("infectiology.portfolio_label")}
-            </p>
-            <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-silver">
-              {molecules.map((molecule, i) => (
-                <li key={molecule} className="flex items-center gap-3">
-                  <span>{molecule}</span>
-                  {i < molecules.length - 1 && (
-                    <span aria-hidden className="text-frost/20">
-                      ·
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.p
-            variants={fadeUp}
-            className="mt-5 max-w-2xl text-xs leading-relaxed text-muted"
-          >
-            {t("infectiology.disclaimer")}
-          </motion.p>
-        </motion.div>
       </div>
     </section>
   );

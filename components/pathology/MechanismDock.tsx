@@ -14,13 +14,12 @@ type Target = {
   nameKey: string;
   classKey: string;
   descKey: string;
-  moleculesKey: string;
   accent: string;
 };
 
 const TARGETS: Target[] = [
-  { key: "integrase", nameKey: "dock.integrase_name", classKey: "dock.integrase_class", descKey: "dock.integrase_desc", moleculesKey: "dock.integrase_molecules", accent: "#68D2DF" },
-  { key: "protease", nameKey: "dock.protease_name", classKey: "dock.protease_class", descKey: "dock.protease_desc", moleculesKey: "dock.protease_molecules", accent: "#2f83d6" },
+  { key: "integrase", nameKey: "dock.integrase_name", classKey: "dock.integrase_class", descKey: "dock.integrase_desc", accent: "#68D2DF" },
+  { key: "protease", nameKey: "dock.protease_name", classKey: "dock.protease_class", descKey: "dock.protease_desc", accent: "#2f83d6" },
 ];
 
 const _o = new THREE.Object3D();
@@ -222,12 +221,6 @@ export default function MechanismDock() {
                     {t(target.nameKey)}
                   </h3>
                   <p className="mt-4 text-sm leading-relaxed text-silver">{t(target.descKey)}</p>
-                  <div className="mt-6 rounded-2xl border border-lime/25 bg-lime/[0.06] p-4">
-                    <p className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-lime">
-                      {t("dock.focus_badge")}
-                    </p>
-                    <p className="mt-1.5 text-sm text-frost">{t(target.moleculesKey)}</p>
-                  </div>
                 </motion.div>
               </AnimatePresence>
             </motion.div>
