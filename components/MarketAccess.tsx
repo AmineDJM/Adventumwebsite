@@ -11,7 +11,7 @@ import { EASE, VIEWPORT, fadeUp, lineGrow, stagger } from "@/lib/anim";
 
 /* ------------------------------------------------------------------ */
 /*  Market Access — one monolithic console surface for the hospital   */
-/*  & tender channel. Four modules separated by hairlines, a quiet    */
+/*  & tender channel. Three modules separated by hairlines, a quiet   */
 /*  OS header bar and a near-invisible scan-line sweep.               */
 /* ------------------------------------------------------------------ */
 
@@ -48,7 +48,7 @@ const MODULES: ConsoleModule[] = [
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
-          d="M6.5 3.5h8l3 3v14h-11v-17zM14.5 3.5V7h3M9.5 11.5h5M9.5 15h3.5"
+          d="M12 3.5v17M4.6 7.75l14.8 8.5M19.4 7.75l-14.8 8.5M12 3.5l-2 2m2-2l2 2M12 20.5l-2-2m2 2l2-2"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinecap="round"
@@ -61,22 +61,6 @@ const MODULES: ConsoleModule[] = [
     tagKey: "market.card3_tag",
     titleKey: "market.card3_title",
     bodyKey: "market.card3_body",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
-        <path
-          d="M12 3.5v17M4.6 7.75l14.8 8.5M19.4 7.75l-14.8 8.5M12 3.5l-2 2m2-2l2 2M12 20.5l-2-2m2 2l2-2"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    tagKey: "market.card4_tag",
-    titleKey: "market.card4_title",
-    bodyKey: "market.card4_body",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className={ICON_CLASS} aria-hidden>
         <path
@@ -211,29 +195,26 @@ export default function MarketAccess() {
 
           <div aria-hidden className="hairline" />
 
-          {/* 2x2 module grid, separated by hairlines */}
-          <motion.div variants={stagger(0.1)} className="grid lg:grid-cols-2">
+          {/* single-row module grid, separated by hairlines */}
+          <motion.div variants={stagger(0.1)} className="grid md:grid-cols-3">
             {MODULES.map((mod, i) => (
               <motion.article
                 key={mod.titleKey}
                 variants={fadeUp}
                 className="group relative p-8 transition-colors duration-500 ease-premium hover:bg-surface/[0.02] md:p-10 lg:p-12"
               >
-                {/* horizontal hairline above every module except the first
-                    (on lg only above the second row) */}
+                {/* horizontal hairline between stacked modules (mobile only) */}
                 {i > 0 && (
                   <span
                     aria-hidden
-                    className={`absolute inset-x-0 top-0 hairline ${
-                      i === 1 ? "lg:hidden" : ""
-                    }`}
+                    className="absolute inset-x-0 top-0 hairline md:hidden"
                   />
                 )}
-                {/* vertical hairline on the right column, lg only */}
-                {i % 2 === 1 && (
+                {/* vertical hairline between columns (md and up) */}
+                {i > 0 && (
                   <span
                     aria-hidden
-                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-surface/10 to-transparent lg:block"
+                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-surface/10 to-transparent md:block"
                   />
                 )}
 

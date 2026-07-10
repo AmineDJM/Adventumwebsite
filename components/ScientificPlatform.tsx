@@ -13,7 +13,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
 /*  Scientific Platform — the capability stack.                        */
-/*  Six glass modules over a faint molecular network: the argument     */
+/*  Three glass pillars over a faint molecular network: the argument   */
 /*  that registration, supply and vigilance compound into a durable    */
 /*  operating platform rather than a trading company.                  */
 /* ------------------------------------------------------------------ */
@@ -39,21 +39,6 @@ function IconVirion() {
   );
 }
 
-function IconDossier() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden>
-      <path
-        d="M13.75 3.75H7.25a1 1 0 0 0-1 1v14.5a1 1 0 0 0 1 1h9.5a1 1 0 0 0 1-1V7.75l-4-4Z"
-        {...STROKE}
-        strokeLinejoin="round"
-      />
-      <path d="M13.75 3.75v4h4" {...STROKE} strokeLinejoin="round" />
-      <path d="M9.25 12h5.5" {...STROKE} strokeLinecap="round" />
-      <path d="M9.25 15.25h3.5" {...STROKE} strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function IconInstitution() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden>
@@ -73,24 +58,6 @@ function IconInstitution() {
   );
 }
 
-function IconLink() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden>
-      <path d="M9.25 14.75l5.5-5.5" {...STROKE} strokeLinecap="round" />
-      <path
-        d="M11.5 6.75 13 5.25a3.89 3.89 0 0 1 5.5 5.5L17 12.25"
-        {...STROKE}
-        strokeLinecap="round"
-      />
-      <path
-        d="M12.5 17.25 11 18.75a3.89 3.89 0 0 1-5.5-5.5L7 11.75"
-        {...STROKE}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function IconShieldPulse() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden>
@@ -105,22 +72,6 @@ function IconShieldPulse() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-function IconMolecule() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden>
-      <path
-        d="M10 9.5 6.54 11.5v4L10 17.5l3.46-2v-4L10 9.5Z"
-        {...STROKE}
-        strokeLinejoin="round"
-      />
-      <path d="M13.46 11.5 16 9.95" {...STROKE} strokeLinecap="round" />
-      <circle cx="17.6" cy="9" r="1.75" {...STROKE} />
-      <path d="M10 9.5v-2" {...STROKE} strokeLinecap="round" />
-      <circle cx="10" cy="6.25" r="1.25" {...STROKE} />
     </svg>
   );
 }
@@ -148,35 +99,14 @@ const CAPABILITIES: Capability[] = [
     titleKey: "platform.cap2_title",
     descKey: "platform.cap2_desc",
     accent: "pulse",
-    icon: <IconDossier />,
+    icon: <IconInstitution />,
   },
   {
     code: "CAP-03",
     titleKey: "platform.cap3_title",
     descKey: "platform.cap3_desc",
     accent: "bio",
-    icon: <IconInstitution />,
-  },
-  {
-    code: "CAP-04",
-    titleKey: "platform.cap4_title",
-    descKey: "platform.cap4_desc",
-    accent: "pulse",
-    icon: <IconLink />,
-  },
-  {
-    code: "CAP-05",
-    titleKey: "platform.cap5_title",
-    descKey: "platform.cap5_desc",
-    accent: "bio",
     icon: <IconShieldPulse />,
-  },
-  {
-    code: "CAP-06",
-    titleKey: "platform.cap6_title",
-    descKey: "platform.cap6_desc",
-    accent: "pulse",
-    icon: <IconMolecule />,
   },
 ];
 

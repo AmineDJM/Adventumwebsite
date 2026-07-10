@@ -9,7 +9,7 @@ import { EASE, VIEWPORT, fadeUp, stagger } from "@/lib/anim";
 import { useI18n } from "@/components/providers/I18nProvider";
 
 /* ------------------------------------------------------------------ */
-/*  Regulatory & Market Access Engine — an 8-stage vertical timeline.  */
+/*  Regulatory & Market Access Engine — a 4-phase vertical timeline.   */
 /*  A gradient progress spine fills on scroll (GSAP scrub) and each    */
 /*  stage node lights up as the line passes it. Mission-control calm.  */
 /* ------------------------------------------------------------------ */
@@ -40,26 +40,6 @@ const STEPS = [
     num: "04",
     titleKey: "regulatory.step04_title",
     bodyKey: "regulatory.step04_body",
-  },
-  {
-    num: "05",
-    titleKey: "regulatory.step05_title",
-    bodyKey: "regulatory.step05_body",
-  },
-  {
-    num: "06",
-    titleKey: "regulatory.step06_title",
-    bodyKey: "regulatory.step06_body",
-  },
-  {
-    num: "07",
-    titleKey: "regulatory.step07_title",
-    bodyKey: "regulatory.step07_body",
-  },
-  {
-    num: "08",
-    titleKey: "regulatory.step08_title",
-    bodyKey: "regulatory.step08_body",
   },
 ] as const;
 
