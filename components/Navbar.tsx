@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE } from "@/lib/anim";
 import { scrollToSection, getLenis } from "@/components/providers/SmoothScroll";
@@ -107,7 +106,7 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, ease: EASE, delay: 0.4 }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ease-premium ${
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-700 ease-premium ${
           scrolled
             ? "border-b border-hairline/[0.06] bg-abyss/70 backdrop-blur-2xl"
             : "border-b border-transparent bg-transparent"
@@ -124,34 +123,17 @@ export default function Navbar() {
                   onClick={go(link.href)}
                   className={`relative rounded-full px-4 py-2 text-[0.82rem] font-medium tracking-wide transition-colors duration-400 ${
                     active === link.href
-                      ? "text-frost"
-                      : "text-silver/80 hover:text-frost"
+                      ? "border border-hairline/10 bg-surface/[0.05] text-frost"
+                      : "border border-transparent text-silver/80 hover:text-frost"
                   }`}
                 >
                   {t(link.key)}
-                  {active === link.href && (
-                    <motion.span
-                      layoutId="nav-active"
-                      transition={{ duration: 0.5, ease: EASE }}
-                      className="absolute inset-0 -z-10 rounded-full border border-hairline/10 bg-surface/[0.05]"
-                    />
-                  )}
                 </a>
               </li>
             ))}
           </ul>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <Link
-              href="/pathology"
-              className="group relative inline-flex items-center gap-2 rounded-full border border-pulse/30 bg-pulse/[0.06] px-4 py-2 text-[0.8rem] font-semibold tracking-wide text-pulse transition-all duration-500 ease-premium hover:border-pulse/60 hover:bg-pulse/[0.12] hover:shadow-[0_0_30px_-8px_rgba(47,131,214,0.6)]"
-            >
-              <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
-                <circle cx="8" cy="8" r="2.4" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-              </svg>
-              {t("path.nav")}
-            </Link>
             <LanguageSwitcher />
             <ThemeToggle />
             <a
@@ -236,21 +218,6 @@ export default function Navbar() {
                   </a>
                 </motion.li>
               ))}
-              <motion.li
-                initial={{ opacity: 0, x: -32 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.6, ease: EASE, delay: 0.06 * LINKS.length }}
-              >
-                <Link
-                  href="/pathology"
-                  onClick={() => setOpen(false)}
-                  className="flex items-baseline gap-4 py-2 font-display text-3xl font-medium text-gradient-bio"
-                >
-                  <span className="font-mono text-xs text-pulse/60">★</span>
-                  {t("path.nav")}
-                </Link>
-              </motion.li>
               <motion.li
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -1,7 +1,11 @@
 export const LOCALES = ["en", "fr", "hi", "zh"] as const;
 export type Locale = (typeof LOCALES)[number];
 
-export const DEFAULT_LOCALE: Locale = "en";
+// French is the server-rendered default: it is the professional language of
+// the Algerian market and the language of the search queries that matter
+// most ("laboratoire pharmaceutique algérien", …). Browsers preferring
+// EN/HI/ZH are switched client-side by detectLocale().
+export const DEFAULT_LOCALE: Locale = "fr";
 
 export const LOCALE_META: Record<
   Locale,

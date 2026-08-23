@@ -43,16 +43,6 @@ export const stagger = (staggerChildren = 0.1, delayChildren = 0): Variants => (
   },
 });
 
-export const wordReveal: Variants = {
-  hidden: { opacity: 0, y: "0.6em", rotateX: -25 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    transition: { duration: 0.8, ease: EASE },
-  },
-};
-
 export const lineGrow: Variants = {
   hidden: { scaleX: 0 },
   visible: {

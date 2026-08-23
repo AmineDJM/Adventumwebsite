@@ -8,7 +8,7 @@ import { EASE, stagger } from "@/lib/anim";
 import { PrimaryButton, GhostButton } from "@/components/ui/Buttons";
 import SquareMosaic from "@/components/ui/SquareMosaic";
 import { useI18n } from "@/components/providers/I18nProvider";
-import { parseHighlight, plainTitle } from "@/lib/i18n/highlight";
+import { parseHighlight } from "@/lib/i18n/highlight";
 
 const CHIPS = [
   "hero.chip_arv",
@@ -92,41 +92,28 @@ export default function Hero() {
             {t("hero.status")}
           </motion.p>
 
-          {/* headline */}
-          <h1
-            aria-label={plainTitle(t("hero.headline"))}
+          {/* headline — real text (crawlable), animated as one reliable block */}
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 1.1, ease: EASE },
+              },
+            }}
             className="font-display text-display-xl font-medium text-frost"
-            style={{ perspective: "900px" }}
           >
             {parseHighlight(t("hero.headline")).map((tk, i) =>
-              tk.word.trim() === "" ? (
-                <Fragment key={i}> </Fragment>
-              ) : (
-                <span
-                  key={i}
-                  aria-hidden
-                  className="inline-block overflow-hidden pb-2 align-top"
-                >
-                  <motion.span
-                    variants={{
-                      hidden: { y: "110%", rotateX: -35, opacity: 0 },
-                      visible: {
-                        y: 0,
-                        rotateX: 0,
-                        opacity: 1,
-                        transition: { duration: 1, ease: EASE },
-                      },
-                    }}
-                    className={`inline-block will-change-transform ${
-                      tk.hl ? "text-gradient-bio" : ""
-                    }`}
-                  >
-                    {tk.word}
-                  </motion.span>
+              tk.hl ? (
+                <span key={i} className="text-gradient-bio">
+                  {tk.word}
                 </span>
+              ) : (
+                <Fragment key={i}>{tk.word}</Fragment>
               )
             )}
-          </h1>
+          </motion.h1>
 
           {/* subtitle */}
           <motion.p

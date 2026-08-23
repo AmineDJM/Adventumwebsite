@@ -1,9 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Fragment } from "react";
-import { EASE, VIEWPORT, stagger, wordReveal } from "@/lib/anim";
-import { parseHighlight, plainTitle } from "@/lib/i18n/highlight";
+import { parseHighlight } from "@/lib/i18n/highlight";
 
 type SectionHeadingProps = {
   eyebrow: string;
@@ -17,8 +12,10 @@ type SectionHeadingProps = {
 };
 
 /**
- * Section header with numbered eyebrow, per-word staggered headline
- * and a quiet supporting paragraph.
+ * Section header with numbered eyebrow, gradient-highlighted headline and a
+ * quiet supporting paragraph. Rendered as plain, always-visible text — the
+ * headline is real content for crawlers and can never be stuck hidden by a
+ * missed reveal animation.
  */
 export default function SectionHeading({
   eyebrow,
@@ -37,71 +34,50 @@ export default function SectionHeading({
     return { ...tk, hl: highlight.includes(tk.word.replace(/[.,]/g, "")) };
   });
 
+  // Merge consecutive tokens of the same kind into segments so the markup
+  // stays minimal and words wrap naturally.
+  const segments: { text: string; hl: boolean }[] = [];
+  for (const tk of tokens) {
+    const last = segments[segments.length - 1];
+    const hl = tk.word.trim() === "" ? (last?.hl ?? false) : tk.hl;
+    if (last && last.hl === hl) last.text += tk.word;
+    else segments.push({ text: tk.word, hl });
+  }
+
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={VIEWPORT}
-      variants={stagger(0.06)}
+    <div
       className={`${isCenter ? "mx-auto text-center" : ""} max-w-3xl ${className}`}
     >
-      <motion.p
-        variants={{
-          hidden: { opacity: 0, y: 12 },
-          visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
-        }}
+      <p
         className={`eyebrow mb-6 flex items-center gap-3 ${
           isCenter ? "justify-center" : ""
         }`}
       >
         <span className="inline-block h-px w-8 bg-gradient-to-r from-pulse/80 to-transparent" />
         {eyebrow}
-      </motion.p>
+      </p>
 
-      <h2
-        aria-label={plainTitle(title)}
-        className="font-display text-display-lg font-medium text-frost"
-        style={{ perspective: "800px" }}
-      >
-        {tokens.map((tk, i) =>
-          tk.word.trim() === "" ? (
-            <Fragment key={i}> </Fragment>
-          ) : (
-            <span
-              key={i}
-              aria-hidden
-              className="inline-block overflow-hidden pb-1 align-top"
-            >
-              <motion.span
-                variants={wordReveal}
-                className={`inline-block will-change-transform ${
-                  tk.hl ? "text-gradient-bio" : ""
-                }`}
-              >
-                {tk.word}
-              </motion.span>
+      <h2 className="font-display text-display-lg font-medium text-frost">
+        {segments.map((seg, i) =>
+          seg.hl ? (
+            <span key={i} className="text-gradient-bio">
+              {seg.text}
             </span>
+          ) : (
+            <span key={i}>{seg.text}</span>
           )
         )}
       </h2>
 
       {sub && (
-        <motion.p
-          variants={{
-            hidden: { opacity: 0, y: 20 },
-            visible: {
-              opacity: 1,
-              y: 0,
-              transition: { duration: 0.9, ease: EASE, delay: 0.15 },
-            },
-          }}
+        <p
           className={`mt-6 text-base leading-relaxed text-silver md:text-lg ${
             isCenter ? "mx-auto" : ""
           } max-w-2xl`}
         >
           {sub}
-        </motion.p>
+        </p>
       )}
-    </motion.div>
+    </div>
   );
 }
