@@ -5,7 +5,6 @@ import Mission from "@/components/Mission";
 import RegulatoryJourney from "@/components/RegulatoryJourney";
 import MarketAccess from "@/components/MarketAccess";
 import ScientificPlatform from "@/components/ScientificPlatform";
-import InfectionLab from "@/components/InfectionLabClient";
 import Partnerships from "@/components/Partnerships";
 import Vision from "@/components/Vision";
 import Contact from "@/components/Contact";
@@ -24,7 +23,6 @@ export default function Home() {
         <RegulatoryJourney />
         <MarketAccess />
         <ScientificPlatform />
-        <InfectionLab />
         <Partnerships />
         <Vision />
         <Contact />
