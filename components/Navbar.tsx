@@ -117,23 +117,18 @@ export default function Navbar() {
             : "border-b border-transparent bg-transparent"
         }`}
       >
-        {/* The header keeps its own container: slightly tighter side padding
-            than .shell at lg so the full menu fits 1024–1279px viewports. */}
-        <nav className="mx-auto flex h-[72px] w-full max-w-shell items-center justify-between px-5 sm:px-6 md:px-10 lg:px-8 xl:px-16">
+        {/* The header keeps its own container: tighter side padding than
+            .shell at lg so the full menu fits 1024–1279px viewports. */}
+        <nav className="mx-auto flex h-[72px] w-full max-w-shell items-center justify-between px-5 sm:px-6 md:px-10 lg:px-5 xl:px-16">
           <Logo />
 
-          <ul className="hidden items-center gap-0.5 lg:flex xl:gap-1">
+          <ul className="hidden items-center gap-0 lg:flex xl:gap-1">
             {LINKS.map((link) => (
-              <li
-                key={link.href}
-                // The logo already links home — drop the redundant "Home"
-                // entry on the compact desktop tier to buy back width.
-                className={link.href === "#home" ? "hidden xl:block" : ""}
-              >
+              <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={go(link.href)}
-                  className={`relative rounded-full px-2.5 py-2 text-[0.78rem] font-medium tracking-wide transition-colors duration-400 xl:px-4 xl:text-[0.82rem] ${
+                  className={`relative rounded-full px-2 py-2 text-[0.76rem] font-medium tracking-wide transition-colors duration-400 xl:px-4 xl:text-[0.82rem] ${
                     active === link.href
                       ? "border border-hairline/10 bg-surface/[0.05] text-frost"
                       : "border border-transparent text-silver/80 hover:text-frost"
@@ -145,15 +140,17 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
+          <div className="hidden items-center gap-1.5 lg:flex xl:gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-bio/30 bg-bio/[0.08] px-4 py-2 text-[0.75rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)] xl:px-5 xl:py-2.5 xl:text-[0.8rem]"
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-bio/30 bg-bio/[0.08] px-3.5 py-2 text-[0.73rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)] xl:px-5 xl:py-2.5 xl:text-[0.8rem]"
             >
-              <span className="relative flex h-1.5 w-1.5">
+              {/* the live dot is a flourish — it yields its width on the
+                  compact desktop tier so every menu entry fits */}
+              <span className="relative hidden h-1.5 w-1.5 xl:flex">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-bio opacity-60" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-bio" />
               </span>
