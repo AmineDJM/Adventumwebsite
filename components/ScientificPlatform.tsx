@@ -290,11 +290,15 @@ export default function ScientificPlatform() {
           variants={stagger(0.1)}
           className="mt-12 grid gap-5 md:mt-16 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
         >
-          {CAPABILITIES.map((cap) => (
+          {CAPABILITIES.map((cap, i) => (
             <GlassCard
               key={cap.code}
               accent={cap.accent}
-              className="flex h-full flex-col p-8"
+              className={`flex h-full flex-col p-8 ${
+                // 2-col tablet grid: let the last of three cards span the
+                // full row instead of sitting orphaned on the left.
+                i === CAPABILITIES.length - 1 ? "md:col-span-2 lg:col-span-1" : ""
+              }`}
             >
               <div className="flex items-start justify-between">
                 <span

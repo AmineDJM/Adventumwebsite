@@ -195,26 +195,28 @@ export default function MarketAccess() {
 
           <div aria-hidden className="hairline" />
 
-          {/* single-row module grid, separated by hairlines */}
-          <motion.div variants={stagger(0.1)} className="grid md:grid-cols-3">
+          {/* single-row module grid, separated by hairlines.
+              Stacked through tablet widths — three columns only get room
+              to breathe from lg upward. */}
+          <motion.div variants={stagger(0.1)} className="grid lg:grid-cols-3">
             {MODULES.map((mod, i) => (
               <motion.article
                 key={mod.titleKey}
                 variants={fadeUp}
                 className="group relative p-8 transition-colors duration-500 ease-premium hover:bg-surface/[0.02] md:p-10 lg:p-12"
               >
-                {/* horizontal hairline between stacked modules (mobile only) */}
+                {/* horizontal hairline between stacked modules (below lg) */}
                 {i > 0 && (
                   <span
                     aria-hidden
-                    className="absolute inset-x-0 top-0 hairline md:hidden"
+                    className="absolute inset-x-0 top-0 hairline lg:hidden"
                   />
                 )}
-                {/* vertical hairline between columns (md and up) */}
+                {/* vertical hairline between columns (lg and up) */}
                 {i > 0 && (
                   <span
                     aria-hidden
-                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-surface/10 to-transparent md:block"
+                    className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-surface/10 to-transparent lg:block"
                   />
                 )}
 

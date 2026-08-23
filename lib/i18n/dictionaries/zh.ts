@@ -12,7 +12,7 @@ const zh: Partial<Dict> = {
   "nav.partner": "成为合作伙伴",
   "nav.language": "语言",
   "nav.theme": "主题",
-  "hero.headline": "推动阿尔及利亚⟦传染病⟧诊疗事业",
+  "hero.headline": "以⟦卓越⟧服务患者",
   "hero.status": "阿尔及利亚 · 传染病治疗药物",
   "hero.subtitle": "Adventum Pharma 凭借卓越的法规能力、医院渠道以及战略性国际合作伙伴关系，开发、注册并商业化关键的传染病治疗药物。",
   "hero.cta_primary": "探索我们的专注领域",

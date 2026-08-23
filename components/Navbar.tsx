@@ -115,7 +115,7 @@ export default function Navbar() {
         <nav className="shell flex h-[72px] items-center justify-between">
           <Logo />
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul className="hidden items-center gap-1 xl:flex">
             {LINKS.map((link) => (
               <li key={link.href}>
                 <a
@@ -133,7 +133,7 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-3 xl:flex">
             <LanguageSwitcher />
             <ThemeToggle />
             <a
@@ -150,7 +150,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile controls */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 xl:hidden">
             <LanguageSwitcher />
             <ThemeToggle />
             <button
@@ -189,7 +189,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: EASE }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-abyss/95 backdrop-blur-2xl lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-abyss/95 backdrop-blur-2xl xl:hidden"
           >
             <div
               aria-hidden

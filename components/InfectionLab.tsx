@@ -472,7 +472,7 @@ export default function InfectionLab() {
               <div className="pointer-events-none absolute left-5 top-5 z-20 font-mono text-[0.6rem] uppercase tracking-[0.3em] text-silver/80">
                 {t(pathogen.tagKey)}
               </div>
-              <div className="pointer-events-none absolute bottom-5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap font-mono text-[0.58rem] uppercase tracking-[0.25em] text-muted">
+              <div className="pointer-events-none absolute inset-x-4 bottom-4 z-20 text-center font-mono text-[0.55rem] uppercase leading-relaxed tracking-[0.2em] text-muted sm:bottom-5 sm:text-[0.58rem] sm:tracking-[0.25em]">
                 {t("lab.hint_drag")}
               </div>
             </div>
@@ -556,7 +556,7 @@ export default function InfectionLab() {
                   key={h.id}
                   type="button"
                   onClick={() => setActiveId(h.id)}
-                  className={`rounded-lg border px-3 py-1.5 text-xs transition-all duration-300 ${
+                  className={`rounded-lg border px-3.5 py-2.5 text-xs transition-all duration-300 sm:px-3 sm:py-1.5 ${
                     activeId === h.id
                       ? "border-pulse/50 bg-pulse/10 text-frost"
                       : "border-hairline/12 text-silver hover:border-pulse/30 hover:text-frost"

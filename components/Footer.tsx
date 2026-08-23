@@ -104,13 +104,13 @@ export default function Footer() {
             aria-label={t("footer.nav_aria_label")}
           >
             <h3 className={columnTitle}>{t("footer.nav_heading")}</h3>
-            <ul className="mt-6 space-y-3">
+            <ul className="mt-5 space-y-1">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
                     onClick={go(link.href)}
-                    className="text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost"
+                    className="inline-block py-1.5 text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost"
                   >
                     {t(link.labelKey)}
                   </a>

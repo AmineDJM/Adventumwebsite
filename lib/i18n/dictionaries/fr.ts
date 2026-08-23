@@ -12,7 +12,7 @@ const fr: Partial<Dict> = {
   "nav.partner": "Devenir Partenaire",
   "nav.language": "Langue",
   "nav.theme": "Thème",
-  "hero.headline": "Faire progresser la prise en charge des ⟦maladies infectieuses⟧ en Algérie",
+  "hero.headline": "L'⟦excellence⟧ au service des patients",
   "hero.status": "Algérie · Thérapeutiques des maladies infectieuses",
   "hero.subtitle": "Adventum Pharma, laboratoire pharmaceutique algérien, développe, enregistre et commercialise des thérapies critiques contre les maladies infectieuses — excellence réglementaire, accès hospitalier et partenariats internationaux stratégiques.",
   "hero.cta_primary": "Découvrir nos domaines",

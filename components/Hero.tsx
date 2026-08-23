@@ -43,7 +43,7 @@ export default function Hero() {
     <section
       id="home"
       ref={sectionRef}
-      className="relative flex min-h-screen items-center overflow-hidden"
+      className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
 
       {/* cinematic vignette + bottom fade into the page */}
@@ -66,7 +66,7 @@ export default function Hero() {
         className="right-0 top-0 z-[2] h-[16rem] w-[26rem] max-w-[70vw] opacity-60"
       />
 
-      <div ref={contentRef} className="shell relative z-10 pb-20 pt-40">
+      <div ref={contentRef} className="shell relative z-10 pb-16 pt-32 md:pb-20 md:pt-40">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -155,7 +155,7 @@ export default function Hero() {
                 transition: { duration: 1.2, ease: EASE, delay: 0.2 },
               },
             }}
-            className="mt-16 flex flex-wrap gap-3"
+            className="mt-12 flex flex-wrap gap-2.5 md:mt-16 md:gap-3"
           >
             {CHIPS.map((chip) => (
               <li

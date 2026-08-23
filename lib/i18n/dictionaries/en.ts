@@ -11,7 +11,7 @@ const en = {
   "nav.partner": "Partner With Us",
   "nav.language": "Language",
   "nav.theme": "Theme",
-  "hero.headline": "Advancing ⟦Infectious Disease⟧ Care in Algeria",
+  "hero.headline": "⟦Excellence⟧ in the Service of Patients",
   "hero.status": "Algeria · Infectious Disease Therapeutics",
   "hero.subtitle": "Adventum Pharma is an Algerian pharmaceutical company that develops, registers and commercializes critical infectious disease therapies — through regulatory excellence, hospital access and strategic international partnerships.",
   "hero.cta_primary": "Explore Our Focus",
