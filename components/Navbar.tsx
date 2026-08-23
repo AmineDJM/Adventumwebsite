@@ -97,7 +97,12 @@ export default function Navbar() {
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     setOpen(false);
-    scrollToSection(href);
+    // Wait two frames so the menu-close effect has restarted Lenis and
+    // lifted the html overflow lock before the scroll animation starts —
+    // otherwise the tap closes the menu but never scrolls (mobile bug).
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => scrollToSection(href))
+    );
   };
 
   return (
@@ -112,16 +117,23 @@ export default function Navbar() {
             : "border-b border-transparent bg-transparent"
         }`}
       >
-        <nav className="shell flex h-[72px] items-center justify-between">
+        {/* The header keeps its own container: slightly tighter side padding
+            than .shell at lg so the full menu fits 1024–1279px viewports. */}
+        <nav className="mx-auto flex h-[72px] w-full max-w-shell items-center justify-between px-5 sm:px-6 md:px-10 lg:px-8 xl:px-16">
           <Logo />
 
-          <ul className="hidden items-center gap-1 xl:flex">
+          <ul className="hidden items-center gap-0.5 lg:flex xl:gap-1">
             {LINKS.map((link) => (
-              <li key={link.href}>
+              <li
+                key={link.href}
+                // The logo already links home — drop the redundant "Home"
+                // entry on the compact desktop tier to buy back width.
+                className={link.href === "#home" ? "hidden xl:block" : ""}
+              >
                 <a
                   href={link.href}
                   onClick={go(link.href)}
-                  className={`relative rounded-full px-4 py-2 text-[0.82rem] font-medium tracking-wide transition-colors duration-400 ${
+                  className={`relative rounded-full px-2.5 py-2 text-[0.78rem] font-medium tracking-wide transition-colors duration-400 xl:px-4 xl:text-[0.82rem] ${
                     active === link.href
                       ? "border border-hairline/10 bg-surface/[0.05] text-frost"
                       : "border border-transparent text-silver/80 hover:text-frost"
@@ -133,13 +145,13 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden items-center gap-3 xl:flex">
+          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
             <LanguageSwitcher />
             <ThemeToggle />
             <a
               href="#contact"
               onClick={go("#contact")}
-              className="inline-flex items-center gap-2 rounded-full border border-bio/30 bg-bio/[0.08] px-5 py-2.5 text-[0.8rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)]"
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-bio/30 bg-bio/[0.08] px-4 py-2 text-[0.75rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)] xl:px-5 xl:py-2.5 xl:text-[0.8rem]"
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-bio opacity-60" />
@@ -150,7 +162,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile controls */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <LanguageSwitcher />
             <ThemeToggle />
             <button
@@ -187,9 +199,16 @@ export default function Navbar() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            // Only the panel itself animates out — child exit animations
+            // would keep the overlay alive (and swallowing taps) for over
+            // a second after the burger is tapped closed.
+            exit={{
+              opacity: 0,
+              pointerEvents: "none",
+              transition: { duration: 0.25, ease: EASE },
+            }}
             transition={{ duration: 0.5, ease: EASE }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-abyss/95 backdrop-blur-2xl xl:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-abyss/95 backdrop-blur-2xl lg:hidden"
           >
             <div
               aria-hidden
@@ -201,7 +220,6 @@ export default function Navbar() {
                   key={link.href}
                   initial={{ opacity: 0, x: -32 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.6, ease: EASE, delay: 0.06 * i }}
                 >
                   <a
@@ -221,7 +239,6 @@ export default function Navbar() {
               <motion.li
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
                 className="pt-8"
               >

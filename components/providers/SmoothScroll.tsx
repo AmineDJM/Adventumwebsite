@@ -12,18 +12,39 @@ export function getLenis(): Lenis | null {
   return lenisInstance;
 }
 
+const ANCHOR_OFFSET = -72; // fixed header height
+
 export function scrollToSection(hash: string) {
-  const target = document.querySelector(hash);
+  const target = document.querySelector(hash) as HTMLElement | null;
   if (!target) return;
-  if (lenisInstance) {
-    lenisInstance.scrollTo(target as HTMLElement, {
-      offset: -72,
-      duration: 1.4,
-      easing: (t: number) => 1 - Math.pow(1 - t, 4),
-    });
-  } else {
-    (target as HTMLElement).scrollIntoView({ behavior: "smooth" });
+  const lenis = lenisInstance;
+  if (!lenis) {
+    target.scrollIntoView({ behavior: "smooth" });
+    return;
   }
+  const easing = (t: number) => 1 - Math.pow(1 - t, 4);
+  lenis.scrollTo(target, {
+    offset: ANCHOR_OFFSET,
+    duration: 1.4,
+    easing,
+    // The mobile menu stops Lenis while open; without force a scroll
+    // requested during that lock is silently dropped.
+    force: true,
+    onComplete: () => {
+      // Lazily mounted sections (e.g. the 3D lab) can grow the page while
+      // a long scroll is in flight, leaving the anchor short of the
+      // viewport. Correct once against the final layout.
+      const drift = target.getBoundingClientRect().top + ANCHOR_OFFSET;
+      if (Math.abs(drift) > 8) {
+        lenis.scrollTo(target, {
+          offset: ANCHOR_OFFSET,
+          duration: 0.6,
+          easing,
+          force: true,
+        });
+      }
+    },
+  });
 }
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
