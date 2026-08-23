@@ -101,26 +101,38 @@ function ParticleMap() {
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
 
-    /* ---- reveal driven by visibility ---- */
+    /* ---- reveal + draw loop, both gated by visibility ----
+       The loop only runs while the map is on screen: an always-on canvas
+       repaint would tax every scroll elsewhere on the page. */
     let revealStart: number | null = null;
+    let raf = 0;
+    let running = false;
+    const REVEAL_MS = 5200;
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting && !startedRef.current) {
-            startedRef.current = true;
-            revealStart = performance.now();
+          if (e.isIntersecting) {
+            if (!startedRef.current) {
+              startedRef.current = true;
+              revealStart = performance.now();
+            }
+            if (!running) {
+              running = true;
+              raf = requestAnimationFrame(draw);
+            }
+          } else if (running) {
+            running = false;
+            cancelAnimationFrame(raf);
           }
         });
       },
-      { threshold: 0.35 }
+      { threshold: 0.05 }
     );
     io.observe(wrap);
 
-    /* ---- draw loop ---- */
-    let raf = 0;
-    const REVEAL_MS = 5200;
-
     const draw = (now: number) => {
+      if (!running) return;
       raf = requestAnimationFrame(draw);
       const t = now / 1000;
 
@@ -260,10 +272,11 @@ function ParticleMap() {
         ctx.fillText("ALGIERS", origin.x + 10, origin.y - 6);
       }
     };
-
-    raf = requestAnimationFrame(draw);
+    // No unconditional bootstrap — the IntersectionObserver starts the
+    // loop when the map becomes visible.
 
     return () => {
+      running = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
       io.disconnect();

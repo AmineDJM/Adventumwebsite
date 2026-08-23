@@ -351,8 +351,17 @@ export default function InfectionLab() {
   const [selected, setSelected] = useState<PathogenKey>("hiv");
   const [activeId, setActiveId] = useState<string | null>("in");
   const [visible, setVisible] = useState(false);
+  // Render for a short warm-up window right after mount (which happens
+  // during browser idle time): the WebGL programs compile then, instead
+  // of causing a long-frame hitch the first time the section scrolls in.
+  const [warmup, setWarmup] = useState(true);
   const [allowRotate, setAllowRotate] = useState(true);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => setWarmup(false), 700);
+    return () => clearTimeout(t);
+  }, []);
 
   const pathogen = PATHOGENS.find((p) => p.key === selected)!;
   const activeSpot = pathogen.hotspots.find((h) => h.id === activeId) ?? null;
@@ -455,7 +464,7 @@ export default function InfectionLab() {
               />
               <Canvas
                 className="absolute inset-0"
-                frameloop={visible ? "always" : "never"}
+                frameloop={visible || warmup ? "always" : "never"}
                 camera={{ position: [0, 0, 6.2], fov: 45 }}
                 dpr={[1, 1.7]}
                 gl={{ alpha: true, antialias: true }}

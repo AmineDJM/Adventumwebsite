@@ -25,7 +25,7 @@ export function scrollToSection(hash: string) {
   const easing = (t: number) => 1 - Math.pow(1 - t, 4);
   lenis.scrollTo(target, {
     offset: ANCHOR_OFFSET,
-    duration: 1.4,
+    duration: 1.15,
     easing,
     // The mobile menu stops Lenis while open; without force a scroll
     // requested during that lock is silently dropped.
@@ -38,7 +38,7 @@ export function scrollToSection(hash: string) {
       if (Math.abs(drift) > 8) {
         lenis.scrollTo(target, {
           offset: ANCHOR_OFFSET,
-          duration: 0.6,
+          duration: 0.45,
           easing,
           force: true,
         });

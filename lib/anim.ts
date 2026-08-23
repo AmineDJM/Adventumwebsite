@@ -8,7 +8,10 @@ import type { Variants } from "framer-motion";
 
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-export const VIEWPORT = { once: true, margin: "-15% 0px -15% 0px" } as const;
+// Bottom margin is positive so entrances arm slightly BEFORE a section
+// scrolls into view: during a long menu scroll the work is spread along
+// the flight instead of piling up in one heavy frame at the landing.
+export const VIEWPORT = { once: true, margin: "-10% 0px 10% 0px" } as const;
 
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 36 },
