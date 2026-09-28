@@ -31,9 +31,18 @@ services:
       - key: ADMIN_SESSION_SECRET
         sync: false
 
-      # Where job postings created from the admin are written. Point this at
-      # the mount path of a persistent disk (see below) so postings survive
-      # restarts and deploys.
+      # Content API (/api/v1/*) used by the ERP to publish jobs and
+      # articles. Generate a long random key and set it identically here and
+      # in the ERP. Optional: ERP_WEBHOOK_SECRET additionally requires an
+      # HMAC-SHA256 signature of the request body.
+      - key: ERP_API_KEY
+        sync: false
+      - key: ERP_WEBHOOK_SECRET
+        sync: false
+
+      # Where job postings and ERP-pushed articles are written. Point this
+      # at the mount path of a persistent disk (see below) so content
+      # survives restarts and deploys.
       - key: JOBS_DATA_DIR
         value: /var/data
 

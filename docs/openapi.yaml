@@ -1,0 +1,404 @@
+openapi: 3.1.0
+info:
+  title: Adventum Pharma — Content API
+  version: "1.0.0"
+  description: |
+    Machine-to-machine API used by the Adventum ERP to publish job postings
+    and blog articles on the public website.
+
+    Model: the ERP is the source of truth and pushes content. Writes are
+    idempotent on `externalId` (the ERP's own identifier), so retrying a
+    request is always safe. After each write the site revalidates the
+    affected pages, the sitemap and the RSS feed — no redeploy needed.
+  contact:
+    name: Adventum Pharma
+    email: Info@adventumdz.com
+
+servers:
+  - url: https://www.adventumdz.com/api/v1
+    description: Production
+  - url: http://localhost:3000/api/v1
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: health
+  - name: jobs
+  - name: posts
+
+paths:
+  /health:
+    get:
+      tags: [health]
+      summary: Connectivity and credential check
+      security: []
+      responses:
+        "200":
+          description: Service reachable. `authenticated` is true when a valid key was sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  service: { type: string, example: adventum-content-api }
+                  version: { type: string, example: "1" }
+                  configured:
+                    type: boolean
+                    description: Whether ERP_API_KEY is set on the website.
+                  authenticated: { type: boolean }
+                  capabilities:
+                    type: array
+                    items: { type: string }
+                  serverTime: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /jobs:
+    get:
+      tags: [jobs]
+      summary: List every job posting held by the site (drafts included)
+      responses:
+        "200":
+          description: Full list, for reconciliation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count: { type: integer }
+                  jobs:
+                    type: array
+                    items: { $ref: "#/components/schemas/JobRecord" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "503": { $ref: "#/components/responses/Unavailable" }
+
+  /jobs/{externalId}:
+    parameters:
+      - $ref: "#/components/parameters/ExternalId"
+    get:
+      tags: [jobs]
+      summary: Read one job posting
+      responses:
+        "200":
+          description: Found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job: { $ref: "#/components/schemas/JobRecord" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    put:
+      tags: [jobs]
+      summary: Create or update a job posting (idempotent)
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/JobInput" }
+      responses:
+        "200":
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JobWriteResult" }
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JobWriteResult" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+        "503": { $ref: "#/components/responses/Unavailable" }
+    delete:
+      tags: [jobs]
+      summary: Delete a job posting
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted: { type: boolean }
+                  externalId: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "503": { $ref: "#/components/responses/Unavailable" }
+
+  /posts:
+    get:
+      tags: [posts]
+      summary: List ERP-owned articles, plus read-only repository articles
+      responses:
+        "200":
+          description: ERP articles, and the Markdown articles the ERP cannot overwrite.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count: { type: integer }
+                  posts:
+                    type: array
+                    items: { $ref: "#/components/schemas/PostRecord" }
+                  readOnlyFileArticles:
+                    type: array
+                    description: Articles committed in the website repository. A pushed article sharing one of these slugs is ignored publicly.
+                    items:
+                      type: object
+                      properties:
+                        slug: { type: string }
+                        url: { type: string }
+                        title: { type: string }
+                        date: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /posts/{externalId}:
+    parameters:
+      - $ref: "#/components/parameters/ExternalId"
+    get:
+      tags: [posts]
+      summary: Read one article
+      responses:
+        "200":
+          description: Found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post: { $ref: "#/components/schemas/PostRecord" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    put:
+      tags: [posts]
+      summary: Create or update an article (idempotent)
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PostInput" }
+      responses:
+        "200":
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PostWriteResult" }
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PostWriteResult" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+        "503": { $ref: "#/components/responses/Unavailable" }
+    delete:
+      tags: [posts]
+      summary: Delete an article
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted: { type: boolean }
+                  externalId: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "503": { $ref: "#/components/responses/Unavailable" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Value of ERP_API_KEY, shared by the website and the ERP.
+
+  parameters:
+    ExternalId:
+      name: externalId
+      in: path
+      required: true
+      description: The ERP's own identifier for the record. Idempotency key.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+        example: JOB-1042
+    Signature:
+      name: X-Adventum-Signature
+      in: header
+      required: false
+      description: |
+        `sha256=<hex>` — HMAC-SHA256 of the exact raw request body, keyed with
+        ERP_WEBHOOK_SECRET. Required only when that variable is set on the
+        website. Serialize the JSON once, sign that string, send that string.
+      schema:
+        type: string
+        example: sha256=9f2c…
+
+  responses:
+    BadRequest:
+      description: Malformed JSON, or an externalId outside 1–128 characters.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Missing/invalid bearer token, or invalid body signature. Do not retry blindly.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: No record for this externalId.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unprocessable:
+      description: A required field is missing or empty.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unavailable:
+      description: API not configured, or storage not writable. Retry with backoff.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+
+    JobInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          maxLength: 160
+          description: Drives the public URL.
+          example: Directeur Supply Chain
+        department: { type: string, maxLength: 120, example: Supply Chain }
+        location: { type: string, maxLength: 120, example: "Cheraga, Alger" }
+        type:
+          type: string
+          maxLength: 60
+          description: Maps to structured-data employmentType (CDD → TEMPORARY, Stage → INTERN, otherwise FULL_TIME).
+          example: CDI
+        experience: { type: string, maxLength: 120, example: 10 ans minimum }
+        summary: { type: string, maxLength: 600 }
+        mission:
+          description: Bullet list. A newline-separated string is also accepted.
+          oneOf:
+            - type: array
+              maxItems: 30
+              items: { type: string }
+            - type: string
+        profile:
+          oneOf:
+            - type: array
+              maxItems: 30
+              items: { type: string }
+            - type: string
+        offer:
+          oneOf:
+            - type: array
+              maxItems: 30
+              items: { type: string }
+            - type: string
+        published:
+          type: boolean
+          default: false
+          description: false keeps the posting off the public site.
+
+    JobRecord:
+      allOf:
+        - $ref: "#/components/schemas/JobInput"
+        - type: object
+          properties:
+            externalId: { type: string, nullable: true }
+            id: { type: string, format: uuid }
+            slug: { type: string }
+            url: { type: string, example: /carrieres/directeur-supply-chain }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    JobWriteResult:
+      type: object
+      properties:
+        created: { type: boolean }
+        job: { $ref: "#/components/schemas/JobRecord" }
+
+    PostInput:
+      type: object
+      required: [title, body]
+      properties:
+        title: { type: string, maxLength: 200 }
+        body:
+          type: string
+          maxLength: 200000
+          description: |
+            Markdown. `##` headings become the article's table of contents.
+            Do not include an H1 — the title provides it. Reading time,
+            HTML rendering and structured data are handled by the website.
+        description:
+          type: string
+          maxLength: 400
+          description: Meta description shown by search engines. Aim for 150–160 characters.
+        slug:
+          type: string
+          maxLength: 96
+          description: Derived from the title when omitted. Determines the URL.
+        category: { type: string, maxLength: 80, default: Secteur }
+        tags:
+          type: array
+          maxItems: 20
+          items: { type: string }
+          description: Drives the "related articles" block.
+        author: { type: string, maxLength: 120, default: Adventum Pharma }
+        date:
+          type: string
+          format: date-time
+          description: Publication date; feeds datePublished. Defaults to now.
+        updated:
+          type: string
+          format: date-time
+          description: Feeds dateModified.
+        featured:
+          type: boolean
+          default: false
+          description: Pins the article to the top of the blog index.
+        published:
+          type: boolean
+          default: true
+          description: Send false to stage a draft.
+
+    PostRecord:
+      allOf:
+        - $ref: "#/components/schemas/PostInput"
+        - type: object
+          properties:
+            externalId: { type: string }
+            url: { type: string, example: /blog/tracabilite-des-lots }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    PostWriteResult:
+      type: object
+      properties:
+        created: { type: boolean }
+        post: { $ref: "#/components/schemas/PostRecord" }

@@ -31,3 +31,4 @@ next-env.d.ts
 
 # Runtime job postings written by the admin (seed is committed)
 /data/jobs.json
+/data/posts.json

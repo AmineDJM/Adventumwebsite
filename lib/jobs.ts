@@ -17,6 +17,8 @@ const SEED_FILE = path.join(process.cwd(), "data", "jobs.seed.json");
 
 export type Job = {
   id: string;
+  /** Stable id owned by the ERP; the idempotency key for upserts. */
+  externalId?: string;
   slug: string;
   title: string;
   department: string;
@@ -32,7 +34,10 @@ export type Job = {
   updatedAt: string;
 };
 
-export type JobInput = Omit<Job, "id" | "slug" | "createdAt" | "updatedAt">;
+export type JobInput = Omit<
+  Job,
+  "id" | "externalId" | "slug" | "createdAt" | "updatedAt"
+>;
 
 export function slugify(input: string): string {
   return input
@@ -153,4 +158,55 @@ export function parseJobInput(body: unknown): JobInput | null {
     offer: list(b.offer),
     published: Boolean(b.published),
   };
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  ERP-facing operations — keyed by externalId so repeated pushes of   */
+/*  the same record update it instead of creating duplicates.          */
+/* ------------------------------------------------------------------ */
+
+export function getJobByExternalId(externalId: string): Job | null {
+  return readRaw().find((j) => j.externalId === externalId) ?? null;
+}
+
+export function upsertJobByExternalId(
+  externalId: string,
+  input: JobInput
+): { job: Job; created: boolean } {
+  const jobs = readRaw();
+  const idx = jobs.findIndex((j) => j.externalId === externalId);
+  const now = new Date().toISOString();
+
+  if (idx === -1) {
+    const job: Job = {
+      ...input,
+      id: crypto.randomUUID(),
+      externalId,
+      slug: uniqueSlug(input.title, jobs),
+      createdAt: now,
+      updatedAt: now,
+    };
+    writeRaw([job, ...jobs]);
+    return { job, created: true };
+  }
+
+  const job: Job = {
+    ...jobs[idx],
+    ...input,
+    externalId,
+    slug: uniqueSlug(input.title, jobs, jobs[idx].id),
+    updatedAt: now,
+  };
+  jobs[idx] = job;
+  writeRaw(jobs);
+  return { job, created: false };
+}
+
+export function deleteJobByExternalId(externalId: string): boolean {
+  const jobs = readRaw();
+  const next = jobs.filter((j) => j.externalId !== externalId);
+  if (next.length === jobs.length) return false;
+  writeRaw(next);
+  return true;
 }

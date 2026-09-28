@@ -2,14 +2,20 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
+import { getPublishedErpPosts } from "@/lib/erp-posts";
 
 /**
- * File-based blog. Articles live as Markdown + front matter under
- * content/blog, so they are version-controlled, statically rendered and
- * instantly indexable — the arrangement search engines reward most.
+ * Blog reader with two merged sources:
+ *   1. Markdown files in content/blog — editorial, version-controlled.
+ *   2. Records pushed by the ERP (lib/erp-posts).
+ *
+ * A committed file always wins over an ERP record sharing its slug, so the
+ * repository stays the final authority on published content.
  */
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
+
+export type PostSource = "file" | "erp";
 
 export type PostMeta = {
   slug: string;
@@ -24,6 +30,7 @@ export type PostMeta = {
   /** minutes, derived from the body */
   readingTime: number;
   featured?: boolean;
+  source: PostSource;
 };
 
 export type Post = PostMeta & {
@@ -43,19 +50,15 @@ export function slugify(input: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-function readFiles(): string[] {
-  if (!fs.existsSync(BLOG_DIR)) return [];
-  return fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".md"));
-}
-
-function parse(file: string): Post {
-  const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
-  const { data, content } = matter(raw);
-
+/** Render Markdown to HTML, collecting h2 anchors for the sidebar. */
+function renderMarkdown(content: string): {
+  html: string;
+  toc: { id: string; text: string }[];
+  readingTime: number;
+} {
   const words = content.split(/\s+/).filter(Boolean).length;
   const readingTime = Math.max(1, Math.round(words / 200));
 
-  // Collect h2s for the table of contents and give them ids to link to.
   const toc: { id: string; text: string }[] = [];
   const renderer = new marked.Renderer();
   renderer.heading = ({ text, depth }) => {
@@ -71,6 +74,19 @@ function parse(file: string): Post {
     gfm: true,
   }) as string;
 
+  return { html, toc, readingTime };
+}
+
+function readFiles(): string[] {
+  if (!fs.existsSync(BLOG_DIR)) return [];
+  return fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".md"));
+}
+
+function parseFile(file: string): Post {
+  const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
+  const { data, content } = matter(raw);
+  const { html, toc, readingTime } = renderMarkdown(content);
+
   return {
     slug: data.slug ?? file.replace(/\.md$/, ""),
     title: data.title ?? "Sans titre",
@@ -82,16 +98,41 @@ function parse(file: string): Post {
     tags: Array.isArray(data.tags) ? data.tags : [],
     featured: Boolean(data.featured),
     readingTime,
+    source: "file",
     html,
     toc,
   };
 }
 
-/** All posts, newest first. */
+/** All published posts from both sources, newest first. */
 export function getAllPosts(): Post[] {
-  return readFiles()
-    .map(parse)
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  const filePosts = readFiles().map(parseFile);
+  const fileSlugs = new Set(filePosts.map((p) => p.slug));
+
+  const erpPosts: Post[] = getPublishedErpPosts()
+    .filter((p) => !fileSlugs.has(p.slug)) // committed files win
+    .map((p) => {
+      const { html, toc, readingTime } = renderMarkdown(p.body);
+      return {
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        date: p.date,
+        updated: p.updated,
+        author: p.author,
+        category: p.category,
+        tags: p.tags,
+        featured: p.featured,
+        readingTime,
+        source: "erp" as const,
+        html,
+        toc,
+      };
+    });
+
+  return [...filePosts, ...erpPosts].sort(
+    (a, b) => +new Date(b.date) - +new Date(a.date)
+  );
 }
 
 export function getPostSlugs(): string[] {
@@ -113,7 +154,10 @@ export function getRelatedPosts(slug: string, limit = 3): Post[] {
       post: p,
       score: p.tags.filter((tag) => current.tags.includes(tag)).length,
     }))
-    .sort((a, b) => b.score - a.score || +new Date(b.post.date) - +new Date(a.post.date))
+    .sort(
+      (a, b) =>
+        b.score - a.score || +new Date(b.post.date) - +new Date(a.post.date)
+    )
     .slice(0, limit)
     .map((x) => x.post);
 }

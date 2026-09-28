@@ -84,6 +84,29 @@ vide.
 
 ---
 
+## Intégration ERP
+
+Le site expose une API de contenu versionnée (`/api/v1`) qui permet à l'ERP
+de publier les offres d'emploi et les articles de blog sans passer par
+l'espace `/admin`.
+
+- **Contrat d'interface complet** : [`docs/ERP-INTEGRATION.md`](docs/ERP-INTEGRATION.md)
+  — à remettre tel quel à l'équipe ERP.
+- **Spécification machine** : [`docs/openapi.yaml`](docs/openapi.yaml)
+  (OpenAPI 3.1, exploitable pour générer un client).
+
+Principe : l'ERP est la source de vérité et **pousse** le contenu. Les
+écritures sont idempotentes sur l'identifiant de l'ERP (`externalId`), et
+le site revalide automatiquement les pages, le sitemap et le flux RSS.
+
+Variables requises côté site : `ERP_API_KEY` (et `ERP_WEBHOOK_SECRET` pour
+exiger en plus une signature HMAC du corps).
+
+Un article committé dans `content/blog/` reste prioritaire sur un article
+poussé par l'ERP qui porterait le même slug.
+
+---
+
 ## SEO
 
 Ce qui est en place :
