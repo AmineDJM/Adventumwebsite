@@ -1,0 +1,98 @@
+[
+  {
+    "id": "seed-affaires-reglementaires",
+    "slug": "charge-affaires-reglementaires",
+    "title": "Chargé(e) des Affaires Réglementaires",
+    "department": "Affaires réglementaires",
+    "location": "Cheraga, Alger",
+    "type": "CDI",
+    "experience": "3 ans minimum",
+    "summary": "Vous portez les dossiers d'enregistrement de bout en bout, de la constitution au suivi des variations et renouvellements, en lien direct avec les laboratoires partenaires et l'autorité compétente.",
+    "mission": [
+      "Constituer et contrôler les dossiers d'enregistrement avant dépôt",
+      "Assurer le suivi de l'instruction et répondre aux demandes de compléments",
+      "Piloter les variations, renouvellements et mises à jour d'information produit",
+      "Maintenir la veille réglementaire et alerter sur les évolutions applicables",
+      "Coordonner les échanges techniques avec les laboratoires partenaires"
+    ],
+    "profile": [
+      "Pharmacien(ne) ou formation scientifique supérieure",
+      "Expérience confirmée en affaires réglementaires pharmaceutiques",
+      "Maîtrise de la structure d'un dossier qualité, sécurité et efficacité",
+      "Rigueur documentaire et sens de l'anticipation des échéances",
+      "Français et anglais professionnels"
+    ],
+    "offer": [
+      "Un périmètre complet, de la sélection du produit au cycle de vie",
+      "Un contact direct avec des laboratoires internationaux",
+      "Une équipe resserrée où les décisions se prennent vite"
+    ],
+    "published": true,
+    "createdAt": "2026-09-01T09:00:00.000Z",
+    "updatedAt": "2026-09-01T09:00:00.000Z"
+  },
+  {
+    "id": "seed-assurance-qualite",
+    "slug": "responsable-assurance-qualite",
+    "title": "Responsable Assurance Qualité",
+    "department": "Qualité",
+    "location": "Cheraga, Alger",
+    "type": "CDI",
+    "experience": "5 ans minimum",
+    "summary": "Vous êtes garant(e) du système qualité : procédures, qualification des partenaires, maîtrise des conditions de stockage et de transport, gestion des écarts et amélioration continue.",
+    "mission": [
+      "Définir, maintenir et faire appliquer le système documentaire qualité",
+      "Qualifier et auditer les partenaires industriels et logistiques",
+      "Piloter la maîtrise des conditions de conservation, chaîne du froid comprise",
+      "Traiter les écarts, réclamations et actions correctives et préventives",
+      "Préparer et accompagner les inspections"
+    ],
+    "profile": [
+      "Pharmacien(ne) ou ingénieur(e) avec spécialisation qualité",
+      "Expérience solide en assurance qualité pharmaceutique",
+      "Connaissance des bonnes pratiques de fabrication et de distribution",
+      "Capacité à faire appliquer une exigence sans bloquer l'opérationnel",
+      "Français et anglais professionnels"
+    ],
+    "offer": [
+      "Un rôle structurant, avec un vrai mandat sur l'organisation",
+      "Des moyens pour construire le système, pas seulement le maintenir",
+      "Une exposition transverse à toute la chaîne"
+    ],
+    "published": true,
+    "createdAt": "2026-08-20T09:00:00.000Z",
+    "updatedAt": "2026-08-20T09:00:00.000Z"
+  },
+  {
+    "id": "seed-marches-institutionnels",
+    "slug": "charge-marches-institutionnels",
+    "title": "Chargé(e) des Marchés Institutionnels",
+    "department": "Accès au marché",
+    "location": "Cheraga, Alger",
+    "type": "CDI",
+    "experience": "2 ans minimum",
+    "summary": "Vous suivez les cycles d'appels d'offres publics, montez les dossiers de soumission et accompagnez l'exécution des marchés auprès des établissements de santé.",
+    "mission": [
+      "Assurer la veille des consultations et des cycles d'appels d'offres",
+      "Constituer les dossiers administratifs, techniques et financiers",
+      "Coordonner les pièces avec les équipes réglementaires et logistiques",
+      "Suivre l'exécution des marchés attribués et la relation avec les établissements",
+      "Analyser les résultats des consultations et en tirer des enseignements"
+    ],
+    "profile": [
+      "Formation supérieure en commerce, droit, pharmacie ou équivalent",
+      "Première expérience réussie sur des marchés publics, idéalement en santé",
+      "Excellente rigueur administrative et respect absolu des délais",
+      "Aisance relationnelle avec des interlocuteurs institutionnels",
+      "Français courant, anglais apprécié"
+    ],
+    "offer": [
+      "Un poste au cœur de l'activité de l'entreprise",
+      "Une montée en compétence rapide sur la commande publique de santé",
+      "Un accompagnement par des profils expérimentés"
+    ],
+    "published": true,
+    "createdAt": "2026-08-05T09:00:00.000Z",
+    "updatedAt": "2026-08-05T09:00:00.000Z"
+  }
+]

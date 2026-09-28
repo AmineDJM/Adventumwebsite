@@ -209,6 +209,76 @@ body {
     box-shadow: 0 1px 0 0 rgb(var(--hairline) / 0.06) inset,
       0 24px 60px -24px var(--card-shadow-color);
   }
+
+  /* Native anchor jumps (e.g. arriving from /blog on "/#expertise") must
+     clear the fixed header; the in-page smooth scroll applies its own
+     offset, so this only affects cross-page navigation and deep links. */
+  section[id],
+  [id^="contact-"] {
+    scroll-margin-top: 88px;
+  }
+
+  /* ------- Long-form article typography (blog bodies) -------
+     Applied to server-rendered Markdown, so the rules target plain tags
+     rather than utility classes. Measure is capped for readability. */
+  .prose-adventum {
+    @apply max-w-[68ch] text-[0.98rem] leading-[1.75] text-silver md:text-base;
+  }
+  .prose-adventum > * + * {
+    @apply mt-5;
+  }
+  .prose-adventum h2 {
+    @apply mt-14 scroll-mt-28 font-display text-2xl font-medium leading-snug text-frost md:text-3xl;
+  }
+  .prose-adventum h3 {
+    @apply mt-10 scroll-mt-28 font-display text-lg font-medium text-frost md:text-xl;
+  }
+  .prose-adventum p {
+    @apply text-silver;
+  }
+  .prose-adventum strong {
+    @apply font-semibold text-frost;
+  }
+  .prose-adventum em {
+    @apply text-muted;
+  }
+  .prose-adventum a {
+    @apply text-bio underline decoration-bio/40 underline-offset-4 transition-colors duration-300 hover:decoration-bio;
+  }
+  .prose-adventum ul,
+  .prose-adventum ol {
+    @apply space-y-2.5 pl-1;
+  }
+  .prose-adventum li {
+    @apply relative pl-6 text-silver;
+  }
+  .prose-adventum ul > li::before {
+    content: "";
+    @apply absolute left-1 top-[0.7em] h-1 w-1 rounded-full bg-bio/70;
+  }
+  .prose-adventum ol {
+    counter-reset: prose-counter;
+  }
+  .prose-adventum ol > li {
+    counter-increment: prose-counter;
+  }
+  .prose-adventum ol > li::before {
+    content: counter(prose-counter) ".";
+    @apply absolute left-0 top-0 font-mono text-xs text-pulse;
+  }
+  .prose-adventum blockquote {
+    @apply border-l-2 border-bio/40 pl-5 italic text-muted;
+  }
+  .prose-adventum hr {
+    @apply my-12 border-0 border-t border-hairline/10;
+  }
+  .prose-adventum code {
+    @apply rounded bg-surface/[0.06] px-1.5 py-0.5 font-mono text-[0.85em] text-frost;
+  }
+  /* trailing legal note */
+  .prose-adventum > p:last-child > em:only-child {
+    @apply block border-t border-hairline/10 pt-6 text-xs not-italic leading-relaxed text-muted;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

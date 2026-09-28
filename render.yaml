@@ -1,6 +1,5 @@
 # Render Blueprint — deploy Adventum Pharma as a Node Web Service.
 # In Render: New + → Blueprint → connect this repo → it reads this file.
-# (Or create a Web Service manually with the Build/Start commands below.)
 services:
   - type: web
     name: adventum-pharma
@@ -18,3 +17,32 @@ services:
         value: "22.14.0"
       - key: NODE_ENV
         value: production
+
+      # Canonical origin used by metadata, sitemap, robots, RSS and JSON-LD.
+      # Set this to the production domain once it is attached in Render.
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://www.adventumdz.com
+
+      # Admin area (/admin). Until ADMIN_PASSWORD is set the admin refuses
+      # every login — there is deliberately no default password.
+      # Set both values in the Render dashboard, never in this file.
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SESSION_SECRET
+        sync: false
+
+      # Where job postings created from the admin are written. Point this at
+      # the mount path of a persistent disk (see below) so postings survive
+      # restarts and deploys.
+      - key: JOBS_DATA_DIR
+        value: /var/data
+
+    # A persistent disk is REQUIRED for admin-created job postings to
+    # survive. Render's free plan does not support disks: on free, postings
+    # fall back to the committed seed (data/jobs.seed.json) after every
+    # restart. Upgrade the plan and uncomment this block to enable writes.
+    #
+    # disk:
+    #   name: adventum-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

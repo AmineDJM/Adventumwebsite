@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import InfectiologyFocus from "@/components/InfectiologyFocus";
+import ExpertiseFocus from "@/components/ExpertiseFocus";
 import Mission from "@/components/Mission";
 import RegulatoryJourney from "@/components/RegulatoryJourney";
 import MarketAccess from "@/components/MarketAccess";
@@ -18,7 +18,7 @@ export default function Home() {
       <main className="relative z-10">
         <Navbar />
         <Hero />
-        <InfectiologyFocus />
+        <ExpertiseFocus />
         <Mission />
         <RegulatoryJourney />
         <MarketAccess />

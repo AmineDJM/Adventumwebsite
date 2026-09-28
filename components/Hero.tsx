@@ -11,8 +11,8 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { parseHighlight } from "@/lib/i18n/highlight";
 
 const CHIPS = [
-  "hero.chip_arv",
-  "hero.chip_hospital",
+  "hero.chip_quality",
+  "hero.chip_institutional",
   "hero.chip_regulatory",
 ];
 
@@ -142,7 +142,7 @@ export default function Hero() {
             }}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
-            <PrimaryButton href="#infectiology">{t("hero.cta_primary")}</PrimaryButton>
+            <PrimaryButton href="#expertise">{t("hero.cta_primary")}</PrimaryButton>
             <GhostButton href="#contact">{t("hero.cta_secondary")}</GhostButton>
           </motion.div>
 

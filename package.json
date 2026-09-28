@@ -2,7 +2,7 @@
   "name": "adventum-pharma",
   "version": "1.0.0",
   "private": true,
-  "description": "Adventum Pharma \u2014 Advancing Infectious Disease Care in Algeria",
+  "description": "Adventum Pharma — Advancing Infectious Disease Care in Algeria",
   "engines": {
     "node": ">=18.18.0"
   },
@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "framer-motion": "^12.15.0",
+    "gray-matter": "^4.0.3",
     "gsap": "^3.13.0",
     "lenis": "^1.3.0",
+    "marked": "^18.0.14",
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

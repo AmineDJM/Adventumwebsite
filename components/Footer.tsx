@@ -1,26 +1,32 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { EASE, VIEWPORT, fadeIn, stagger } from "@/lib/anim";
 import { scrollToSection } from "@/components/providers/SmoothScroll";
 import AdventumMark from "@/components/ui/AdventumMark";
 import { useI18n } from "@/components/providers/I18nProvider";
 
-const NAV_LINKS = [
-  { labelKey: "footer.nav_home", href: "#home" },
-  { labelKey: "footer.nav_infectiology", href: "#infectiology" },
-  { labelKey: "footer.nav_platform", href: "#platform" },
-  { labelKey: "footer.nav_regulatory", href: "#regulatory" },
-  { labelKey: "footer.nav_partnerships", href: "#partnerships" },
-  { labelKey: "footer.nav_vision", href: "#vision" },
-  { labelKey: "footer.nav_contact", href: "#contact" },
+type FooterLink = { labelKey: string; href: string; type: "anchor" | "page" };
+
+const NAV_LINKS: FooterLink[] = [
+  { labelKey: "footer.nav_home", href: "#home", type: "anchor" },
+  { labelKey: "footer.nav_expertise", href: "#expertise", type: "anchor" },
+  { labelKey: "footer.nav_platform", href: "#platform", type: "anchor" },
+  { labelKey: "footer.nav_regulatory", href: "#regulatory", type: "anchor" },
+  { labelKey: "footer.nav_partnerships", href: "#partnerships", type: "anchor" },
+  { labelKey: "footer.nav_vision", href: "#vision", type: "anchor" },
+  { labelKey: "footer.nav_blog", href: "/blog", type: "page" },
+  { labelKey: "footer.nav_careers", href: "/carrieres", type: "page" },
+  { labelKey: "footer.nav_contact", href: "#contact", type: "anchor" },
 ];
 
 const FOCUS_AREAS = [
-  "footer.focus_hiv",
-  "footer.focus_hospital",
-  "footer.focus_public_health",
+  "footer.focus_quality",
+  "footer.focus_regulatory",
   "footer.focus_supply",
+  "footer.focus_partnership",
 ];
 
 const columnFade = {
@@ -46,8 +52,17 @@ function FooterMark() {
 export default function Footer() {
   const { t } = useI18n();
 
+  const pathname = usePathname();
+  const router = useRouter();
+  const onHome = pathname === "/";
+
+  // Anchors resolve from any route: on a sub-page they navigate home first.
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!onHome) {
+      router.push(`/${href}`);
+      return;
+    }
     scrollToSection(href);
   };
 
@@ -107,13 +122,19 @@ export default function Footer() {
             <ul className="mt-5 space-y-1">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={go(link.href)}
-                    className="inline-block py-1.5 text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost"
-                  >
-                    {t(link.labelKey)}
-                  </a>
+                  {link.type === "page" ? (
+                    <Link href={link.href} className="inline-block py-1.5 text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost">
+                      {t(link.labelKey)}
+                    </Link>
+                  ) : (
+                    <a
+                      href={onHome ? link.href : `/${link.href}`}
+                      onClick={go(link.href)}
+                      className="inline-block py-1.5 text-sm text-silver transition-colors duration-300 ease-premium hover:text-frost"
+                    >
+                      {t(link.labelKey)}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

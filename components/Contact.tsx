@@ -30,9 +30,9 @@ const INITIAL_FORM: ContactForm = {
 };
 
 const PRODUCT_AREAS = [
-  { value: "HIV / Antiretrovirals", labelKey: "contact.pa_arv" },
-  { value: "Hospital Anti-Infectives", labelKey: "contact.pa_hospital" },
-  { value: "Public Health Therapeutics", labelKey: "contact.pa_public_health" },
+  { value: "Institutional / Hospital", labelKey: "contact.pa_institutional" },
+  { value: "Retail / Pharmacy", labelKey: "contact.pa_retail" },
+  { value: "Specialty Medicines", labelKey: "contact.pa_specialty" },
   { value: "Other", labelKey: "contact.pa_other" },
 ];
 

@@ -153,30 +153,30 @@ type FocusArea = {
 
 const FOCUS_AREAS: FocusArea[] = [
   {
-    titleKey: "infectiology.card1_title",
-    tagKey: "infectiology.card1_tag",
-    bodyKey: "infectiology.card1_body",
+    titleKey: "expertise.card1_title",
+    tagKey: "expertise.card1_tag",
+    bodyKey: "expertise.card1_body",
     accent: "bio",
     icon: <VirionIcon />,
   },
   {
-    titleKey: "infectiology.card2_title",
-    tagKey: "infectiology.card2_tag",
-    bodyKey: "infectiology.card2_body",
+    titleKey: "expertise.card2_title",
+    tagKey: "expertise.card2_tag",
+    bodyKey: "expertise.card2_body",
     accent: "pulse",
     icon: <HospitalHexIcon />,
   },
   {
-    titleKey: "infectiology.card3_title",
-    tagKey: "infectiology.card3_tag",
-    bodyKey: "infectiology.card3_body",
+    titleKey: "expertise.card3_title",
+    tagKey: "expertise.card3_tag",
+    bodyKey: "expertise.card3_body",
     accent: "bio",
     icon: <PopulationIcon />,
   },
   {
-    titleKey: "infectiology.card4_title",
-    tagKey: "infectiology.card4_tag",
-    bodyKey: "infectiology.card4_body",
+    titleKey: "expertise.card4_title",
+    tagKey: "expertise.card4_tag",
+    bodyKey: "expertise.card4_body",
     accent: "pulse",
     icon: <SupplyRouteIcon />,
   },
@@ -184,7 +184,7 @@ const FOCUS_AREAS: FocusArea[] = [
 
 /* ------------------------------------------------------------- component */
 
-export default function InfectiologyFocus() {
+export default function ExpertiseFocus() {
   const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const glowTopRef = useRef<HTMLDivElement>(null);
@@ -211,7 +211,7 @@ export default function InfectiologyFocus() {
 
   return (
     <section
-      id="infectiology"
+      id="expertise"
       ref={sectionRef}
       className="relative overflow-hidden section-pad"
     >
@@ -238,10 +238,9 @@ export default function InfectiologyFocus() {
 
       <div className="shell relative">
         <SectionHeading
-          eyebrow={t("infectiology.eyebrow")}
-          title={t("infectiology.title")}
-          highlight={["Critical", "Therapies"]}
-          sub={t("infectiology.sub")}
+          eyebrow={t("expertise.eyebrow")}
+          title={t("expertise.title")}
+          sub={t("expertise.sub")}
         />
 
         {/* focus grid */}
@@ -262,7 +261,7 @@ export default function InfectiologyFocus() {
             >
               <GlassCard animated={false} accent={area.accent} className="h-full">
                 <div className="relative flex h-full flex-col p-8 md:p-10">
-                  <HexLattice id={`infectiology-hex-${i}`} />
+                  <HexLattice id={`expertise-hex-${i}`} />
 
                   <div className="relative flex items-start justify-between gap-4">
                     {/* icon chip */}
