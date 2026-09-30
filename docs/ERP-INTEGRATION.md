@@ -60,10 +60,15 @@ l'élément, le sitemap et le flux RSS). Aucun redéploiement n'est requis.
 
 2. Dans Render, ouvrir le service **du site** (`adventum-pharma`, pas celui de
    l'ERP) → **Environment** → **Add from .env** → coller le bloc →
-   **Save and deploy**. Pas « Save only » : le site ne lirait le bloc qu'au
-   prochain déploiement.
+   **Save, rebuild, and deploy**. Pas « Save only » : rien ne changerait. Ni
+   « Save and deploy » : d'après la documentation de Render, ce bouton
+   redéploie la version DÉJÀ construite, qui peut être une ancienne version
+   du site — elle reconnaîtrait la clé et publierait les offres, mais sans
+   formulaire de candidature. L'écran de l'ERP le signale (la santé du site
+   n'annonce pas `applications`) et nomme le geste qui rattrape :
+   **Manual Deploy › Deploy latest commit**.
 
-3. C'est tout. Le site redémarre (2 à 3 minutes). L'ERP présente la nouvelle
+3. C'est tout. Le site se reconstruit et redémarre (quelques minutes). L'ERP présente la nouvelle
    clé au site chaque minute pendant 30 minutes, puis toutes les 10 minutes
    jusqu'à 24 h, puis toutes les heures ; dès que le site l'accepte — ou dès
    que le site s'en sert pour appeler l'ERP — elle devient la clé active et
@@ -464,8 +469,8 @@ n'a pas de disque.
 
 - [ ] ERP : **Site web › Connexion au site › « Générer la clé »**
 - [ ] Render (service du site) : **Environment › Add from .env** → coller le
-      bloc → **Save and deploy**
-- [ ] Attendre 2 à 3 minutes : l'ERP passe à **« Relié »** de lui-même
+      bloc → **Save, rebuild, and deploy**
+- [ ] Attendre quelques minutes : l'ERP passe à **« Relié »** de lui-même
 - [ ] Publier une offre de test depuis l'ERP, vérifier `/carrieres`
 - [ ] Postuler à cette offre avec un CV de test, vérifier qu'il arrive dans
       l'ERP (**Recrutement › Candidatures du site**)
