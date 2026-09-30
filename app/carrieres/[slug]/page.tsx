@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageShell from "@/components/PageShell";
 import T from "@/components/ui/T";
+import ApplicationForm from "@/components/ApplicationForm";
 import { getJobBySlug } from "@/lib/jobs";
+import { erpLinked } from "@/lib/erp";
+import { restoreReady } from "@/lib/erp-sync";
 import {
   ADDRESS,
   CAREERS_EMAIL,
@@ -19,6 +22,7 @@ type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
+  await restoreReady();
   const job = getJobBySlug(slug);
   if (!job) return {};
 
@@ -65,8 +69,12 @@ function Bullets({ items }: { items: string[] }) {
 
 export default async function JobPage({ params }: Params) {
   const { slug } = await params;
+  // After a restart the site reloads its postings from the ERP: wait for it,
+  // briefly, rather than answer "not found" for an opening that exists.
+  await restoreReady();
   const job = getJobBySlug(slug);
   if (!job) notFound();
+  const linked = erpLinked();
 
   // Google for Jobs reads this: a well-formed JobPosting puts the opening
   // directly into Google's jobs experience.
@@ -135,9 +143,11 @@ export default async function JobPage({ params }: Params) {
     ]),
   ]);
 
-  const applyHref = `mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(
-    `Candidature — ${job.title}`
-  )}`;
+  // Linked to the ERP: the button leads to the form below. Not linked yet: the
+  // former e-mail link, so applying is never impossible.
+  const applyHref = linked
+    ? "#postuler"
+    : `mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(`Candidature — ${job.title}`)}`;
 
   return (
     <PageShell>
@@ -229,13 +239,21 @@ export default async function JobPage({ params }: Params) {
             )}
           </div>
 
+          {linked && (
+            <section id="postuler" className="mt-16 max-w-3xl scroll-mt-28">
+              <ApplicationForm linked jobSlug={job.slug} jobTitle={job.title} fallbackEmail={CAREERS_EMAIL} />
+            </section>
+          )}
+
           <div className="mt-16 flex flex-wrap items-center gap-6">
-            <a
-              href={applyHref}
-              className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
-            >
-              <T k="careers.apply_cta" />
-            </a>
+            {!linked && (
+              <a
+                href={applyHref}
+                className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
+              >
+                <T k="careers.apply_cta" />
+              </a>
+            )}
             <Link
               href="/carrieres"
               className="font-mono text-[0.62rem] uppercase tracking-[0.25em] text-pulse transition-colors hover:text-frost"

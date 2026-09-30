@@ -1,18 +1,20 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { dataDir, writeJsonAtomic } from "@/lib/storage";
+import { erpLinked } from "@/lib/erp";
 
 /**
  * Job postings store.
  *
- * Backed by a JSON file so the site needs no database to run. NOTE for
- * deployment: container filesystems are ephemeral — on Render, attach a
- * persistent disk mounted at the directory below (or set JOBS_DATA_DIR to
- * it) so postings created from the admin survive restarts and deploys.
+ * Backed by a JSON file so the site needs no database to run. The directory
+ * comes from lib/storage.ts, which falls back to a writable one when the
+ * configured disk is missing. Container filesystems are ephemeral: when the
+ * site is linked to the ERP, it reloads the ERP's postings on every start
+ * (lib/erp-sync.ts), so a restart loses nothing the ERP published.
  */
 
-const DATA_DIR = process.env.JOBS_DATA_DIR ?? path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "jobs.json");
+const dataFile = () => path.join(dataDir().dir, "jobs.json");
 const SEED_FILE = path.join(process.cwd(), "data", "jobs.seed.json");
 
 export type Job = {
@@ -51,11 +53,14 @@ export function slugify(input: string): string {
 
 function readRaw(): Job[] {
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, "utf8")) as Job[];
+    const file = dataFile();
+    if (fs.existsSync(file)) {
+      return JSON.parse(fs.readFileSync(file, "utf8")) as Job[];
     }
-    // First boot: fall back to the committed seed so the page is never empty.
-    if (fs.existsSync(SEED_FILE)) {
+    // First boot of an UNLINKED site: the committed seed keeps the page from
+    // looking empty. A site linked to the ERP never shows it — sample
+    // openings would draw real applications for positions that do not exist.
+    if (!erpLinked() && fs.existsSync(SEED_FILE)) {
       return JSON.parse(fs.readFileSync(SEED_FILE, "utf8")) as Job[];
     }
   } catch {
@@ -65,8 +70,7 @@ function readRaw(): Job[] {
 }
 
 function writeRaw(jobs: Job[]): void {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(jobs, null, 2), "utf8");
+  writeJsonAtomic(dataFile(), jobs);
 }
 
 function uniqueSlug(title: string, jobs: Job[], selfId?: string): string {
@@ -209,4 +213,36 @@ export function deleteJobByExternalId(externalId: string): boolean {
   if (next.length === jobs.length) return false;
   writeRaw(next);
   return true;
+}
+
+/**
+ * Replace every ERP-managed posting with the ERP's list in one write — used
+ * when the site reloads its content at start-up. Postings created in this
+ * site's own admin (no externalId) are kept untouched. Existing records keep
+ * their id, slug and creation date, so links already shared stay valid.
+ */
+export function replaceErpJobs(
+  items: { externalId: string; input: JobInput }[],
+  /** When the reload started: a record the ERP pushed AFTER that is newer than the list, and wins. */
+  since: string
+): { kept: number; written: number; removed: number } {
+  const current = readRaw();
+  const manual = current.filter((j) => !j.externalId);
+  const fresher = current.filter((j) => j.externalId && j.updatedAt > since);
+  const byExternal = new Map(current.filter((j) => j.externalId).map((j) => [j.externalId!, j] as const));
+  const now = new Date().toISOString();
+  const next: Job[] = [...manual, ...fresher];
+  const pushedMeanwhile = new Set(fresher.map((j) => j.externalId!));
+  for (const { externalId, input } of items) {
+    if (pushedMeanwhile.has(externalId)) continue;
+    const existing = byExternal.get(externalId);
+    const job: Job = existing
+      ? { ...existing, ...input, externalId, slug: uniqueSlug(input.title, next, existing.id), updatedAt: now }
+      : { ...input, id: crypto.randomUUID(), externalId, slug: uniqueSlug(input.title, next), createdAt: now, updatedAt: now };
+    next.push(job);
+  }
+  const wanted = new Set([...items.map((i) => i.externalId), ...pushedMeanwhile]);
+  const removed = [...byExternal.keys()].filter((k) => !wanted.has(k)).length;
+  writeRaw(next);
+  return { kept: manual.length, written: items.length, removed };
 }

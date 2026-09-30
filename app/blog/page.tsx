@@ -4,6 +4,7 @@ import PageShell from "@/components/PageShell";
 import PageHeading from "@/components/ui/PageHeading";
 import T from "@/components/ui/T";
 import { getAllPosts, formatDate } from "@/lib/blog";
+import { restoreReady } from "@/lib/erp-sync";
 import {
   SITE_NAME,
   SITE_URL,
@@ -36,7 +37,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogIndexPage() {
+// Articles published from the ERP arrive at runtime: the list must not be
+// frozen at build time (it would show only the committed Markdown files).
+export const dynamic = "force-dynamic";
+
+export default async function BlogIndexPage() {
+  await restoreReady();
   const posts = getAllPosts();
 
   const jsonLd = jsonLdScript([

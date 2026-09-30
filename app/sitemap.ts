@@ -2,12 +2,14 @@ import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog";
 import { getPublishedJobs } from "@/lib/jobs";
 import { SITE_URL } from "@/lib/site";
+import { restoreReady } from "@/lib/erp-sync";
 
 // Job postings change at runtime, so the sitemap is generated per request
 // rather than frozen at build time.
 export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await restoreReady();
   const posts = getAllPosts();
   const jobs = getPublishedJobs();
 

@@ -5,8 +5,12 @@
  * site never contradicts itself.
  */
 
+// The apex domain is the one that SERVES the site: www.adventumdz.com answers
+// with a permanent redirect to it (measured 30/09/2026). Canonical links,
+// sitemap and structured data must point at the final address, not at a
+// redirect — search engines treat that as a contradiction.
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.adventumdz.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://adventumdz.com"
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "Adventum Pharma";

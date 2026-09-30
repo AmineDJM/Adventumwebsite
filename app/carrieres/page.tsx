@@ -3,7 +3,10 @@ import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import PageHeading from "@/components/ui/PageHeading";
 import T from "@/components/ui/T";
+import ApplicationForm from "@/components/ApplicationForm";
 import { getPublishedJobs } from "@/lib/jobs";
+import { erpLinked } from "@/lib/erp";
+import { restoreReady } from "@/lib/erp-sync";
 import {
   CAREERS_EMAIL,
   SITE_NAME,
@@ -46,8 +49,12 @@ const VALUES = [
   { t: "careers.value3_title", b: "careers.value3_body" },
 ];
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  // After a restart the site reloads its postings from the ERP: wait for it,
+  // briefly, rather than show "no openings" while openings exist.
+  await restoreReady();
   const jobs = getPublishedJobs();
+  const linked = erpLinked();
 
   const jsonLd = jsonLdScript([
     breadcrumbJsonLd([
@@ -147,14 +154,9 @@ export default function CareersPage() {
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-silver md:text-base">
               <T k="careers.spontaneous_body" />
             </p>
-            <a
-              href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(
-                "Candidature spontanée"
-              )}`}
-              className="mt-7 inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
-            >
-              <T k="careers.spontaneous_cta" />
-            </a>
+            <div className="mt-7">
+              <ApplicationForm linked={linked} spontaneous framed={false} fallbackEmail={CAREERS_EMAIL} />
+            </div>
           </div>
         </div>
       </section>

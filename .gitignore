@@ -32,3 +32,6 @@ next-env.d.ts
 # Runtime job postings written by the admin (seed is committed)
 /data/jobs.json
 /data/posts.json
+# Applications waiting to reach the ERP — candidates' personal data, never committed
+/data/applications/
+/data/.write-probe-*

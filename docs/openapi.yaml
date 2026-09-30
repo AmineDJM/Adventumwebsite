@@ -10,13 +10,25 @@ info:
     idempotent on `externalId` (the ERP's own identifier), so retrying a
     request is always safe. After each write the site revalidates the
     affected pages, the sitemap and the RSS feed — no redeploy needed.
+
+    The link also works the other way (docs/ERP-INTEGRATION.md §11–§12),
+    with the SAME key and secret: the site sends the applications it
+    receives to `{ERP_BASE_URL}/api/site-web/v1/candidatures` (described
+    below under `webhooks`), and reloads its content from
+    `{ERP_BASE_URL}/api/site-web/v1/contenus` when it starts.
+
+    Signature: when ERP_WEBHOOK_SECRET is set on the website — always the
+    case once the ERP's block is pasted — EVERY authenticated request must
+    carry `X-Adventum-Signature`, reads and deletes included (HMAC of the
+    empty string when there is no body). The ERP applies the same rule to
+    the site's calls.
   contact:
     name: Adventum Pharma
     email: Info@adventumdz.com
 
 servers:
-  - url: https://www.adventumdz.com/api/v1
-    description: Production
+  - url: https://adventumdz.com/api/v1
+    description: Production (www.adventumdz.com redirects here)
   - url: http://localhost:3000/api/v1
     description: Local development
 
@@ -32,33 +44,28 @@ paths:
   /health:
     get:
       tags: [health]
-      summary: Connectivity and credential check
+      summary: Connectivity and credential check, and the state of the return link
+      description: |
+        Without an Authorization header: only whether the API is configured,
+        and `authenticated: false`. With a valid key (and signature): the
+        full status below — counts and dates only, never a candidate's data.
       security: []
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Service reachable. `authenticated` is true when a valid key was sent.
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: ok }
-                  service: { type: string, example: adventum-content-api }
-                  version: { type: string, example: "1" }
-                  configured:
-                    type: boolean
-                    description: Whether ERP_API_KEY is set on the website.
-                  authenticated: { type: boolean }
-                  capabilities:
-                    type: array
-                    items: { type: string }
-                  serverTime: { type: string, format: date-time }
+              schema: { $ref: "#/components/schemas/Health" }
         "401": { $ref: "#/components/responses/Unauthorized" }
 
   /jobs:
     get:
       tags: [jobs]
       summary: List every job posting held by the site (drafts included)
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Full list, for reconciliation.
@@ -80,6 +87,8 @@ paths:
     get:
       tags: [jobs]
       summary: Read one job posting
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Found.
@@ -119,6 +128,8 @@ paths:
     delete:
       tags: [jobs]
       summary: Delete a job posting
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Deleted.
@@ -137,6 +148,8 @@ paths:
     get:
       tags: [posts]
       summary: List ERP-owned articles, plus read-only repository articles
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: ERP articles, and the Markdown articles the ERP cannot overwrite.
@@ -167,6 +180,8 @@ paths:
     get:
       tags: [posts]
       summary: Read one article
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Found.
@@ -206,6 +221,8 @@ paths:
     delete:
       tags: [posts]
       summary: Delete an article
+      parameters:
+        - $ref: "#/components/parameters/Signature"
       responses:
         "200":
           description: Deleted.
@@ -219,6 +236,34 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "503": { $ref: "#/components/responses/Unavailable" }
+
+webhooks:
+  application:
+    post:
+      summary: An application submitted on the careers pages, sent to the ERP
+      description: |
+        Sent by the WEBSITE to `{ERP_BASE_URL}/api/site-web/v1/candidatures`
+        the moment the candidate clicks "Send", then retried in the
+        background (every minute for the ones due, with a growing delay up to
+        an hour) until the ERP answers 200 or 201. Authenticated with the
+        same bearer key, and signed over the exact body with the same secret.
+        Idempotent on `id`: a copy the ERP already has comes back as 200. The
+        site deletes its copy as soon as the ERP has it.
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Application" }
+      responses:
+        "201": { description: Received. }
+        "200": { description: Already received (same `id`) — nothing created twice. }
+        "400": { description: Unreadable body. Kept by the site for 7 days, then deleted. }
+        "401": { description: Key or signature refused. Retried (the key may be changing). }
+        "413": { description: Too large (CV limited to 5 MB). Not retried. }
+        "422": { description: Incomplete — the reason is in `error`. Not retried. }
+        "503": { description: The ERP is not linked yet. Retried. }
 
 components:
   securitySchemes:
@@ -244,8 +289,11 @@ components:
       required: false
       description: |
         `sha256=<hex>` — HMAC-SHA256 of the exact raw request body, keyed with
-        ERP_WEBHOOK_SECRET. Required only when that variable is set on the
-        website. Serialize the JSON once, sign that string, send that string.
+        ERP_WEBHOOK_SECRET; for a request without a body (GET, DELETE), the
+        HMAC of the empty string. Required on EVERY authenticated request
+        when that variable is set on the website (always the case with the
+        ERP's block). Serialize the JSON once, sign that string, send that
+        string.
       schema:
         type: string
         example: sha256=9f2c…
@@ -282,6 +330,97 @@ components:
       type: object
       properties:
         error: { type: string }
+
+    Health:
+      type: object
+      properties:
+        status: { type: string, example: ok }
+        service: { type: string, example: adventum-content-api }
+        version: { type: string, example: "1" }
+        configured:
+          type: boolean
+          description: Whether ERP_API_KEY is set on the website.
+        authenticated: { type: boolean }
+        capabilities:
+          type: array
+          items: { type: string }
+          example: [jobs, posts, applications]
+        serverTime: { type: string, format: date-time }
+        bootId:
+          type: string
+          description: Changes on every start. The ERP resynchronises when it sees a new one.
+        startedAt: { type: string, format: date-time }
+        erp:
+          type: object
+          description: The return link (site → ERP).
+          properties:
+            linked:
+              type: boolean
+              description: ERP_BASE_URL and ERP_API_KEY are set — applications can be sent.
+            signing:
+              type: boolean
+              description: ERP_WEBHOOK_SECRET is set — what the site sends is signed.
+            reason: { type: [string, "null"], description: Why the return link is missing, when it is. }
+            lastError: { type: [string, "null"], description: Last refusal or failure while talking to the ERP. }
+            lastRestore:
+              type: [object, "null"]
+              description: Last reload of the content from the ERP.
+              properties:
+                ok: { type: boolean }
+                at: { type: string, format: date-time }
+                jobs: { type: integer }
+                posts: { type: integer }
+                error: { type: [string, "null"] }
+        applications:
+          type: object
+          description: Counts and dates only — never a candidate's data.
+          properties:
+            pending: { type: integer }
+            rejected: { type: integer }
+            oldestAt: { type: [string, "null"], format: date-time }
+            lastDeliveredAt: { type: [string, "null"], format: date-time }
+        storage:
+          type: object
+          properties:
+            fallback:
+              type: boolean
+              description: JOBS_DATA_DIR is not writable; the site writes to ./data or the temporary directory instead.
+
+    Application:
+      type: object
+      required: [id, fullName, email, consent]
+      properties:
+        id:
+          type: string
+          pattern: "^[A-Za-z0-9-]{8,64}$"
+          description: Generated by the site. Idempotency key.
+        submittedAt: { type: string, format: date-time }
+        job:
+          type: [object, "null"]
+          description: null for a spontaneous application. `externalId` is set only for a posting published by the ERP.
+          properties:
+            externalId: { type: [string, "null"] }
+            slug: { type: [string, "null"] }
+            title: { type: [string, "null"] }
+        fullName: { type: string, minLength: 2, maxLength: 160 }
+        email: { type: string, format: email, maxLength: 254 }
+        phone: { type: [string, "null"], maxLength: 40 }
+        message: { type: [string, "null"], maxLength: 5000 }
+        consent:
+          type: boolean
+          const: true
+          description: Any other value is refused — without consent nothing is processed.
+        language: { type: [string, "null"], maxLength: 12 }
+        cv:
+          type: [object, "null"]
+          description: PDF, Word (.doc, .docx) or OpenDocument (.odt), 5 MB at most, recognised by its first bytes.
+          properties:
+            fileName: { type: string }
+            contentType: { type: string }
+            base64: { type: string, contentEncoding: base64 }
+            sha256:
+              type: string
+              description: Hex SHA-256 of the file's bytes — checked by the ERP.
 
     JobInput:
       type: object

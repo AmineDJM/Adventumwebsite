@@ -22,10 +22,11 @@ npm run build && npm start
 
 | Variable | Rôle | Obligatoire |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Origine canonique utilisée par les métadonnées, le sitemap, robots.txt, le flux RSS et les données structurées. | Recommandé |
+| `NEXT_PUBLIC_SITE_URL` | Origine canonique utilisée par les métadonnées, le sitemap, robots.txt, le flux RSS et les données structurées. Défaut : `https://adventumdz.com` (l'adresse sans `www`, celle qui sert le site). | Recommandé |
 | `ADMIN_PASSWORD` | Mot de passe de l'espace `/admin`. **Sans cette variable, l'administration refuse toute connexion** (aucun mot de passe par défaut). | Pour `/admin` |
 | `ADMIN_SESSION_SECRET` | Clé de signature du cookie de session admin. À défaut, `ADMIN_PASSWORD` est utilisé. | Recommandé |
-| `JOBS_DATA_DIR` | Répertoire d'écriture des offres créées depuis l'admin. Doit pointer vers un disque persistant en production. | Production |
+| `ERP_API_KEY`, `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL` | La liaison avec l'ERP, dans les deux sens. **Générées par l'ERP** (Site web › Connexion au site › « Générer la clé ») sous la forme d'un bloc à coller tel quel dans Render (Environment › Add from .env › Save and deploy). Ne jamais les committer. | Pour l'ERP |
+| `JOBS_DATA_DIR` | Répertoire d'écriture (offres, articles de l'ERP, candidatures pas encore envoyées). S'il n'est pas inscriptible, le site écrit dans `./data` puis dans le répertoire temporaire, et le signale. | Facultatif |
 
 ---
 
@@ -65,22 +66,31 @@ données structurées `BlogPosting` et son fil d'Ariane.
   suppression des offres. Page exclue de l'indexation (`noindex` +
   `Disallow` dans robots.txt).
 
+### Candidatures
+
+Quand le site est relié à l'ERP, chaque fiche de poste porte un
+**formulaire de candidature** (nom, e-mail, téléphone, message, CV,
+consentement) et la page `/carrieres` un formulaire de candidature
+spontanée. La candidature part **dans l'ERP** (Recrutement › Candidatures du
+site) — pas dans une boîte e-mail. Le site ne la garde que le temps de
+l'envoyer. Sans liaison, les deux formulaires reviennent au bouton e-mail.
+
 ### Persistance des offres
 
 Les offres sont stockées dans `data/jobs.json`, écrit au moment de
 l'enregistrement. Ce fichier est ignoré par Git : il appartient à
 l'environnement d'exécution.
 
-Au premier démarrage, s'il est absent, l'application lit
-`data/jobs.seed.json` (versionné) afin que la page carrières ne soit jamais
-vide.
+Au premier démarrage d'un site **non relié** à l'ERP, s'il est absent,
+l'application lit `data/jobs.seed.json` (versionné) afin que la page
+carrières ne soit jamais vide. Un site relié affiche les offres de l'ERP.
 
-> **Important pour Render** : le système de fichiers d'un conteneur est
-> éphémère. Sans disque persistant, les offres créées depuis l'admin
-> disparaissent au redéploiement et la liste revient au fichier seed.
-> Attacher un disque, le monter sur `/var/data` et définir
-> `JOBS_DATA_DIR=/var/data` (voir `render.yaml`). Le plan gratuit de Render
-> ne propose pas de disque persistant.
+> **Sur Render** : le système de fichiers d'un conteneur est éphémère, et le
+> plan gratuit n'a pas de disque. Un site relié à l'ERP **recharge ses offres
+> et ses articles depuis l'ERP à chaque démarrage** : rien de ce que l'ERP a
+> publié ne se perd. Un disque (monté sur `/var/data`, voir `render.yaml`)
+> reste nécessaire pour les offres saisies dans l'admin du site, et pour
+> qu'une candidature qui attend l'ERP survive à un redémarrage.
 
 ---
 
@@ -88,7 +98,9 @@ vide.
 
 Le site expose une API de contenu versionnée (`/api/v1`) qui permet à l'ERP
 de publier les offres d'emploi et les articles de blog sans passer par
-l'espace `/admin`.
+l'espace `/admin`. Dans l'autre sens, le site envoie à l'ERP les
+candidatures qu'il reçoit, et recharge ses contenus depuis l'ERP quand il
+démarre (`instrumentation.ts`, `lib/erp-sync.ts`, `lib/applications.ts`).
 
 - **Contrat d'interface complet** : [`docs/ERP-INTEGRATION.md`](docs/ERP-INTEGRATION.md)
   — à remettre tel quel à l'équipe ERP.
@@ -99,8 +111,11 @@ Principe : l'ERP est la source de vérité et **pousse** le contenu. Les
 écritures sont idempotentes sur l'identifiant de l'ERP (`externalId`), et
 le site revalide automatiquement les pages, le sitemap et le flux RSS.
 
-Variables requises côté site : `ERP_API_KEY` (et `ERP_WEBHOOK_SECRET` pour
-exiger en plus une signature HMAC du corps).
+Mise en service : un seul geste. L'ERP génère la clé, le secret et son
+adresse, et les affiche en un bloc de trois lignes (`ERP_API_KEY`,
+`ERP_WEBHOOK_SECRET`, `ERP_BASE_URL`) à coller dans l'environnement du site
+sur Render. Toute requête est alors signée (HMAC-SHA256 du corps, de la
+chaîne vide pour un `GET` ou un `DELETE`), dans les deux sens.
 
 Un article committé dans `content/blog/` reste prioritaire sur un article
 poussé par l'ERP qui porterait le même slug.

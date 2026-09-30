@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { dataDir, writeJsonAtomic } from "@/lib/storage";
 
 /**
  * Store for blog articles pushed by the ERP.
@@ -12,8 +13,7 @@ import path from "node:path";
  * article, and the site still has content if the store is empty.
  */
 
-const DATA_DIR = process.env.JOBS_DATA_DIR ?? path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "posts.json");
+const dataFile = () => path.join(dataDir().dir, "posts.json");
 
 export type ErpPost = {
   /** Stable id owned by the ERP; the idempotency key for upserts. */
@@ -52,8 +52,9 @@ export function slugify(input: string): string {
 
 function readRaw(): ErpPost[] {
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, "utf8")) as ErpPost[];
+    const file = dataFile();
+    if (fs.existsSync(file)) {
+      return JSON.parse(fs.readFileSync(file, "utf8")) as ErpPost[];
     }
   } catch {
     /* unreadable or corrupt — behave as if empty */
@@ -62,8 +63,7 @@ function readRaw(): ErpPost[] {
 }
 
 function writeRaw(posts: ErpPost[]): void {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), "utf8");
+  writeJsonAtomic(dataFile(), posts);
 }
 
 export function getAllErpPosts(): ErpPost[] {
@@ -164,4 +164,36 @@ export function parseErpPostInput(body: unknown): ErpPostInput | null {
     // publishing it. Send published:false explicitly to stage a draft.
     published: b.published === undefined ? true : Boolean(b.published),
   };
+}
+
+/**
+ * Replace the whole store with the ERP's list in one write — used when the
+ * site reloads its content at start-up. Every record here comes from the
+ * ERP, so the ERP's list IS the store. Existing records keep their creation
+ * date; slugs stay unique among ERP records (committed files still win at
+ * read time).
+ */
+export function replaceErpPosts(
+  items: { externalId: string; input: ErpPostInput }[],
+  /** When the reload started: a record the ERP pushed AFTER that is newer than the list, and wins. */
+  since: string
+): { written: number; removed: number } {
+  const current = readRaw();
+  const byExternal = new Map(current.map((p) => [p.externalId, p] as const));
+  const now = new Date().toISOString();
+  const next: ErpPost[] = current.filter((p) => p.updatedAt > since);
+  const pushedMeanwhile = new Set(next.map((p) => p.externalId));
+  for (const { externalId, input } of items) {
+    if (pushedMeanwhile.has(externalId)) continue;
+    const base = input.slug || slugify(input.title) || "article";
+    let slug = base;
+    let n = 2;
+    while (next.some((p) => p.slug === slug)) slug = `${base}-${n++}`;
+    const existing = byExternal.get(externalId);
+    next.push({ ...(existing ?? {}), ...input, slug, externalId, createdAt: existing?.createdAt ?? now, updatedAt: now });
+  }
+  const wanted = new Set([...items.map((i) => i.externalId), ...pushedMeanwhile]);
+  const removed = current.filter((p) => !wanted.has(p.externalId)).length;
+  writeRaw(next);
+  return { written: next.length, removed };
 }

@@ -3,12 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageShell from "@/components/PageShell";
 import T from "@/components/ui/T";
-import {
-  getAllPosts,
-  getPost,
-  getRelatedPosts,
-  formatDate,
-} from "@/lib/blog";
+import { getPost, getRelatedPosts, formatDate } from "@/lib/blog";
+import { restoreReady } from "@/lib/erp-sync";
 import {
   SITE_NAME,
   absoluteUrl,
@@ -18,12 +14,13 @@ import {
 
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }));
-}
+// ERP articles come and go at runtime: render on request, never from a
+// build-time snapshot.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
+  await restoreReady();
   const post = getPost(slug);
   if (!post) return {};
 
@@ -56,6 +53,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Params) {
   const { slug } = await params;
+  await restoreReady();
   const post = getPost(slug);
   if (!post) notFound();
 

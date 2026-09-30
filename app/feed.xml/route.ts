@@ -1,8 +1,12 @@
 import { getAllPosts } from "@/lib/blog";
+import { restoreReady } from "@/lib/erp-sync";
+
+export const dynamic = "force-dynamic";
 import { CONTACT_EMAIL, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
 /** RSS 2.0 feed — lets readers and aggregators follow the Insights section. */
 export async function GET() {
+  await restoreReady();
   const posts = getAllPosts();
 
   const escape = (s: string) =>
