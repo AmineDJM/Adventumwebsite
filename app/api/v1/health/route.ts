@@ -49,7 +49,9 @@ export async function GET(request: Request) {
     version: "1",
     configured: true,
     authenticated: true,
-    capabilities: ["jobs", "posts", "applications"],
+    // "repository": this version lets the ERP read its committed content, take
+    // it over (replacesFile / replacesJob) and ask for a reload (POST /resync).
+    capabilities: ["jobs", "posts", "applications", "repository"],
     serverTime: new Date().toISOString(),
     bootId: proc.bootId,
     startedAt: proc.startedAt,

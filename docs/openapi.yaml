@@ -128,8 +128,21 @@ paths:
     delete:
       tags: [jobs]
       summary: Delete a job posting
+      description: |
+        Usually bodyless. When the ERP deletes a posting it had taken over from
+        this site's admin, it sends `{ "replacesJob": "<id>" }` (signed like any
+        body) so that the admin-typed copy goes too, even if the ERP's version
+        never reached the site.
       parameters:
         - $ref: "#/components/parameters/Signature"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replacesJob: { type: string, maxLength: 128 }
       responses:
         "200":
           description: Deleted.
@@ -162,9 +175,13 @@ paths:
                   posts:
                     type: array
                     items: { $ref: "#/components/schemas/PostRecord" }
+                  replacedFiles:
+                    type: array
+                    items: { type: string }
+                    description: Repository articles the ERP has taken over (never shown as files again).
                   readOnlyFileArticles:
                     type: array
-                    description: Articles committed in the website repository. A pushed article sharing one of these slugs is ignored publicly.
+                    description: Articles committed in the website repository and still SHOWN. A pushed article merely sharing one of these slugs is ignored publicly — take the file over with `replacesFile` instead.
                     items:
                       type: object
                       properties:
@@ -221,11 +238,25 @@ paths:
     delete:
       tags: [posts]
       summary: Delete an article
+      description: |
+        Usually bodyless. When the ERP deletes an article it had taken over from
+        this repository, it sends `{ "replacesFile": "<slug>" }` (signed like any
+        body): the file stays hidden for good, even if the ERP's version never
+        reached the site. Answers 200 with `replacedFile` in that case, even if
+        the record itself was absent.
       parameters:
         - $ref: "#/components/parameters/Signature"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replacesFile: { type: string, maxLength: 96, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
       responses:
         "200":
-          description: Deleted.
+          description: Deleted (or, with `replacesFile`, the file hidden).
           content:
             application/json:
               schema:
@@ -233,9 +264,69 @@ paths:
                 properties:
                   deleted: { type: boolean }
                   externalId: { type: string }
+                  replacedFile: { type: string }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "503": { $ref: "#/components/responses/Unavailable" }
+
+  /repository:
+    get:
+      tags: [repository]
+      summary: The content committed in the website repository, raw — for the ERP to take it over
+      description: |
+        Every article in content/blog (raw Markdown, front matter as fields,
+        `replaced: true` once the ERP has taken it over) and the sample
+        openings of data/jobs.seed.json. Read-only: nothing here changes
+        what the site shows.
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      responses:
+        "200":
+          description: Repository content.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        slug: { type: string }
+                        title: { type: string }
+                        description: { type: string }
+                        body: { type: string, description: Raw Markdown. }
+                        category: { type: string }
+                        tags: { type: array, items: { type: string } }
+                        author: { type: string }
+                        date: { type: string, format: date-time, nullable: true }
+                        updated: { type: string, format: date-time, nullable: true }
+                        featured: { type: boolean }
+                        replaced: { type: boolean }
+                  sampleJobs:
+                    type: array
+                    items: { $ref: "#/components/schemas/JobInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /resync:
+    post:
+      tags: [repository]
+      summary: Reload the site's content from the ERP now
+      description: |
+        The same reload the site performs at start-up
+        (GET {ERP_BASE_URL}/api/site-web/v1/contenus), including the list of
+        repository articles taken over. Spaced to one reload per 30 seconds
+        whoever asks. Empty body, signed as such.
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      responses:
+        "200": { description: Reloaded. }
+        "202": { description: Reload still running. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { description: A reload started before this request (spaced, or already running) — ask again after Retry-After. }
+        "502": { description: The ERP did not answer the reload. }
+        "503": { description: This site does not know the ERP's address. }
 
 webhooks:
   application:
@@ -344,7 +435,7 @@ components:
         capabilities:
           type: array
           items: { type: string }
-          example: [jobs, posts, applications]
+          example: [jobs, posts, applications, repository]
         serverTime: { type: string, format: date-time }
         bootId:
           type: string
@@ -463,6 +554,13 @@ components:
           type: boolean
           default: false
           description: false keeps the posting off the public site.
+        replacesJob:
+          type: string
+          maxLength: 128
+          description: |
+            TAKEOVER. The id of a posting typed in this site's own admin that
+            this ERP record replaces: the local copy is removed and never
+            shown twice.
 
     JobRecord:
       allOf:
@@ -525,6 +623,16 @@ components:
           type: boolean
           default: true
           description: Send false to stage a draft.
+        replacesFile:
+          type: string
+          maxLength: 96
+          pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          description: |
+            TAKEOVER. The slug of a repository article (content/blog) this
+            record replaces. Set, the repository file is never shown again —
+            this record IS the article, published or not — and deleting this
+            record leaves the file hidden (a tombstone). Omitted: an article
+            merely sharing a repository slug is ignored publicly.
 
     PostRecord:
       allOf:

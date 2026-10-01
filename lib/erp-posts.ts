@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { dataDir, writeJsonAtomic } from "@/lib/storage";
+import { validFileSlug } from "@/lib/replaced-files";
 
 /**
  * Store for blog articles pushed by the ERP.
@@ -10,7 +11,10 @@ import { dataDir, writeJsonAtomic } from "@/lib/storage";
  *   2. This JSON store — records pushed by the ERP over /api/v1/posts.
  *
  * Keeping them separate means the ERP can never overwrite a committed
- * article, and the site still has content if the store is empty.
+ * article by accident, and the site still has content if the store is empty.
+ * The one deliberate exception is a TAKEOVER: a record pushed with
+ * `replacesFile` is the ERP's version of that repository article, and it is
+ * the one the blog shows (lib/replaced-files.ts).
  */
 
 const dataFile = () => path.join(dataDir().dir, "posts.json");
@@ -31,6 +35,11 @@ export type ErpPost = {
   updated?: string;
   featured: boolean;
   published: boolean;
+  /**
+   * The repository article (its slug) this record takes over. Set, the file
+   * is never shown again — published or not, this record IS that article.
+   */
+  replacesFile?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -163,6 +172,9 @@ export function parseErpPostInput(body: unknown): ErpPostInput | null {
     // Absent "published" defaults to true: an ERP that pushes an article is
     // publishing it. Send published:false explicitly to stage a draft.
     published: b.published === undefined ? true : Boolean(b.published),
+    // Only a well-formed repository slug is accepted: anything else is
+    // ignored rather than allowed to hide a file by accident.
+    ...(validFileSlug(b.replacesFile) ? { replacesFile: validFileSlug(b.replacesFile)! } : {}),
   };
 }
 

@@ -61,6 +61,8 @@ export default function AdminPage() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [configured, setConfigured] = useState(true);
+  // Linked to the ERP, the postings are the ERP's: this page only shows them.
+  const [managedByErp, setManagedByErp] = useState(false);
   const [password, setPassword] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -85,8 +87,10 @@ export default function AdminPage() {
         const data = (await res.json()) as {
           authenticated: boolean;
           configured: boolean;
+          managedByErp?: boolean;
         };
         setConfigured(data.configured);
+        setManagedByErp(Boolean(data.managedByErp));
         setAuthed(data.authenticated);
         if (data.authenticated) await loadJobs();
       } finally {
@@ -275,7 +279,7 @@ export default function AdminPage() {
                   {jobs.length} · {t("careers.open_positions")}
                 </p>
               </div>
-              {!draft && (
+              {!draft && !managedByErp && (
                 <button
                   onClick={() => setDraft({ ...EMPTY })}
                   className="rounded-full border border-bio/40 bg-bio/10 px-5 py-2.5 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
@@ -285,7 +289,13 @@ export default function AdminPage() {
               )}
             </div>
 
-            {draft && (
+            {managedByErp && (
+              <p className="mt-8 rounded-xl border border-bio/30 bg-bio/[0.07] px-4 py-3 text-sm leading-relaxed text-bio">
+                {t("admin.erp_managed")}
+              </p>
+            )}
+
+            {draft && !managedByErp && (
               <form
                 onSubmit={save}
                 className="mt-10 space-y-6 rounded-2xl glass p-7 md:p-9"
@@ -420,6 +430,7 @@ export default function AdminPage() {
                         .join(" · ")}
                     </p>
                   </div>
+                  {!managedByErp && (
                   <div className="flex shrink-0 gap-2.5">
                     <button
                       onClick={() => setDraft(toDraft(job))}
@@ -435,6 +446,7 @@ export default function AdminPage() {
                       {t("admin.delete")}
                     </button>
                   </div>
+                  )}
                 </div>
               ))}
             </div>

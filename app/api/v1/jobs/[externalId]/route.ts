@@ -3,8 +3,9 @@ import { revalidatePath } from "next/cache";
 import { authenticate } from "@/lib/api-auth";
 import {
   deleteJobByExternalId,
+  deleteManualJob,
   getJobByExternalId,
-  parseJobInput,
+  parseErpJobInput,
   upsertJobByExternalId,
 } from "@/lib/jobs";
 
@@ -52,7 +53,7 @@ export async function PUT(request: Request, { params }: Params) {
     return NextResponse.json({ error: "Body must be valid JSON." }, { status: 400 });
   }
 
-  const input = parseJobInput(body);
+  const input = parseErpJobInput(body);
   if (!input) {
     return NextResponse.json(
       { error: "A non-empty 'title' is required." },
@@ -83,22 +84,42 @@ export async function PUT(request: Request, { params }: Params) {
   }
 }
 
+/**
+ * Delete a posting. The body is usually empty; when the ERP deletes a posting
+ * it had TAKEN OVER from this site's admin, it sends `{ "replacesJob": "<id>" }`
+ * — signed like any body — so that the admin-typed copy goes too, even if the
+ * ERP's version never reached this site.
+ */
 export async function DELETE(request: Request, { params }: Params) {
-  const auth = authenticate(request);
+  const raw = await request.text();
+  const auth = authenticate(request, raw);
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { externalId } = await params;
 
+  let named: string | null = null;
+  if (raw.trim()) {
+    try {
+      const v = (JSON.parse(raw) as { replacesJob?: unknown })?.replacesJob;
+      named = typeof v === "string" && /^[A-Za-z0-9._~-]{1,128}$/.test(v.trim()) ? v.trim() : null;
+    } catch {
+      return NextResponse.json({ error: "Body must be valid JSON." }, { status: 400 });
+    }
+  }
+
   try {
     const job = getJobByExternalId(externalId);
-    if (!deleteJobByExternalId(externalId)) {
+    const manual = named ? deleteManualJob(named) : null;
+    const deleted = deleteJobByExternalId(externalId);
+    if (!deleted && !manual) {
       return NextResponse.json({ error: "Not found." }, { status: 404 });
     }
     revalidatePath("/carrieres");
     if (job) revalidatePath(`/carrieres/${job.slug}`);
+    if (manual) revalidatePath(`/carrieres/${manual.slug}`);
     revalidatePath("/sitemap.xml");
-    return NextResponse.json({ deleted: true, externalId });
+    return NextResponse.json({ deleted, externalId, ...(manual ? { replacedJob: manual.id } : {}) });
   } catch {
     return NextResponse.json(
       { error: "Storage is not writable." },

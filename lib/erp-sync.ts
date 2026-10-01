@@ -1,7 +1,8 @@
 import crypto from "node:crypto";
 import { callErp, erpLinked, erpMessage } from "@/lib/erp";
-import { parseJobInput, replaceErpJobs, type JobInput } from "@/lib/jobs";
+import { parseErpJobInput, replaceErpJobs, type ErpJobInput } from "@/lib/jobs";
 import { parseErpPostInput, replaceErpPosts, type ErpPostInput } from "@/lib/erp-posts";
+import { setReplacedFileSlugs } from "@/lib/replaced-files";
 
 /**
  * Keeping the site's content in step with the ERP across restarts.
@@ -15,7 +16,10 @@ import { parseErpPostInput, replaceErpPosts, type ErpPostInput } from "@/lib/erp
  *
  * The ERP remains the source of truth: an ERP-managed record that is no
  * longer in its list is removed here. Postings created in this site's own
- * admin are never touched.
+ * admin are never touched — unless the ERP has taken one over. The reply also
+ * carries the repository articles the ERP has taken over (`replacedFiles`):
+ * without that list, an article taken over and then DELETED in the ERP would
+ * come back from the repository after every restart.
  *
  * State lives on globalThis: instrumentation.ts and the route bundles are
  * separate module graphs in Next.js, and must see the same process state.
@@ -60,7 +64,7 @@ async function restoreOnce(): Promise<RestoreResult> {
   const at = new Date().toISOString();
   const r = await callErp("/api/site-web/v1/contenus", { method: "GET", timeoutMs: 15_000 });
   if (r.status !== 200) return { ok: false, at, jobs: 0, posts: 0, error: erpMessage(r) };
-  let j: { jobs?: unknown; posts?: unknown; count?: unknown };
+  let j: { jobs?: unknown; posts?: unknown; count?: unknown; replacedFiles?: unknown };
   try {
     j = JSON.parse(r.text ?? "");
   } catch {
@@ -71,9 +75,9 @@ async function restoreOnce(): Promise<RestoreResult> {
   if (!Array.isArray(j.jobs) || !Array.isArray(j.posts)) {
     return { ok: false, at, jobs: 0, posts: 0, error: "ERP answered without the expected lists." };
   }
-  const jobs: { externalId: string; input: JobInput }[] = [];
+  const jobs: { externalId: string; input: ErpJobInput }[] = [];
   for (const w of j.jobs as Wire[]) {
-    const input = parseJobInput(w);
+    const input = parseErpJobInput(w);
     if (typeof w.externalId === "string" && w.externalId && input) jobs.push({ externalId: w.externalId, input });
   }
   const posts: { externalId: string; input: ErpPostInput }[] = [];
@@ -84,6 +88,8 @@ async function restoreOnce(): Promise<RestoreResult> {
   try {
     replaceErpJobs(jobs, at);
     replaceErpPosts(posts, at);
+    // An ERP that predates takeovers sends no list: keep what is here rather than wipe it.
+    if (Array.isArray(j.replacedFiles)) setReplacedFileSlugs(j.replacedFiles);
   } catch (e) {
     return { ok: false, at, jobs: 0, posts: 0, error: `Storage error: ${e instanceof Error ? e.message : String(e)}` };
   }
@@ -93,13 +99,17 @@ async function restoreOnce(): Promise<RestoreResult> {
 /**
  * Start (or join) the reload. Idempotent within a process; a failed reload is
  * retried at most every five minutes, so a sleeping ERP is not hammered.
+ * `force` (POST /api/v1/resync — the ERP asking) reloads even after a success.
  */
-export function startRestore(): Promise<RestoreResult> | null {
+export function startRestore(opts: { force?: boolean } = {}): Promise<RestoreResult> | null {
   if (!erpLinked()) return null;
   const s = processState();
   if (s.restore) return s.restore;
-  if (s.lastRestore?.ok) return Promise.resolve(s.lastRestore);
-  if (Date.now() - s.lastRestoreAttempt < 5 * 60_000 && s.lastRestore) return Promise.resolve(s.lastRestore);
+  if (s.lastRestore?.ok && !opts.force) return Promise.resolve(s.lastRestore);
+  // A forced reload is still spaced (30 s): the key that can ask for it must not be able to make
+  // the site hammer the ERP.
+  const gap = opts.force ? 30_000 : 5 * 60_000;
+  if (Date.now() - s.lastRestoreAttempt < gap && s.lastRestore) return Promise.resolve(s.lastRestore);
   s.lastRestoreAttempt = Date.now();
   s.restore = restoreOnce()
     .catch((e): RestoreResult => ({ ok: false, at: new Date().toISOString(), jobs: 0, posts: 0, error: String(e) }))

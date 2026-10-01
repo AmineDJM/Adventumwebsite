@@ -48,7 +48,7 @@ l'élément, le sitemap et le flux RSS). Aucun redéploiement n'est requis.
 
 ## 2. Mise en service — un seul geste
 
-1. Dans l'ERP : **Site web › Connexion au site › « Générer la clé »**
+1. Dans l'ERP : **Administration › Site web (connexion) › « Générer la clé »**
    (Super Admin). L'ERP fabrique la clé et le secret de signature, et connaît
    sa propre adresse. Il affiche un bloc de trois lignes :
 
@@ -378,6 +378,14 @@ Signées sur la chaîne vide (§3). Réponse `200` :
 `{"deleted": true, "externalId": "JOB-1042"}`. Réponse `404` si
 l'identifiant est inconnu.
 
+La suppression d'un contenu **repris** (§13) porte un petit corps, signé comme
+tout corps : `{"replacesFile": "<slug>"}` pour un article du dépôt,
+`{"replacesJob": "<id>"}` pour une offre saisie dans l'admin du site. Le site
+cache alors le fichier (ou retire sa copie) **même s'il n'avait jamais reçu la
+version de l'ERP** — supprimée avant de partir, ou encore à corriger. Réponse
+`200` avec `replacedFile` / `replacedJob` quand c'est le cas, même si
+l'enregistrement lui-même était absent.
+
 > Alternative recommandée à la suppression : envoyer `"published": false`.
 > Le contenu disparaît du site public mais reste consultable dans l'ERP et
 > peut être republié.
@@ -420,19 +428,23 @@ Implémentée dans l'ERP d'Adventum :
 
 ## 8. Ce que l'ERP ne contrôle pas
 
-- **Les articles versionnés.** Cinq articles fondateurs vivent dans le
-  dépôt Git du site (`content/blog/*.md`). Ils apparaissent en lecture
-  seule dans `GET /posts` sous `readOnlyFileArticles`. Si l'ERP pousse un
-  article avec le même `slug`, **le fichier du dépôt reste prioritaire** et
-  la version ERP est ignorée sur le site public. Choisir des slugs distincts.
+- **Les articles versionnés — jusqu'à leur reprise.** Cinq articles
+  fondateurs vivent dans le dépôt Git du site (`content/blog/*.md`). Tant que
+  l'ERP ne les a pas **repris** (§13), ils apparaissent en lecture seule dans
+  `GET /posts` sous `readOnlyFileArticles`, et un article de l'ERP qui ne fait
+  que partager leur `slug` est ignoré sur le site public. Repris, ils
+  deviennent des articles de l'ERP comme les autres : modifiables et
+  supprimables depuis l'ERP.
 - **Les offres d'exemple.** `data/jobs.seed.json` ne sert qu'à un site **non
   relié** (pour que la page carrières ne soit jamais vide). Dès que le site
-  est relié à l'ERP, ce sont les offres de l'ERP qui s'affichent — avec
-  celles saisies dans l'admin du site.
-- **L'espace `/admin` du site.** Il reste disponible pour une saisie
-  manuelle de secours. Si l'ERP devient l'unique source, il est recommandé
-  de ne plus définir `ADMIN_PASSWORD` : l'admin refuse alors toute
-  connexion et l'ERP est seul maître du contenu.
+  est relié, ce sont les offres de l'ERP qui s'affichent ; l'ERP reprend les
+  exemples en **brouillons** (§13), à publier s'ils correspondent à un vrai
+  poste.
+- **L'espace `/admin` du site.** Relié à l'ERP, il ne sert plus qu'à
+  consulter : créer, modifier ou supprimer une offre y est refusé (409) —
+  une offre saisie là ferait concurrence à celle de l'ERP et, sans disque,
+  disparaîtrait au redémarrage suivant. Celles qu'il contenait sont reprises
+  par l'ERP (§13).
 - **La mise en page, le SEO et les traductions d'interface**, entièrement
   gérés par le site.
 
@@ -467,7 +479,7 @@ n'a pas de disque.
 
 ## 10. Checklist de mise en service
 
-- [ ] ERP : **Site web › Connexion au site › « Générer la clé »**
+- [ ] ERP : **Administration › Site web (connexion) › « Générer la clé »**
 - [ ] Render (service du site) : **Environment › Add from .env** → coller le
       bloc → **Save, rebuild, and deploy**
 - [ ] Attendre quelques minutes : l'ERP passe à **« Relié »** de lui-même
@@ -579,7 +591,9 @@ Réponse `200` :
 ```
 
 Chaque élément est **exactement le corps** que l'ERP pousserait par `PUT`,
-plus son `externalId`. Le site remplace alors tout ce qu'il tient de l'ERP par
+plus son `externalId`. La réponse porte aussi `replacedFiles` : les articles
+du dépôt que l'ERP a repris (§13), qui ne doivent plus jamais s'afficher en
+tant que fichiers — même s'ils ont été supprimés depuis dans l'ERP. Le site remplace alors tout ce qu'il tient de l'ERP par
 cette liste — un contenu de l'ERP absent de la liste est retiré — sans toucher
 aux offres saisies dans son admin. Une réponse qui ne porte pas **les deux**
 listes est refusée : « l'ERP n'a rien » ne se déduit pas d'une réponse
@@ -587,3 +601,48 @@ incomplète. Un échec est réessayé au plus toutes les 5 minutes.
 
 Appeler l'ERP avec la clé en attente (après le collage du bloc) suffit à la
 rendre active : c'est la preuve que le site l'a.
+
+---
+
+## 13. Reprise des contenus du dépôt (ERP ← site)
+
+Les articles de `content/blog`, les offres d'exemple et les offres saisies
+dans l'admin du site doivent pouvoir être **modifiés ou supprimés depuis
+l'ERP**. L'ERP les reprend donc une fois, automatiquement :
+
+1. **Lecture.** `GET /api/v1/repository` (clé + signature sur la chaîne vide)
+   rend chaque article du dépôt tel qu'écrit — Markdown brut, champs de l'en-tête,
+   et `replaced: true` s'il est déjà repris — ainsi que les offres d'exemple.
+   Les offres saisies dans l'admin se lisent dans `GET /jobs`
+   (`externalId: null`).
+2. **Création dans l'ERP.** L'ERP crée ses propres enregistrements, avec la
+   **même adresse** (`slug`) pour les articles : les liens déjà partagés
+   restent valides.
+3. **Reprise.** L'ERP pousse sa version par le `PUT` habituel, avec :
+   - `replacesFile: "<slug>"` pour un article du dépôt — le fichier n'est
+     alors plus jamais affiché, et c'est la version de l'ERP qui fait foi
+     (publiée ou retirée) ;
+   - `replacesJob: "<id>"` pour une offre saisie dans l'admin du site — la
+     copie locale est retirée, jamais affichée en double.
+4. **Suppression.** Quand l'ERP supprime un article repris, son `DELETE`
+   porte `{"replacesFile": "<slug>"}` (§5.4) et le site garde ce `slug` comme
+   **pierre tombale** : le fichier du dépôt ne revient pas, même si la version
+   de l'ERP n'était jamais arrivée. La liste complète repart dans chaque
+   rechargement (`replacedFiles`, §12) — c'est l'ERP qui fait foi.
+
+La règle de la reprise : **ce qui est en ligne reste en ligne, ce qui ne l'est
+pas ne le devient pas.** Un article visible est repris publié ; un fichier déjà
+caché est repris en brouillon ; une offre d'exemple est reprise **en
+brouillon** (publier un poste est une décision de recrutement) ; une offre
+saisie dans l'admin garde son état. Un article que le contrat refuserait (un
+titre `#`, par exemple) est repris quand même mais ne part pas avant d'être
+corrigé : le site garde sa version en attendant.
+
+`POST /api/v1/resync` (corps vide, signé) demande au site de refaire ce
+rechargement tout de suite — l'ERP s'en sert quand il constate qu'un article
+repris est encore affiché en tant que fichier. Un rechargement forcé est
+espacé de 30 secondes au moins.
+
+La santé (`GET /health` authentifié) annonce `repository` dans
+`capabilities` : une version antérieure du site ne sait pas être reprise, et
+l'ERP le dit au lieu d'échouer en silence.

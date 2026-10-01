@@ -25,7 +25,7 @@ npm run build && npm start
 | `NEXT_PUBLIC_SITE_URL` | Origine canonique utilisée par les métadonnées, le sitemap, robots.txt, le flux RSS et les données structurées. Défaut : `https://adventumdz.com` (l'adresse sans `www`, celle qui sert le site). | Recommandé |
 | `ADMIN_PASSWORD` | Mot de passe de l'espace `/admin`. **Sans cette variable, l'administration refuse toute connexion** (aucun mot de passe par défaut). | Pour `/admin` |
 | `ADMIN_SESSION_SECRET` | Clé de signature du cookie de session admin. À défaut, `ADMIN_PASSWORD` est utilisé. | Recommandé |
-| `ERP_API_KEY`, `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL` | La liaison avec l'ERP, dans les deux sens. **Générées par l'ERP** (Site web › Connexion au site › « Générer la clé ») sous la forme d'un bloc à coller tel quel dans Render (Environment › Add from .env › **Save, rebuild, and deploy** — pas « Save and deploy », qui redémarre la version déjà construite). Ne jamais les committer. | Pour l'ERP |
+| `ERP_API_KEY`, `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL` | La liaison avec l'ERP, dans les deux sens. **Générées par l'ERP** (Administration › Site web (connexion) › « Générer la clé ») sous la forme d'un bloc à coller tel quel dans Render (Environment › Add from .env › **Save, rebuild, and deploy** — pas « Save and deploy », qui redémarre la version déjà construite). Ne jamais les committer. | Pour l'ERP |
 | `JOBS_DATA_DIR` | Répertoire d'écriture (offres, articles de l'ERP, candidatures pas encore envoyées). S'il n'est pas inscriptible, le site écrit dans `./data` puis dans le répertoire temporaire, et le signale. | Facultatif |
 
 ---

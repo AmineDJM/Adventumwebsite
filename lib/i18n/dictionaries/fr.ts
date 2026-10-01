@@ -302,6 +302,7 @@ const fr: Partial<Dict> = {
   "admin.saved": "Enregistré.",
   "admin.error": "Une erreur est survenue. Réessayez.",
   "admin.session_expired": "Session expirée. Reconnectez-vous.",
+  "admin.erp_managed": "Ce site est relié à l'ERP d'Adventum : les offres d'emploi et les articles se créent, se modifient et se suppriment dans l'ERP (module Site web). Cette page ne sert plus qu'à les consulter.",
 };
 
 export default fr;

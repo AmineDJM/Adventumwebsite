@@ -2,15 +2,21 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
-import { getPublishedErpPosts } from "@/lib/erp-posts";
+import { getAllErpPosts, getPublishedErpPosts } from "@/lib/erp-posts";
+import { getReplacedFileSlugs } from "@/lib/replaced-files";
 
 /**
  * Blog reader with two merged sources:
  *   1. Markdown files in content/blog — editorial, version-controlled.
  *   2. Records pushed by the ERP (lib/erp-posts).
  *
- * A committed file always wins over an ERP record sharing its slug, so the
- * repository stays the final authority on published content.
+ * A committed file wins over an ERP record that merely shares its slug — an
+ * accident the ERP refuses anyway. It does NOT win over a TAKEOVER: once the
+ * ERP has taken a repository article over (a record pushed with
+ * `replacesFile`, or a tombstone left when the ERP deleted it), the file is
+ * hidden for good and the ERP's version is the article. That is what lets the
+ * company edit or delete, from the ERP, the articles that were first written
+ * here (lib/replaced-files.ts).
  */
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
@@ -104,9 +110,21 @@ function parseFile(file: string): Post {
   };
 }
 
+/**
+ * The repository articles the ERP has taken over: claimed by one of its
+ * records (published or not — a withdrawn takeover is still a takeover), or
+ * tombstoned when the ERP deleted it.
+ */
+export function replacedFileSlugs(): Set<string> {
+  const hidden = getReplacedFileSlugs();
+  for (const p of getAllErpPosts()) if (p.replacesFile) hidden.add(p.replacesFile);
+  return hidden;
+}
+
 /** All published posts from both sources, newest first. */
 export function getAllPosts(): Post[] {
-  const filePosts = readFiles().map(parseFile);
+  const hidden = replacedFileSlugs();
+  const filePosts = readFiles().map(parseFile).filter((p) => !hidden.has(p.slug));
   const fileSlugs = new Set(filePosts.map((p) => p.slug));
 
   const erpPosts: Post[] = getPublishedErpPosts()
@@ -133,6 +151,47 @@ export function getAllPosts(): Post[] {
   return [...filePosts, ...erpPosts].sort(
     (a, b) => +new Date(b.date) - +new Date(a.date)
   );
+}
+
+/** A repository article exactly as committed — the raw Markdown, for the ERP to take over. */
+export type RepositoryArticle = {
+  slug: string;
+  title: string;
+  description: string;
+  /** Markdown body, unrendered. */
+  body: string;
+  category: string;
+  tags: string[];
+  author: string;
+  date: string | null;
+  updated: string | null;
+  featured: boolean;
+  /** Already taken over by the ERP (hidden on the site). */
+  replaced: boolean;
+};
+
+/** Every committed article, taken over or not, with its RAW body (GET /api/v1/repository). */
+export function getRepositoryArticles(): RepositoryArticle[] {
+  const hidden = replacedFileSlugs();
+  return readFiles().map((file) => {
+    const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
+    const { data, content } = matter(raw);
+    const slug = typeof data.slug === "string" && data.slug.trim() ? data.slug.trim() : file.replace(/\.md$/, "");
+    return {
+      slug,
+      title: typeof data.title === "string" ? data.title : "Sans titre",
+      description: typeof data.description === "string" ? data.description : "",
+      body: content.replace(/^\s*\n/, ""),
+      category: typeof data.category === "string" ? data.category : "Secteur",
+      tags: Array.isArray(data.tags) ? data.tags.map((t: unknown) => String(t)) : [],
+      author: typeof data.author === "string" ? data.author : "Adventum Pharma",
+      // No date in the file: none is invented (the ERP then dates it at its first publication).
+      date: data.date && !Number.isNaN(+new Date(data.date)) ? new Date(data.date).toISOString() : null,
+      updated: data.updated && !Number.isNaN(+new Date(data.updated)) ? new Date(data.updated).toISOString() : null,
+      featured: Boolean(data.featured),
+      replaced: hidden.has(slug),
+    };
+  });
 }
 
 export function getPostSlugs(): string[] {

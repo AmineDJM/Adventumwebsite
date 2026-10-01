@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { erpLinked } from "@/lib/erp";
 import {
   SESSION_COOKIE,
   adminConfigured,
@@ -10,11 +11,17 @@ import {
 
 export const dynamic = "force-dynamic";
 
-/** Session probe — lets the admin UI restore a signed-in state on reload. */
+/**
+ * Session probe — lets the admin UI restore a signed-in state on reload.
+ * `managedByErp`: the site is linked to the ERP, which owns the postings — the
+ * admin then only shows them (a posting typed here would compete with the
+ * ERP's and, without a disk, vanish at the next restart).
+ */
 export async function GET() {
   return NextResponse.json({
     authenticated: await isAuthenticated(),
     configured: adminConfigured(),
+    managedByErp: erpLinked(),
   });
 }
 

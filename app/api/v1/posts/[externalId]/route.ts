@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { authenticate } from "@/lib/api-auth";
+import { addReplacedFileSlug, validFileSlug } from "@/lib/replaced-files";
 import {
   deleteErpPost,
   getErpPostByExternalId,
@@ -81,23 +82,47 @@ export async function PUT(request: Request, { params }: Params) {
   }
 }
 
+/**
+ * Delete an article. The body is usually empty; when the ERP deletes an
+ * article it had TAKEN OVER from this repository, it sends
+ * `{ "replacesFile": "<slug>" }` — signed like any body — so that the file
+ * stays hidden even if the ERP's version never reached this site (deleted
+ * before it left, or still waiting to be corrected). Without it, deleting a
+ * taken-over article would bring the old repository version back.
+ */
 export async function DELETE(request: Request, { params }: Params) {
-  const auth = authenticate(request);
+  const raw = await request.text();
+  const auth = authenticate(request, raw);
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { externalId } = await params;
 
+  let named: string | null = null;
+  if (raw.trim()) {
+    try {
+      named = validFileSlug((JSON.parse(raw) as { replacesFile?: unknown })?.replacesFile);
+    } catch {
+      return NextResponse.json({ error: "Body must be valid JSON." }, { status: 400 });
+    }
+  }
+
   try {
     const post = getErpPostByExternalId(externalId);
-    if (!deleteErpPost(externalId)) {
+    // A record that had taken a repository article over: deleting it must
+    // not bring the old file back. Remembered BEFORE the record goes.
+    const hidden = post?.replacesFile ?? named;
+    if (hidden) addReplacedFileSlug(hidden);
+    const deleted = deleteErpPost(externalId);
+    if (!deleted && !hidden) {
       return NextResponse.json({ error: "Not found." }, { status: 404 });
     }
     revalidatePath("/blog");
     if (post) revalidatePath(`/blog/${post.slug}`);
+    if (hidden) revalidatePath(`/blog/${hidden}`);
     revalidatePath("/sitemap.xml");
     revalidatePath("/feed.xml");
-    return NextResponse.json({ deleted: true, externalId });
+    return NextResponse.json({ deleted, externalId, ...(hidden ? { replacedFile: hidden } : {}) });
   } catch {
     return NextResponse.json(
       { error: "Storage is not writable." },

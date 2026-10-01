@@ -303,6 +303,7 @@ const en = {
   "admin.saved": "Saved.",
   "admin.error": "Something went wrong. Please try again.",
   "admin.session_expired": "Session expired. Please sign in again.",
+  "admin.erp_managed": "This site is linked to the Adventum ERP: job postings and articles are created, edited and deleted in the ERP (Site web module). This page now only lists them.",
 };
 
 export default en;

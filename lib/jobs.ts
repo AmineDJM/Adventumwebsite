@@ -170,15 +170,59 @@ export function parseJobInput(body: unknown): JobInput | null {
 /*  the same record update it instead of creating duplicates.          */
 /* ------------------------------------------------------------------ */
 
+/**
+ * What the ERP pushes: a posting, plus — when the ERP has taken over a
+ * posting first typed in THIS site's admin — the id of that posting. The ERP's
+ * version replaces it: the local copy is removed, never shown twice.
+ */
+export type ErpJobInput = JobInput & { replacesJob?: string };
+
+const SITE_ID = /^[A-Za-z0-9._~-]{1,128}$/;
+
+export function parseErpJobInput(body: unknown): ErpJobInput | null {
+  const input = parseJobInput(body);
+  if (!input) return null;
+  const raw = (body as Record<string, unknown>).replacesJob;
+  const replacesJob = typeof raw === "string" && SITE_ID.test(raw.trim()) ? raw.trim() : null;
+  return replacesJob ? { ...input, replacesJob } : input;
+}
+
+/** The posting itself, without the takeover marker (which is not stored). */
+function jobFields(pushed: ErpJobInput): JobInput {
+  const { replacesJob, ...fields } = pushed;
+  void replacesJob;
+  return fields;
+}
+
+/** Drop the admin-typed posting an ERP record has taken over (never an ERP record). */
+function withoutReplaced(jobs: Job[], replacesJob: string | null | undefined): Job[] {
+  if (!replacesJob) return jobs;
+  return jobs.filter((j) => !(j.id === replacesJob && !j.externalId));
+}
+
+/**
+ * Remove a posting typed in THIS site's admin (never an ERP record): the ERP
+ * deleted the posting it had taken over, and the local copy must go with it.
+ * Returns the removed posting, or null when there was nothing to remove.
+ */
+export function deleteManualJob(id: string): Job | null {
+  const jobs = readRaw();
+  const found = jobs.find((j) => j.id === id && !j.externalId) ?? null;
+  if (!found) return null;
+  writeRaw(jobs.filter((j) => j !== found));
+  return found;
+}
+
 export function getJobByExternalId(externalId: string): Job | null {
   return readRaw().find((j) => j.externalId === externalId) ?? null;
 }
 
 export function upsertJobByExternalId(
   externalId: string,
-  input: JobInput
+  pushed: ErpJobInput
 ): { job: Job; created: boolean } {
-  const jobs = readRaw();
+  const input = jobFields(pushed);
+  const jobs = withoutReplaced(readRaw(), pushed.replacesJob);
   const idx = jobs.findIndex((j) => j.externalId === externalId);
   const now = new Date().toISOString();
 
@@ -222,19 +266,22 @@ export function deleteJobByExternalId(externalId: string): boolean {
  * their id, slug and creation date, so links already shared stay valid.
  */
 export function replaceErpJobs(
-  items: { externalId: string; input: JobInput }[],
+  items: { externalId: string; input: ErpJobInput }[],
   /** When the reload started: a record the ERP pushed AFTER that is newer than the list, and wins. */
   since: string
 ): { kept: number; written: number; removed: number } {
   const current = readRaw();
-  const manual = current.filter((j) => !j.externalId);
+  // Admin-typed postings the ERP has taken over are gone for good: its version replaces them.
+  const takenOver = new Set(items.map((i) => i.input.replacesJob).filter((id): id is string => Boolean(id)));
+  const manual = current.filter((j) => !j.externalId && !takenOver.has(j.id));
   const fresher = current.filter((j) => j.externalId && j.updatedAt > since);
   const byExternal = new Map(current.filter((j) => j.externalId).map((j) => [j.externalId!, j] as const));
   const now = new Date().toISOString();
   const next: Job[] = [...manual, ...fresher];
   const pushedMeanwhile = new Set(fresher.map((j) => j.externalId!));
-  for (const { externalId, input } of items) {
+  for (const { externalId, input: pushed } of items) {
     if (pushedMeanwhile.has(externalId)) continue;
+    const input = jobFields(pushed);
     const existing = byExternal.get(externalId);
     const job: Job = existing
       ? { ...existing, ...input, externalId, slug: uniqueSlug(input.title, next, existing.id), updatedAt: now }
