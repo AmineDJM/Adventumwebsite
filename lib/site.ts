@@ -58,6 +58,33 @@ export const DEFAULT_KEYWORDS = [
   "pharmaceutical laboratory Algeria",
 ];
 
+/**
+ * Audience tracker served by the ERP. Its origin is ERP_BASE_URL — the same
+ * value the ERP already generates for the site↔ERP link (lib/erp.ts), so the
+ * address is never typed twice. Returns null, and the tag is simply not
+ * rendered, when the variable is missing or is not https (plain http is
+ * accepted for localhost only, matching lib/erp.ts): a bad value can never
+ * inject an arbitrary script.
+ */
+export const AUDIENCE_SCRIPT_PATH = "/api/site-web/v1/audience.js";
+
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+export function audienceScript(): { src: string; origin: string } | null {
+  const raw = process.env.ERP_BASE_URL?.trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    const allowed =
+      url.protocol === "https:" ||
+      (url.protocol === "http:" && LOCAL_HOSTS.has(url.hostname));
+    if (!allowed) return null;
+    return { origin: url.origin, src: `${url.origin}${AUDIENCE_SCRIPT_PATH}` };
+  } catch {
+    return null;
+  }
+}
+
 export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }

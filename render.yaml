@@ -52,6 +52,8 @@ services:
         sync: false
       - key: ERP_WEBHOOK_SECRET
         sync: false
+      # ERP_BASE_URL also loads the ERP's audience statistics script
+      # (<ERP_BASE_URL>/api/site-web/v1/audience.js) on every page.
       - key: ERP_BASE_URL
         sync: false
 

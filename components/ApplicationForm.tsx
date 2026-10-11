@@ -43,6 +43,9 @@ export default function ApplicationForm({
   const [state, setState] = useState<State>({ kind: "idle" });
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Names counted by the ERP audience script (data-adventum-track).
+  const trackBase = spontaneous ? "candidature-spontanee" : `postuler-${jobSlug ?? "poste"}`;
+
   const mailto = `mailto:${fallbackEmail}?subject=${encodeURIComponent(
     spontaneous ? "Candidature spontanée" : `Candidature — ${jobTitle ?? ""}`
   )}`;
@@ -51,6 +54,7 @@ export default function ApplicationForm({
     return (
       <a
         href={mailto}
+        data-adventum-track={trackBase}
         className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
       >
         {t(spontaneous ? "careers.spontaneous_cta" : "careers.apply_cta")}
@@ -166,7 +170,7 @@ export default function ApplicationForm({
         </p>
       )}
 
-      <PrimaryButton type="submit" className="w-full">
+      <PrimaryButton type="submit" className="w-full" track={`${trackBase}-envoyer`}>
         {state.kind === "sending" ? t("careers.form_sending") : t("careers.form_submit")}
       </PrimaryButton>
       <p className="text-center text-xs text-muted">{t("careers.form_privacy")}</p>

@@ -142,8 +142,8 @@ export default function Hero() {
             }}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
-            <PrimaryButton href="#expertise">{t("hero.cta_primary")}</PrimaryButton>
-            <GhostButton href="#contact">{t("hero.cta_secondary")}</GhostButton>
+            <PrimaryButton href="#expertise" track="hero-decouvrir-expertise">{t("hero.cta_primary")}</PrimaryButton>
+            <GhostButton href="#contact" track="hero-devenir-partenaire">{t("hero.cta_secondary")}</GhostButton>
           </motion.div>
 
           {/* OS-style capability chips */}

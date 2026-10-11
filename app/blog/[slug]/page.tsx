@@ -179,6 +179,7 @@ export default async function BlogPostPage({ params }: Params) {
             </p>
             <Link
               href="/#contact"
+              data-adventum-track={`article-contact-${post.slug}`}
               className="mt-7 inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
             >
               <T k="blog.cta_button" />

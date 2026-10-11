@@ -189,6 +189,7 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:Info@adventumdz.com"
+                  data-adventum-track="footer-email"
                   className="flex items-center gap-2.5 transition-colors duration-300 hover:text-frost"
                 >
                   <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4 shrink-0 text-muted" aria-hidden>

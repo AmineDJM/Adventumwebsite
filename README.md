@@ -25,7 +25,7 @@ npm run build && npm start
 | `NEXT_PUBLIC_SITE_URL` | Origine canonique utilisée par les métadonnées, le sitemap, robots.txt, le flux RSS et les données structurées. Défaut : `https://adventumdz.com` (l'adresse sans `www`, celle qui sert le site). | Recommandé |
 | `ADMIN_PASSWORD` | Mot de passe de l'espace `/admin`. **Sans cette variable, l'administration refuse toute connexion** (aucun mot de passe par défaut). | Pour `/admin` |
 | `ADMIN_SESSION_SECRET` | Clé de signature du cookie de session admin. À défaut, `ADMIN_PASSWORD` est utilisé. | Recommandé |
-| `ERP_API_KEY`, `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL` | La liaison avec l'ERP, dans les deux sens. **Générées par l'ERP** (Administration › Site web (connexion) › « Générer la clé ») sous la forme d'un bloc à coller tel quel dans Render (Environment › Add from .env › **Save, rebuild, and deploy** — pas « Save and deploy », qui redémarre la version déjà construite). Ne jamais les committer. | Pour l'ERP |
+| `ERP_API_KEY`, `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL` | La liaison avec l'ERP, dans les deux sens. **Générées par l'ERP** (Administration › Site web (connexion) › « Générer la clé ») sous la forme d'un bloc à coller tel quel dans Render (Environment › Add from .env › **Save, rebuild, and deploy** — pas « Save and deploy », qui redémarre la version déjà construite). `ERP_BASE_URL` charge aussi la balise de statistiques `audience.js` de l'ERP sur toutes les pages. Ne jamais les committer. | Pour l'ERP |
 | `JOBS_DATA_DIR` | Répertoire d'écriture (offres, articles de l'ERP, candidatures pas encore envoyées). S'il n'est pas inscriptible, le site écrit dans `./data` puis dans le répertoire temporaire, et le signale. | Facultatif |
 
 ---
@@ -116,6 +116,8 @@ adresse, et les affiche en un bloc de trois lignes (`ERP_API_KEY`,
 `ERP_WEBHOOK_SECRET`, `ERP_BASE_URL`) à coller dans l'environnement du site
 sur Render. Toute requête est alors signée (HMAC-SHA256 du corps, de la
 chaîne vide pour un `GET` ou un `DELETE`), dans les deux sens.
+
+**Statistiques** : la balise `audience.js` de l'ERP est chargée sur toutes les pages si `ERP_BASE_URL` est définie (la même variable que la liaison ERP) ; les boutons importants portent `data-adventum-track`. Liste des noms et exigences dans `docs/ERP-INTEGRATION.md` §14.
 
 Un article committé dans `content/blog/` reste prioritaire sur un article
 poussé par l'ERP qui porterait le même slug.

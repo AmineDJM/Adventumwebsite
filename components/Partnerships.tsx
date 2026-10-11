@@ -349,10 +349,10 @@ export default function Partnerships() {
             variants={fadeUp}
             className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            <PrimaryButton href="#contact">
+            <PrimaryButton href="#contact" track="partenariats-devenir-partenaire">
               {t("partnerships.cta_primary")}
             </PrimaryButton>
-            <GhostButton href="#contact">
+            <GhostButton href="#contact" track="partenariats-voir-formulaire">
               {t("partnerships.cta_secondary")}
             </GhostButton>
           </motion.div>

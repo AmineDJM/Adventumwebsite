@@ -16,16 +16,22 @@ import { useI18n } from "@/components/providers/I18nProvider";
  * real route. Anchors still resolve from other routes: they become "/#id"
  * links, so Insights and Careers pages keep a working main menu.
  */
-type NavLink = { key: string; href: string; type: "anchor" | "page" };
+type NavLink = {
+  key: string;
+  href: string;
+  type: "anchor" | "page";
+  /** Click name counted by the ERP audience script. */
+  track: string;
+};
 
 const LINKS: NavLink[] = [
-  { key: "nav.home", href: "#home", type: "anchor" },
-  { key: "nav.expertise", href: "#expertise", type: "anchor" },
-  { key: "nav.regulatory", href: "#regulatory", type: "anchor" },
-  { key: "nav.partnerships", href: "#partnerships", type: "anchor" },
-  { key: "nav.blog", href: "/blog", type: "page" },
-  { key: "nav.careers", href: "/carrieres", type: "page" },
-  { key: "nav.contact", href: "#contact", type: "anchor" },
+  { key: "nav.home", href: "#home", type: "anchor", track: "menu-accueil" },
+  { key: "nav.expertise", href: "#expertise", type: "anchor", track: "menu-expertise" },
+  { key: "nav.regulatory", href: "#regulatory", type: "anchor", track: "menu-reglementaire" },
+  { key: "nav.partnerships", href: "#partnerships", type: "anchor", track: "menu-partenariats" },
+  { key: "nav.blog", href: "/blog", type: "page", track: "menu-actualites" },
+  { key: "nav.careers", href: "/carrieres", type: "page", track: "menu-carrieres" },
+  { key: "nav.contact", href: "#contact", type: "anchor", track: "menu-contact" },
 ];
 
 const ANCHOR_IDS = LINKS.filter((l) => l.type === "anchor").map((l) => l.href);
@@ -172,7 +178,11 @@ export default function Navbar() {
             {LINKS.map((link) => (
               <li key={link.href}>
                 {link.type === "page" ? (
-                  <Link href={link.href} className={linkClass(isActive(link))}>
+                  <Link
+                    href={link.href}
+                    className={linkClass(isActive(link))}
+                    data-adventum-track={link.track}
+                  >
                     {t(link.key)}
                   </Link>
                 ) : (
@@ -180,6 +190,7 @@ export default function Navbar() {
                     href={onHome ? link.href : `/${link.href}`}
                     onClick={goAnchor(link.href)}
                     className={linkClass(isActive(link))}
+                    data-adventum-track={link.track}
                   >
                     {t(link.key)}
                   </a>
@@ -194,6 +205,7 @@ export default function Navbar() {
             <a
               href={onHome ? "#contact" : "/#contact"}
               onClick={goAnchor("#contact")}
+              data-adventum-track="nav-devenir-partenaire"
               className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-bio/30 bg-bio/[0.08] px-3.5 py-2 text-[0.73rem] font-semibold tracking-wide text-bio transition-all duration-500 ease-premium hover:border-bio/60 hover:bg-bio/[0.14] hover:shadow-[0_0_30px_-8px_rgba(104,210,223,0.5)] xl:px-5 xl:py-2.5 xl:text-[0.8rem]"
             >
               {/* the live dot is a flourish — it yields its width on the
@@ -268,6 +280,7 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setOpen(false)}
+                      data-adventum-track={link.track}
                       className={`flex items-baseline gap-4 py-2 font-display text-3xl font-medium ${
                         isActive(link) ? "text-gradient-bio" : "text-frost"
                       }`}
@@ -281,6 +294,7 @@ export default function Navbar() {
                     <a
                       href={onHome ? link.href : `/${link.href}`}
                       onClick={goAnchor(link.href)}
+                      data-adventum-track={link.track}
                       className={`flex items-baseline gap-4 py-2 font-display text-3xl font-medium ${
                         isActive(link) ? "text-gradient-bio" : "text-frost"
                       }`}
@@ -302,6 +316,7 @@ export default function Navbar() {
                 <a
                   href={onHome ? "#contact" : "/#contact"}
                   onClick={goAnchor("#contact")}
+                  data-adventum-track="menu-mobile-devenir-partenaire"
                   className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio"
                 >
                   {t("nav.partner")}

@@ -282,6 +282,7 @@ export default function Contact() {
                 </p>
                 <a
                   href="mailto:Info@adventumdz.com"
+                  data-adventum-track="contact-email"
                   className="flex items-center gap-2.5 text-sm text-silver transition-colors duration-300 hover:text-bio"
                 >
                   <svg aria-hidden viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0 text-pulse">
@@ -395,6 +396,7 @@ export default function Contact() {
                       {t("contact.confirm_body_pre")}{" "}
                       <a
                         href={`mailto:${CONTACT_EMAIL}`}
+                        data-adventum-track="contact-email-confirmation"
                         className="text-pulse underline-offset-4 transition-colors duration-300 hover:underline"
                       >
                         {CONTACT_EMAIL}
@@ -403,7 +405,7 @@ export default function Contact() {
                     </p>
 
                     <div className="mt-10">
-                      <GhostButton onClick={handleReset}>
+                      <GhostButton onClick={handleReset} track="contact-nouvelle-demande">
                         {t("contact.send_another")}
                       </GhostButton>
                     </div>
@@ -517,7 +519,11 @@ export default function Contact() {
                     </FormRow>
 
                     <FormRow className="pt-2">
-                      <PrimaryButton type="submit" className="w-full">
+                      <PrimaryButton
+                        type="submit"
+                        className="w-full"
+                        track="contact-envoyer-demande"
+                      >
                         {t("contact.submit_cta")}
                       </PrimaryButton>
                     </FormRow>

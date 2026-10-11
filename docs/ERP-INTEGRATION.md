@@ -488,6 +488,9 @@ n'a pas de disque.
       l'ERP (**Recrutement › Candidatures du site**)
 - [ ] Supprimer l'offre et la candidature de test
 - [ ] Décider du sort de `ADMIN_PASSWORD` (conserver ou retirer)
+- [ ] Statistiques : vérifier que `audience.js` compte les navigations sans
+      rechargement (§14), puis naviguer accueil → Actualités → un article :
+      3 pages vues doivent apparaître dans l'ERP
 
 ---
 
@@ -646,3 +649,113 @@ espacé de 30 secondes au moins.
 La santé (`GET /health` authentifié) annonce `repository` dans
 `capabilities` : une version antérieure du site ne sait pas être reprise, et
 l'ERP le dit au lieu d'échouer en silence.
+
+---
+
+## 14. Statistiques d'audience (`audience.js`)
+
+Le flux est l'inverse de la publication : le **navigateur du visiteur**
+charge `audience.js` depuis l'ERP et lui envoie directement pages vues et
+clics. Le serveur du site n'intervient pas.
+
+### Ce qui est en place côté site
+
+- La balise est posée dans le layout racine, donc sur **toutes** les pages
+  (accueil, blog, articles, carrières, fiches de poste, 404) :
+
+  ```html
+  <link rel="preconnect" href="https://<adresse-de-l-ERP>">
+  <script src="https://<adresse-de-l-ERP>/api/site-web/v1/audience.js" defer></script>
+  ```
+
+- L'adresse est celle de **`ERP_BASE_URL`**, déjà présente dans le bloc
+  généré par l'ERP (§2) : rien de plus à saisir. Si elle est absente ou
+  n'est pas une URL `https` valide, la balise n'est pas émise. Elle est lue
+  à la construction du site : c'est une raison de plus de choisir **Save,
+  rebuild, and deploy**.
+- Les boutons suivis portent `data-adventum-track="nom"`. Le site ne fait
+  rien d'autre : c'est `audience.js` qui doit écouter les clics (délégation
+  sur `document`, avec `closest("[data-adventum-track]")`, car une partie du
+  contenu est rendue après le chargement).
+
+### Noms de clics émis par le site
+
+| Nom | Bouton |
+|---|---|
+| `menu-accueil`, `menu-expertise`, `menu-reglementaire`, `menu-partenariats`, `menu-actualites`, `menu-carrieres`, `menu-contact` | Entrées du menu (desktop et mobile) |
+| `nav-devenir-partenaire` | Bouton « Devenir Partenaire » de l'en-tête |
+| `menu-mobile-devenir-partenaire` | Même bouton dans le menu mobile |
+| `hero-decouvrir-expertise`, `hero-devenir-partenaire` | Boutons de la bannière d'accueil |
+| `partenariats-devenir-partenaire`, `partenariats-voir-formulaire` | Section Partenariats |
+| `contact-envoyer-demande` | Envoi du formulaire de partenariat |
+| `contact-email`, `contact-email-confirmation`, `footer-email` | Liens e-mail |
+| `contact-nouvelle-demande` | « Envoyer une autre demande » |
+| `postuler-<slug-du-poste>` | « Postuler » sur une fiche de poste (ou le lien e-mail de secours si le site n'est pas relié) |
+| `postuler-<slug-du-poste>-envoyer` | Bouton « Envoyer » du formulaire de candidature de ce poste |
+| `candidature-spontanee` | Lien e-mail de secours de la candidature spontanée (site non relié) |
+| `candidature-spontanee-envoyer` | Bouton « Envoyer » de la candidature spontanée |
+| `article-contact-<slug-de-l-article>` | Appel à l'action en bas d'un article |
+
+Les noms avec slug permettent de savoir **quel poste** attire les
+candidatures et **quel article** génère des contacts. La paire
+`postuler-<slug>` / `postuler-<slug>-envoyer` forme un entonnoir : intérêt,
+puis tentative d'envoi. Un clic « Envoyer » est compté même si le
+navigateur bloque ensuite l'envoi (champ obligatoire vide) ; le nombre de
+candidatures réellement reçues reste celui de **Recrutement › Candidatures
+du site**.
+
+### ⚠️ Exigence pour `audience.js` : la navigation sans rechargement
+
+Le site navigue **sans recharger la page** (navigation client Next.js via
+`history.pushState`). Un script qui compte une page vue uniquement à son
+chargement ne verra que la **première** page de chaque visite.
+
+Testé sur ce site avec un script qui ne compte qu'au chargement, le
+parcours accueil → blog → article n'a remonté **qu'une** page vue sur trois.
+
+`audience.js` doit donc compter aussi les changements d'URL. Logique
+validée sur ce site (parcours de 5 pages + bouton « retour » : 5 pages vues
+reçues, aucun doublon, et le défilement vers une ancre `#section` n'est pas
+compté comme une page) :
+
+```js
+let last = null;
+function pageview() {
+  if (location.pathname === last) return; // ignore les ancres et les doublons
+  last = location.pathname;
+  envoyerPageVue(location.pathname);      // votre envoi existant
+}
+for (const m of ["pushState", "replaceState"]) {
+  const orig = history[m];
+  history[m] = function () {
+    const r = orig.apply(this, arguments);
+    pageview();
+    return r;
+  };
+}
+addEventListener("popstate", pageview);   // boutons précédent / suivant
+pageview();                               // première page
+```
+
+Points d'attention :
+
+- **Dédupliquer sur `pathname`** : Next.js appelle aussi `replaceState` au
+  démarrage, sur la même URL ; sans la comparaison, la première page serait
+  comptée deux fois.
+- Le **référent** externe (`document.referrer`) n'a de sens que pour la
+  première page vue d'une visite.
+- Envoyer avec `navigator.sendBeacon` (ou `fetch` avec `keepalive: true`)
+  pour ne pas perdre le clic sur un lien `mailto:` ou une navigation.
+- `audience.js` est un script tiers sur le site public : il doit rester
+  léger, ne jamais lever d'erreur et ne pas bloquer le rendu.
+
+### Pays « Inconnu »
+
+Le navigateur appelle l'ERP directement : le pays ne peut être déduit que
+de l'hébergement **de l'ERP**, pas de celui du site. Render ne fournit pas
+d'en-tête de géolocalisation. Deux options si le pays devient utile :
+
+- placer l'ERP derrière Cloudflare (même en offre gratuite), qui ajoute
+  l'en-tête `CF-IPCountry` à chaque requête ;
+- ou résoudre l'adresse IP côté ERP avec une base GeoIP locale (par
+  exemple DB-IP Lite ou MaxMind GeoLite2), sans appel à un service externe.

@@ -206,6 +206,7 @@ export default async function JobPage({ params }: Params) {
 
             <a
               href={applyHref}
+              data-adventum-track={`postuler-${job.slug}`}
               className="mt-9 inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
             >
               <T k="careers.apply_cta" />
@@ -249,6 +250,7 @@ export default async function JobPage({ params }: Params) {
             {!linked && (
               <a
                 href={applyHref}
+                data-adventum-track={`postuler-${job.slug}`}
                 className="inline-flex items-center gap-2 rounded-full border border-bio/40 bg-bio/10 px-6 py-3 text-sm font-semibold text-bio transition-all duration-500 ease-premium hover:border-bio/70 hover:bg-bio/[0.16]"
               >
                 <T k="careers.apply_cta" />

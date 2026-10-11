@@ -13,6 +13,7 @@ import {
   SITE_LOCALE,
   SITE_NAME,
   SITE_URL,
+  audienceScript,
   jsonLdScript,
   organizationJsonLd,
   webSiteJsonLd,
@@ -114,6 +115,10 @@ export const viewport: Viewport = {
 // JobPosting, BreadcrumbList) reference these by @id.
 const siteJsonLd = jsonLdScript([organizationJsonLd(), webSiteJsonLd()]);
 
+// ERP audience statistics. The root layout wraps every route, so this one
+// tag covers every page of the site.
+const audience = audienceScript();
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -129,6 +134,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: siteJsonLd }}
         />
+        {audience && (
+          <>
+            <link rel="preconnect" href={audience.origin} />
+            <script src={audience.src} defer />
+          </>
+        )}
       </head>
       <body className="bg-abyss font-sans text-frost">
         <ThemeProvider>
