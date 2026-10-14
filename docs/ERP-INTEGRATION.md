@@ -691,20 +691,31 @@ clics. Le serveur du site n'intervient pas.
 | `contact-email`, `contact-email-confirmation`, `footer-email` | Liens e-mail |
 | `contact-nouvelle-demande` | « Envoyer une autre demande » |
 | `postuler-<slug-du-poste>` | « Postuler » sur une fiche de poste (ou le lien e-mail de secours si le site n'est pas relié) |
-| `postuler-<slug-du-poste>-envoyer` | Bouton « Envoyer » du formulaire de candidature de ce poste |
+| `envoi-candidature-<slug-du-poste>` | Bouton « Envoyer » du formulaire de candidature de ce poste |
 | `candidature-spontanee` | Lien e-mail de secours de la candidature spontanée (site non relié) |
-| `candidature-spontanee-envoyer` | Bouton « Envoyer » de la candidature spontanée |
+| `envoi-candidature-spontanee` | Bouton « Envoyer » de la candidature spontanée |
 | `article-contact-<slug-de-l-article>` | Appel à l'action en bas d'un article |
+
+`audience.js` tronque les noms à 80 caractères. L'action figure donc
+toujours **en tête** du nom (`postuler-`, `envoi-candidature-`,
+`article-contact-`) : pour un intitulé très long, seule la fin de
+l'identifiant du poste ou de l'article est coupée, jamais ce qui distingue
+un clic « Postuler » d'un clic « Envoyer ».
 
 Les noms avec slug permettent de savoir **quel poste** attire les
 candidatures et **quel article** génère des contacts. La paire
-`postuler-<slug>` / `postuler-<slug>-envoyer` forme un entonnoir : intérêt,
+`postuler-<slug>` / `envoi-candidature-<slug>` forme un entonnoir : intérêt,
 puis tentative d'envoi. Un clic « Envoyer » est compté même si le
 navigateur bloque ensuite l'envoi (champ obligatoire vide) ; le nombre de
 candidatures réellement reçues reste celui de **Recrutement › Candidatures
 du site**.
 
-### ⚠️ Exigence pour `audience.js` : la navigation sans rechargement
+### Exigence pour `audience.js` : la navigation sans rechargement
+
+> **État au 14/10/2026 : satisfaite.** Le `audience.js` servi par l'ERP
+> intercepte `pushState`/`replaceState`, écoute `popstate` et ignore les
+> chemins inchangés. Ce qui suit reste la référence : toute évolution du
+> script doit conserver ce comportement.
 
 Le site navigue **sans recharger la page** (navigation client Next.js via
 `history.pushState`). Un script qui compte une page vue uniquement à son
@@ -713,7 +724,7 @@ chargement ne verra que la **première** page de chaque visite.
 Testé sur ce site avec un script qui ne compte qu'au chargement, le
 parcours accueil → blog → article n'a remonté **qu'une** page vue sur trois.
 
-`audience.js` doit donc compter aussi les changements d'URL. Logique
+`audience.js` doit donc compter aussi les changements d'URL — ce qu'il fait. Logique
 validée sur ce site (parcours de 5 pages + bouton « retour » : 5 pages vues
 reçues, aucun doublon, et le défilement vers une ancre `#section` n'est pas
 compté comme une page) :

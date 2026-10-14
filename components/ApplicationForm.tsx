@@ -44,7 +44,12 @@ export default function ApplicationForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   // Names counted by the ERP audience script (data-adventum-track).
-  const trackBase = spontaneous ? "candidature-spontanee" : `postuler-${jobSlug ?? "poste"}`;
+  // The action comes FIRST: audience.js truncates names at 80 characters, so
+  // a long posting slug may lose its tail — never the part that tells an
+  // "apply" click from a "send" click.
+  const slug = jobSlug ?? "poste";
+  const trackBase = spontaneous ? "candidature-spontanee" : `postuler-${slug}`;
+  const trackSend = spontaneous ? "envoi-candidature-spontanee" : `envoi-candidature-${slug}`;
 
   const mailto = `mailto:${fallbackEmail}?subject=${encodeURIComponent(
     spontaneous ? "Candidature spontanée" : `Candidature — ${jobTitle ?? ""}`
@@ -170,7 +175,7 @@ export default function ApplicationForm({
         </p>
       )}
 
-      <PrimaryButton type="submit" className="w-full" track={`${trackBase}-envoyer`}>
+      <PrimaryButton type="submit" className="w-full" track={trackSend}>
         {state.kind === "sending" ? t("careers.form_sending") : t("careers.form_submit")}
       </PrimaryButton>
       <p className="text-center text-xs text-muted">{t("careers.form_privacy")}</p>
